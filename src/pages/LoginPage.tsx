@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { useAuthStore } from '../store/useAuthStore'
 
 export function LoginPage({ onClose }: { onClose: () => void }) {
-  const { login, register, status, username } = useAuthStore()
+  const { login, register, logout, sync, status, username, syncing } = useAuthStore()
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [name, setName] = useState('')
   const [pass, setPass] = useState('')
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  const [confirmLogout, setConfirmLogout] = useState(false)
 
   const submit = async () => {
     if (!name.trim() || !pass) return
@@ -25,6 +26,14 @@ export function LoginPage({ onClose }: { onClose: () => void }) {
   }
 
   if (status === 'authed') {
+    const doLogout = async () => {
+      // 先把这个账号的数据推上云端再退出，不然最后一段进度会丢
+      await sync()
+      await logout()
+      setConfirmLogout(false)
+      onClose()
+    }
+
     return (
       <div className="mx-auto max-w-md px-5 py-10">
         <div className="rounded-card bg-ok-soft px-5 py-6 text-center">
@@ -35,10 +44,53 @@ export function LoginPage({ onClose }: { onClose: () => void }) {
             换设备登录同一个账号，进度会自动同步
           </div>
         </div>
+
+        {confirmLogout ? (
+          <div className="mt-4 rounded-card bg-bad-soft p-4">
+            <div className="text-[13px] leading-relaxed text-[#a32d2d]">
+              退出后回到本机未登录的进度。这个账号在这里新学的进度会先同步到云端，
+              不会丢。确定退出吗？
+            </div>
+            <div className="mt-3 flex gap-2">
+              <button
+                type="button"
+                onClick={() => void doLogout()}
+                className="h-10 flex-1 rounded-lg bg-[#a32d2d] text-[13px] text-white"
+              >
+                退出登录
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmLogout(false)}
+                className="h-10 flex-1 rounded-lg bg-white text-[13px] text-neutral-600 ring-1 ring-black/5"
+              >
+                取消
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setConfirmLogout(true)}
+            className="mt-4 h-11 w-full rounded-xl bg-white text-[14px] text-[#a32d2d] shadow-sm ring-1 ring-black/5"
+          >
+            退出登录
+          </button>
+        )}
+
+        <button
+          type="button"
+          disabled={syncing}
+          onClick={() => void sync()}
+          className="mt-3 h-11 w-full rounded-xl bg-white text-[14px] text-neutral-700 shadow-sm ring-1 ring-black/5 disabled:opacity-40"
+        >
+          {syncing ? '同步中…' : '立即同步'}
+        </button>
+
         <button
           type="button"
           onClick={onClose}
-          className="mt-4 h-11 w-full rounded-xl bg-white text-[14px] text-neutral-700 shadow-sm ring-1 ring-black/5"
+          className="mt-2 h-10 w-full text-[13px] text-neutral-400"
         >
           返回
         </button>

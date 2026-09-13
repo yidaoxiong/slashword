@@ -57,13 +57,13 @@ export default function App() {
     ? '同步中…'
     : lastSyncAt
       ? `已同步 ${new Date(lastSyncAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`
-      : '点此同步'
+      : '点此管理账号'
 
   return (
     <div className="flex min-h-full flex-col">
       <button
         type="button"
-        onClick={() => (status === 'authed' ? void sync() : setView('login'))}
+        onClick={() => setView('login')}
         className={`w-full px-4 py-2 text-center text-[11px] ${
           status === 'authed'
             ? 'bg-ok-soft text-[#0f6e56]'
