@@ -9,7 +9,9 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "vocab": "/Users/ray/.workbuddy/binaries/python/envs/default/bin/python scripts/parse_vocab.py"
+    "vocab": "/Users/ray/.workbuddy/binaries/python/envs/default/bin/python scripts/parse_vocab.py",
+    "audio": "/Users/ray/.workbuddy/binaries/python/envs/default/bin/python scripts/gen_audio.py",
+    "deploy": "vite build && ./node_modules/.bin/wrangler pages deploy dist --project-name slashword --branch main --commit-dirty=true"
   },
   "keywords": [],
   "author": "",

@@ -4,8 +4,12 @@ import { getRepo } from '../storage'
 import { currentUnitLabel, unlockedCount, unitsOf } from '../core/queue'
 import type { Card, CheckinRecord, Skill } from '../types'
 import { SKILL_LABEL, SKILLS } from '../types'
+import { speak } from '../lib/speech'
 
 const repo = getRepo()
+
+/** 试听用的示例词：car 的英音 /kɑː/ 和美音 /kɑːr/ 差别最明显，一耳朵就能听出来 */
+const SAMPLE = { text: 'car', audioId: 'g5a-0094' }
 
 export function ParentPage() {
   const { config, streak, entries, catalog, init, setConfig, reset } = useAppStore()
@@ -188,6 +192,52 @@ export function ParentPage() {
           />
           <div className="mt-1 text-[11px] text-neutral-300">
             每本词书的进度各自独立保存
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[12px] text-neutral-500">发音口音</span>
+            <button
+              type="button"
+              onClick={() =>
+                void speak(SAMPLE.text, {
+                  audioId: SAMPLE.audioId,
+                  us: (config.accent ?? 'uk') === 'us',
+                })
+              }
+              className="text-[11px] text-brand-500"
+            >
+              再听一遍 car
+            </button>
+          </div>
+          <div className="mt-2 flex overflow-hidden rounded-lg ring-1 ring-black/5">
+            {(
+              [
+                ['uk', '英音 Sonia'],
+                ['us', '美音 Aria'],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => {
+                  void setConfig({ accent: id })
+                  // 点哪个就立刻念一遍，不用猜两种口音有什么区别
+                  void speak(SAMPLE.text, { audioId: SAMPLE.audioId, us: id === 'us' })
+                }}
+                className={`h-9 flex-1 text-[12px] ${
+                  (config.accent ?? 'uk') === id
+                    ? 'bg-brand-500 text-white'
+                    : 'bg-white text-neutral-500'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="mt-1 text-[11px] text-neutral-300">
+            单词和例句整体切换，跟学校教材选同一个就好
           </div>
         </div>
 

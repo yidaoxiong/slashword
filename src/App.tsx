@@ -6,11 +6,12 @@ import { LearnPage } from './pages/LearnPage'
 import { DonePage } from './pages/DonePage'
 import { ParentPage } from './pages/ParentPage'
 import { LoginPage } from './pages/LoginPage'
+import { setAccent } from './lib/speech'
 
 type Tab = 'learn' | 'parent'
 
 export default function App() {
-  const { phase, init, error } = useAppStore()
+  const { phase, init, error, config } = useAppStore()
   const { status, username, syncing, lastSyncAt, restore, sync } = useAuthStore()
   const [tab, setTab] = useState<Tab>('learn')
   const [view, setView] = useState<'main' | 'login'>('main')
@@ -20,6 +21,11 @@ export default function App() {
     void restore()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // 口音设置同步给发音模块，这样各处 speak() 不用逐个传参
+  useEffect(() => {
+    setAccent(config?.accent ?? 'uk')
+  }, [config?.accent])
 
   // 学完一轮就同步一次，换设备能看到最新进度
   useEffect(() => {

@@ -120,6 +120,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       if (!config) {
         config = defaultConfig(LOCAL_USER)
         await repo.putConfig(config)
+      } else if (config.accent === undefined) {
+        // 老配置没有新增字段，用默认值补齐（以后加字段也走这条路）
+        config = { ...defaultConfig(config.userId), ...config }
+        await repo.putConfig(config)
       }
       await loadBook(config.activeBook)
       const checkin = await repo.getCheckin(LOCAL_USER, todayKey())

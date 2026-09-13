@@ -11,7 +11,7 @@ export interface SpeakOptions {
   audioId?: string
   /** word = 单词音频，example = 例句音频 */
   kind?: 'word' | 'example'
-  /** 用美式发音（只在词表里英美音标不同时才会有这个文件） */
+  /** 强制用美式发音；不传就用全局口音设置（见 setAccent） */
   us?: boolean
   /** 语速，仅影响系统 TTS；小于 0.8 时音频也会放慢一点 */
   rate?: number
@@ -47,15 +47,27 @@ function pickVoice(useUs: boolean): SpeechSynthesisVoice | undefined {
   )
 }
 
+// ---------- 口音 ----------
+
+/** 全局口音，由 App 跟着用户配置同步下来，这样调用处不用逐个传 us */
+let defaultUs = false
+
+export function setAccent(accent: 'uk' | 'us') {
+  defaultUs = accent === 'us'
+}
+
 // ---------- 预生成音频 ----------
 
 const audioCache = new Map<string, HTMLAudioElement | null>()
 
-function audioUrl(opts: SpeakOptions): string | null {
+function audioPath(audioId: string, kind: SpeakOptions['kind'], us: boolean) {
+  const dir = kind === 'example' ? 'examples' : 'words'
+  return `./audio/${dir}/${audioId}${us ? '-us' : ''}.mp3`
+}
+
+function audioUrl(opts: SpeakOptions, us: boolean): string | null {
   if (!opts.audioId) return null
-  const dir = opts.kind === 'example' ? 'examples' : 'words'
-  const suffix = opts.us ? '-us' : ''
-  return `./audio/${dir}/${opts.audioId}${suffix}.mp3`
+  return audioPath(opts.audioId, opts.kind, us)
 }
 
 function loadAudio(url: string): Promise<HTMLAudioElement | null> {
@@ -109,35 +121,45 @@ function speakWithSystem(text: string, opts: SpeakOptions) {
 }
 
 export async function speak(text: string, opts: SpeakOptions = {}) {
-  const url = audioUrl(opts)
-  if (url) {
+  const wantUs = opts.us ?? defaultUs
+  // 先试当前口音的文件；万一这份没生成出来，退回英音（英音是全量生成的，一定有），
+  // 别一下掉到系统 TTS —— 那才是真的难听
+  const candidates = opts.audioId
+    ? wantUs
+      ? [true, false]
+      : [false]
+    : []
+
+  for (const us of candidates) {
+    const url = audioUrl(opts, us)
+    if (!url) continue
     const el = await loadAudio(url)
-    if (el) {
-      let fired = false
-      const finish = () => {
-        if (fired) return
-        fired = true
-        opts.onEnd?.()
-      }
-      el.onended = finish
-      el.onerror = () => {
-        // 播放中途出错就换系统语音再读一遍
-        speakWithSystem(text, opts)
-      }
-      try {
-        el.currentTime = 0
-        el.playbackRate = opts.rate && opts.rate < 0.8 ? 0.85 : 1
-        await el.play()
-        // 兜底：极端情况下 onended 不来，别让界面卡住
-        const ms = ((el.duration || 3) * 1000) / el.playbackRate + 1500
-        window.setTimeout(finish, ms)
-        return
-      } catch {
-        // play() 被浏览器拦截（比如还没交互过），退回系统语音
-      }
+    if (!el) continue
+
+    let fired = false
+    const finish = () => {
+      if (fired) return
+      fired = true
+      opts.onEnd?.()
+    }
+    el.onended = finish
+    el.onerror = () => {
+      // 播放中途出错就换系统语音再读一遍
+      speakWithSystem(text, { ...opts, us })
+    }
+    try {
+      el.currentTime = 0
+      el.playbackRate = opts.rate && opts.rate < 0.8 ? 0.85 : 1
+      await el.play()
+      // 兜底：极端情况下 onended 不来，别让界面卡住
+      const ms = ((el.duration || 3) * 1000) / el.playbackRate + 1500
+      window.setTimeout(finish, ms)
+      return
+    } catch {
+      // play() 被浏览器拦截（比如还没交互过），退回系统语音
     }
   }
-  speakWithSystem(text, opts)
+  speakWithSystem(text, { ...opts, us: wantUs })
 }
 
 /** 估算朗读时长，用于决定反馈展示的最短时间 */

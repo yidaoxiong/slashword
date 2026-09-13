@@ -12,6 +12,9 @@
 系统 TTS 保留作为兜底（音频文件缺失或加载失败时）。
 
 用法：python scripts/gen_audio.py
+
+每个词/例句都生成英音和美音两份，前端按「发音偏好」设置挑一份播。
+脚本会跳过已存在的文件，所以改词表后重跑只会生成新增的部分。
 """
 import asyncio
 import json
@@ -64,20 +67,24 @@ async def main():
     for w in words:
         wid = w["id"]
         word = w["word"]
-        # 单词（英音）
+        # 单词：英音 + 美音各一份
         tasks.append(synth(word, WORDS_DIR / f"{wid}.mp3", VOICE_UK, sem))
-        # 英美发音不同的，额外生成一份美音
-        if w.get("phoneticUs") and w["phoneticUs"] != w.get("phoneticUk"):
-            tasks.append(synth(word, WORDS_DIR / f"{wid}-us.mp3", VOICE_US, sem))
-            us_count += 1
-        # 例句
+        tasks.append(synth(word, WORDS_DIR / f"{wid}-us.mp3", VOICE_US, sem))
+        us_count += 1
+        # 例句：同样两份，保证整关口音一致
         if w.get("exampleEn"):
             tasks.append(
                 synth(w["exampleEn"], EXAMPLES_DIR / f"{wid}.mp3", VOICE_UK, sem)
             )
+            tasks.append(
+                synth(w["exampleEn"], EXAMPLES_DIR / f"{wid}-us.mp3", VOICE_US, sem)
+            )
             ex_count += 1
 
-    print(f"待生成：{len(words)} 词（其中 {us_count} 个需要美音）+ {ex_count} 条例句")
+    print(
+        f"待生成：{len(words)} 词 + {ex_count} 例句，"
+        f"每个英音/美音各一份（{us_count} 词）"
+    )
     print(f"共 {len(tasks)} 个音频，并发 {CONCURRENCY}，请稍候…")
 
     results = await asyncio.gather(*tasks)

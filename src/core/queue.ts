@@ -145,6 +145,9 @@ export function defaultConfig(userId = 'local'): EngineConfig {
     // 默认不给首字母提示：这一关练的就是"从意思反推拼写"，
     // 给了首字母等于替孩子想了第一步。需要的话家长端可以打开
     spellHint: false,
+    // 默认英音。人教版小学英语偏美音，家里如果要跟教材一致，
+    // 去家长端切成"美音"即可，单词和例句会整体切换
+    accent: 'uk',
     masteryThreshold: 80,
   }
 }

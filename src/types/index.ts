@@ -158,6 +158,8 @@ export interface EngineConfig {
   enabledSkills: Skill[]
   /** 拼写训练是否显示首字母提示 */
   spellHint: boolean
+  /** 发音口音：uk = 英音（Sonia），us = 美音（Aria） */
+  accent: 'uk' | 'us'
   /** 目标：真正记住 = 四维都达标 */
   masteryThreshold: number
 }
