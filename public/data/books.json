@@ -4,6 +4,7 @@
     "name": "五年级上 英语单词表",
     "grade": "五年级上",
     "source": "校内教材",
+    "lang": "en",
     "wordCount": 173,
     "unitCount": 6
   },
@@ -12,7 +13,17 @@
     "name": "四下 厚海单词表",
     "grade": "四年级下",
     "source": "厚海校外教材",
+    "lang": "en",
     "wordCount": 223,
     "unitCount": 6
+  },
+  {
+    "id": "es-basico",
+    "name": "西语入门 200 词",
+    "grade": "西语入门",
+    "source": "入门词库",
+    "lang": "es",
+    "wordCount": 200,
+    "unitCount": 8
   }
 ]

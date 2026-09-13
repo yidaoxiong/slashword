@@ -28,9 +28,25 @@ OUT = ROOT / "public" / "audio"
 WORDS_DIR = OUT / "words"
 EXAMPLES_DIR = OUT / "examples"
 
-# 儿童应用优先女声：清晰、亲和
-VOICE_UK = "en-GB-SoniaNeural"
-VOICE_US = "en-US-AriaNeural"
+# 儿童应用优先女声：清晰、亲和。
+# 这里的音色和口音 id 必须和 src/core/lang.ts 的 ACCENTS 完全一致，
+# 否则前端拼出来的文件名和这边生成出来的对不上。
+ACCENTS = {
+    "en": {
+        "default": "uk",
+        "voices": {
+            "uk": "en-GB-SoniaNeural",
+            "us": "en-US-AriaNeural",
+        },
+    },
+    "es": {
+        "default": "es-mx",  # Ray 选的拉美口音
+        "voices": {
+            "es-mx": "es-MX-DaliaNeural",
+            "es-es": "es-ES-ElviraNeural",
+        },
+    },
+}
 RATE = "-8%"  # 比正常语速略慢，适合孩子听清
 
 CONCURRENCY = 6
@@ -61,29 +77,45 @@ async def main():
 
     sem = asyncio.Semaphore(CONCURRENCY)
     tasks = []
-    us_count = 0
+    by_lang: dict[str, int] = {}
     ex_count = 0
+
+    def path(d: Path, wid: str, accent_id: str, default: str) -> Path:
+        # 命名规则必须和 src/lib/speech.ts 的 audioPath 一致：
+        # 默认口音是裸文件，其他口音带 -{accentId} 后缀
+        suffix = "" if accent_id == default else f"-{accent_id}"
+        return d / f"{wid}{suffix}.mp3"
 
     for w in words:
         wid = w["id"]
         word = w["word"]
-        # 单词：英音 + 美音各一份
-        tasks.append(synth(word, WORDS_DIR / f"{wid}.mp3", VOICE_UK, sem))
-        tasks.append(synth(word, WORDS_DIR / f"{wid}-us.mp3", VOICE_US, sem))
-        us_count += 1
-        # 例句：同样两份，保证整关口音一致
+        lang = w.get("lang") or "en"
+        cfg = ACCENTS.get(lang, ACCENTS["en"])
+        default = cfg["default"]
+        by_lang[lang] = by_lang.get(lang, 0) + 1
+
+        # 单词：每种口音各一份
+        for accent_id, voice in cfg["voices"].items():
+            tasks.append(
+                synth(word, path(WORDS_DIR, wid, accent_id, default), voice, sem)
+            )
+        # 例句：同样每种口音一份，保证整关的口音一致
         if w.get("exampleEn"):
-            tasks.append(
-                synth(w["exampleEn"], EXAMPLES_DIR / f"{wid}.mp3", VOICE_UK, sem)
-            )
-            tasks.append(
-                synth(w["exampleEn"], EXAMPLES_DIR / f"{wid}-us.mp3", VOICE_US, sem)
-            )
+            for accent_id, voice in cfg["voices"].items():
+                tasks.append(
+                    synth(
+                        w["exampleEn"],
+                        path(EXAMPLES_DIR, wid, accent_id, default),
+                        voice,
+                        sem,
+                    )
+                )
             ex_count += 1
 
     print(
-        f"待生成：{len(words)} 词 + {ex_count} 例句，"
-        f"每个英音/美音各一份（{us_count} 词）"
+        "待生成："
+        + "、".join(f"{k} {v} 词" for k, v in sorted(by_lang.items()))
+        + f" + {ex_count} 例句"
     )
     print(f"共 {len(tasks)} 个音频，并发 {CONCURRENCY}，请稍候…")
 

@@ -22,6 +22,7 @@ HEADERS = [
     ("中文含义", True),
     ("英文例句", False),
     ("例句中文", False),
+    ("冠词", False),
     ("单元", False),
     ("单元主题", False),
     ("课文", False),
@@ -30,17 +31,17 @@ HEADERS = [
 
 # 示例：一个「食物」主题的六词小词库，覆盖常见填写情况
 SAMPLE = [
-    ("sandwich", "英 /ˈsænwɪdʒ/ 美 /ˈsænwɪdʒ/", "n.", "三明治",
+    ("sandwich", "英 /ˈsænwɪdʒ/ 美 /ˈsænwɪdʒ/", "n.", "三明治", "",
      "I had a sandwich for lunch.", "我午饭吃了个三明治。", "Unit 1", "食物", "Lesson 1", "Target"),
-    ("soup", "/suːp/", "n.", "汤",
+    ("soup", "/suːp/", "n.", "汤", "",
      "This soup is too hot.", "这汤太烫了。", "Unit 1", "食物", "Lesson 1", "Target"),
-    ("salad", "英 /ˈsæləd/ 美 /ˈsæləd/", "n.", "沙拉",
+    ("salad", "英 /ˈsæləd/ 美 /ˈsæləd/", "n.", "沙拉", "",
      "She made a green salad.", "她做了一份蔬菜沙拉。", "Unit 1", "食物", "Lesson 1", "Target"),
-    ("cookie", "/ˈkʊki/", "n.", "曲奇饼干",
+    ("cookie", "/ˈkʊki/", "n.", "曲奇饼干", "",
      "Would you like a cookie?", "你想来块曲奇吗？", "Unit 1", "食物", "Lesson 2", "Target"),
-    ("orange juice", "/ˈɒrɪndʒ dʒuːs/", "n.", "橙汁",
+    ("orange juice", "/ˈɒrɪndʒ dʒuːs/", "n.", "橙汁", "",
      "I drink orange juice every morning.", "我每天早上喝橙汁。", "Unit 2", "饮料", "Lesson 3", "Context"),
-    ("Would you like ... ?", "/wʊd juː laɪk/", "句型", "你想要……吗？",
+    ("Would you like ... ?", "/wʊd juː laɪk/", "句型", "你想要……吗？", "",
      "Would you like some tea?", "你想喝点茶吗？", "Unit 2", "饮料", "Lesson 3", "Extension"),
 ]
 
@@ -51,6 +52,10 @@ GUIDE = [
     ("3. 例句", "有例句就有「例句训练」这一关的材料，没有也能学，只是那一关会退化成看中文选英文。"),
     ("4. 单元", "填 Unit 1 / 第一单元 / 1 都行，系统会按顺序排。留空就当成一个整体，学的时候不分单元。"),
     ("5. 词汇类别", "比如厚海词表分 Target / Context / Extension。没有就整列留空。"),
+    ("6. 冠词", "西班牙语等有性的语言填 el / la。学西语时卡片上会显示，英语不用填。"),
+    ("", ""),
+    ("语言", "导入时还要在页面上选一次「这门语言」（英语 / 西班牙语），"),
+    ("", "它决定发音音色和屏幕键盘有没有 ñ 和重音键。"),
     ("", ""),
     ("注意", ""),
     ("括号注释", "单词里别写 maths (=mathematics) 这种，写了也会被自动剥掉，注释单独存起来。"),
@@ -89,7 +94,7 @@ def build():
         for c, v in enumerate(row, start=1):
             ws.cell(row=r, column=c, value=v)
 
-    widths = [20, 26, 8, 20, 38, 24, 12, 12, 12, 12]
+    widths = [20, 26, 8, 20, 38, 24, 8, 12, 14, 12, 12]
     for i, w in enumerate(widths, start=1):
         ws.column_dimensions[get_column_letter(i)].width = w
 

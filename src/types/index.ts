@@ -22,6 +22,9 @@ export const SKILL_LABEL: Record<Skill, string> = {
   definition: '能听懂',
 }
 
+/** 词库语言。en = 英语，es = 西班牙语 */
+export type Lang = 'en' | 'es'
+
 /** 静态词条：来自词表，不含任何用户数据，可整体替换 */
 export interface WordEntry {
   id: string
@@ -30,6 +33,13 @@ export interface WordEntry {
   note: string
   phoneticUk: string
   phoneticUs: string
+  /**
+   * 西班牙语等有性的语言用：el / la。
+   * 单独存而不拼进 word —— 拼写练习考的是词本身，冠词只在卡片上提示。
+   */
+  article?: string
+  /** 词条所属语言。老词库没有这个字段，按 en 处理 */
+  lang?: Lang
   pos: string
   cn: string
   exampleEn: string
@@ -57,6 +67,7 @@ export interface BookMeta {
   source: string
   wordCount: number
   units: string[]
+  lang?: Lang
 }
 
 export interface Book {
@@ -75,6 +86,7 @@ export interface UserBook {
   name: string
   grade: string
   source: string
+  lang?: Lang
   wordCount: number
   units: string[]
   words: WordEntry[]
@@ -176,8 +188,12 @@ export interface EngineConfig {
   enabledSkills: Skill[]
   /** 拼写训练是否显示首字母提示 */
   spellHint: boolean
-  /** 发音口音：uk = 英音（Sonia），us = 美音（Aria） */
-  accent: 'uk' | 'us'
+  /**
+   * 发音口音。具体可选值由词库语言决定（见 core/lang.ts）：
+   * 英语 uk / us，西语 es-mx（拉美）/ es-es（西班牙）。
+   * 存成 string 是为了加语言时不用再改数据模型。
+   */
+  accent: string
   /** 目标：真正记住 = 四维都达标 */
   masteryThreshold: number
 }

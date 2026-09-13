@@ -5,14 +5,16 @@
  *   好处是所有设备听到的完全一样、离线可用、比系统 TTS 自然得多。
  * 兜底：Web Speech API（系统内置语音），音频文件缺失或加载失败时顶上。
  */
+import { DEFAULT_ACCENT, resolveAccent } from '../core/lang'
+import type { Lang } from '../types'
 
 export interface SpeakOptions {
   /** 词条 id，用于拼音频文件路径 */
   audioId?: string
   /** word = 单词音频，example = 例句音频 */
   kind?: 'word' | 'example'
-  /** 强制用美式发音；不传就用全局口音设置（见 setAccent） */
-  us?: boolean
+  /** 强制用某个口音；不传就用全局口音设置（见 setVoice） */
+  accent?: string
   /** 语速，仅影响系统 TTS；小于 0.8 时音频也会放慢一点 */
   rate?: number
   onEnd?: () => void
@@ -30,44 +32,67 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
   window.speechSynthesis.onvoiceschanged = loadVoices
 }
 
-function pickVoice(useUs: boolean): SpeechSynthesisVoice | undefined {
+function pickVoice(lang: Lang, accent: string): SpeechSynthesisVoice | undefined {
   if (voices.length === 0) loadVoices()
-  const en = voices.filter((v) => v.lang?.toLowerCase().startsWith('en'))
-  if (en.length === 0) return undefined
+  const tag = langTag(lang)
+  const pool = voices.filter((v) => v.lang?.toLowerCase().startsWith(tag))
+  if (pool.length === 0) return undefined
   // 优先挑 "增强 / 高级" 音质（macOS 上名字里带 Enhanced / Premium / Neural）
-  const quality = en.filter((v) =>
+  const quality = pool.filter((v) =>
     /enhanced|premium|neural|siri/i.test(v.name),
   )
-  const prefer = useUs ? 'en-us' : 'en-gb'
-  const pool = quality.length > 0 ? quality : en
+  const candidates = quality.length > 0 ? quality : pool
+  // 拉美西语优先挑 es-MX / es-419，找不到就随便一个西语
+  const wanted = tag === 'es' && accent.startsWith('es-') ? accent : tag
   return (
-    pool.find((v) => v.lang?.toLowerCase().replace('_', '-') === prefer) ??
-    pool.find((v) => v.lang?.toLowerCase().replace('_', '-') === 'en-us') ??
-    pool[0]
+    candidates.find((v) => v.lang?.toLowerCase().replace('_', '-') === wanted) ??
+    candidates.find((v) => v.lang?.toLowerCase().replace('_', '-').startsWith(tag)) ??
+    candidates[0]
   )
 }
 
-// ---------- 口音 ----------
+// ---------- 语言与口音 ----------
 
-/** 全局口音，由 App 跟着用户配置同步下来，这样调用处不用逐个传 us */
-let defaultUs = false
+/**
+ * 全局语言 + 口音，由 App 跟着「当前词库」和「用户配置」同步下来，
+ * 这样 7 处 speak() 调用点一个都不用改。
+ */
+let currentLang: Lang = 'en'
+let currentAccent: string = DEFAULT_ACCENT.en
 
-export function setAccent(accent: 'uk' | 'us') {
-  defaultUs = accent === 'us'
+export function setVoice(lang: Lang, accent?: string) {
+  currentLang = lang
+  currentAccent = resolveAccent(lang, accent)
+}
+
+/** 系统 TTS 兜底时用来挑语音的语言标签 */
+function langTag(lang: Lang): string {
+  return lang === 'es' ? 'es' : 'en'
 }
 
 // ---------- 预生成音频 ----------
 
 const audioCache = new Map<string, HTMLAudioElement | null>()
 
-function audioPath(audioId: string, kind: SpeakOptions['kind'], us: boolean) {
+/**
+ * 命名规则（gen_audio.py 必须遵守同样的规则）：
+ *   该语言的默认口音 -> {id}.mp3（裸文件）
+ *   其他口音         -> {id}-{accentId}.mp3
+ * 英语默认英音、西语默认拉美，所以英语的 -us 和西语的 -es-es 都是"其他口音"。
+ */
+function audioPath(
+  audioId: string,
+  kind: SpeakOptions['kind'],
+  accentId: string,
+) {
   const dir = kind === 'example' ? 'examples' : 'words'
-  return `./audio/${dir}/${audioId}${us ? '-us' : ''}.mp3`
+  const suffix = accentId === DEFAULT_ACCENT[currentLang] ? '' : `-${accentId}`
+  return `./audio/${dir}/${audioId}${suffix}.mp3`
 }
 
-function audioUrl(opts: SpeakOptions, us: boolean): string | null {
+function audioUrl(opts: SpeakOptions, accentId: string): string | null {
   if (!opts.audioId) return null
-  return audioPath(opts.audioId, opts.kind, us)
+  return audioPath(opts.audioId, opts.kind, accentId)
 }
 
 function loadAudio(url: string): Promise<HTMLAudioElement | null> {
@@ -101,9 +126,9 @@ function speakWithSystem(text: string, opts: SpeakOptions) {
   const u = new SpeechSynthesisUtterance(text)
   u.rate = opts.rate ?? 0.85
   u.pitch = 1.05
-  const v = pickVoice(opts.us ?? false)
+  const v = pickVoice(currentLang, opts.accent ?? currentAccent)
   if (v) u.voice = v
-  u.lang = v?.lang ?? 'en-US'
+  u.lang = v?.lang ?? (currentLang === 'es' ? 'es-MX' : 'en-US')
 
   let fired = false
   const done = () => {
@@ -121,17 +146,18 @@ function speakWithSystem(text: string, opts: SpeakOptions) {
 }
 
 export async function speak(text: string, opts: SpeakOptions = {}) {
-  const wantUs = opts.us ?? defaultUs
-  // 先试当前口音的文件；万一这份没生成出来，退回英音（英音是全量生成的，一定有），
-  // 别一下掉到系统 TTS —— 那才是真的难听
+  const want = opts.accent ?? currentAccent
+  // 先试当前口音的文件；万一这份没生成出来，退回该语言的默认口音
+  //（默认口音是全量生成的，一定有），别一下掉到系统 TTS —— 那才是真的难听
+  const fallback = DEFAULT_ACCENT[currentLang]
   const candidates = opts.audioId
-    ? wantUs
-      ? [true, false]
-      : [false]
+    ? want === fallback
+      ? [want]
+      : [want, fallback]
     : []
 
-  for (const us of candidates) {
-    const url = audioUrl(opts, us)
+  for (const accent of candidates) {
+    const url = audioUrl(opts, accent)
     if (!url) continue
     const el = await loadAudio(url)
     if (!el) continue
@@ -145,7 +171,7 @@ export async function speak(text: string, opts: SpeakOptions = {}) {
     el.onended = finish
     el.onerror = () => {
       // 播放中途出错就换系统语音再读一遍
-      speakWithSystem(text, { ...opts, us })
+      speakWithSystem(text, { ...opts, accent })
     }
     try {
       el.currentTime = 0
@@ -159,7 +185,7 @@ export async function speak(text: string, opts: SpeakOptions = {}) {
       // play() 被浏览器拦截（比如还没交互过），退回系统语音
     }
   }
-  speakWithSystem(text, { ...opts, us: wantUs })
+  speakWithSystem(text, { ...opts, accent: want })
 }
 
 /** 估算朗读时长，用于决定反馈展示的最短时间 */

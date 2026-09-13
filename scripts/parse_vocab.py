@@ -31,6 +31,7 @@ BOOKS = [
         "sheet": "单词表",
         "grade": "五年级上",
         "source": "校内教材",
+        "lang": "en",
         "columns": {
             "word": "单词",
             "phonetic": "注音",
@@ -51,6 +52,7 @@ BOOKS = [
         "sheet": "单词表",
         "grade": "四年级下",
         "source": "厚海校外教材",
+        "lang": "en",
         "columns": {
             "word": "单词",
             "phonetic": "音标",
@@ -172,6 +174,8 @@ def parse_book(cfg):
             "note": note,
             "phoneticUk": uk,
             "phoneticUs": us,
+            "article": "",
+            "lang": cfg.get("lang", "en"),
             "pos": clean(r[idx["pos"]]) if idx.get("pos") is not None else "",
             "cn": cn,
             "exampleEn": ex_en,
@@ -255,6 +259,7 @@ def main():
                 "name": cfg["name"],
                 "grade": cfg["grade"],
                 "source": cfg["source"],
+                "lang": cfg.get("lang", "en"),
                 "wordCount": len(words),
                 "unitCount": len(book_meta["units"]),
             }

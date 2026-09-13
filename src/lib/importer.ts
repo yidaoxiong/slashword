@@ -8,7 +8,7 @@
  * Excel 解析用动态 import：SheetJS 有 400KB 左右，只有真的点了导入才加载，
  * 不拖慢首屏。
  */
-import type { WordEntry } from '../types'
+import type { Lang, WordEntry } from '../types'
 
 /** 模板的标准列名（改这里要同步改 scripts/make_template.py 的 HEADERS） */
 export const TEMPLATE_HEADERS = [
@@ -18,6 +18,7 @@ export const TEMPLATE_HEADERS = [
   '中文含义',
   '英文例句',
   '例句中文',
+  '冠词',
   '单元',
   '单元主题',
   '课文',
@@ -27,6 +28,7 @@ export const TEMPLATE_HEADERS = [
 export type Field =
   | 'word'
   | 'phonetic'
+  | 'article'
   | 'pos'
   | 'cn'
   | 'exampleCn'
@@ -44,6 +46,7 @@ export type Field =
 const ORDER: Field[] = [
   'word',
   'phonetic',
+  'article',
   'cn',
   'exampleCn',
   'exampleEn',
@@ -58,6 +61,7 @@ const ORDER: Field[] = [
 const ALIASES: Record<Field, string[]> = {
   word: ['单词', 'word', '词汇', '生字', '英文'],
   phonetic: ['音标', '注音', 'phonetic', '读音', '发音'],
+  article: ['冠词', 'article', '定冠词'],
   pos: ['词性', 'pos', '词类', 'part of speech'],
   cn: ['中文含义', '中文意思', '中文释义', '中文', '释义', '意思', 'meaning', 'cn'],
   exampleEn: ['英文例句', '英语例句', '例句（英）', 'example', '例句'],
@@ -246,6 +250,8 @@ export interface BuildOptions {
   bookId: string
   grade: string
   source: string
+  /** 语言决定发音音色和屏幕键盘，导入时由用户在家长页选 */
+  lang: Lang
 }
 
 export function buildEntries(
@@ -295,6 +301,8 @@ export function buildEntries(
       note,
       phoneticUk: uk,
       phoneticUs: us,
+      article: at(r, 'article'),
+      lang: opts.lang,
       pos,
       cn,
       exampleEn,

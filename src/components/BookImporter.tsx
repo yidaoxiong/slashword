@@ -10,7 +10,8 @@ import {
   type ImportReport,
   type SheetData,
 } from '../lib/importer'
-import type { WordEntry } from '../types'
+import type { Lang, WordEntry } from '../types'
+import { LANG_LABEL, langOf } from '../core/lang'
 
 const TEMPLATE_URL = './词库导入模板.xlsx'
 
@@ -31,6 +32,7 @@ const FIELD_LABEL: Record<string, string> = {
 interface Pending {
   bookId: string
   name: string
+  lang: Lang
   words: WordEntry[]
   report: ImportReport
   map: ColumnMap
@@ -44,6 +46,7 @@ export function BookImporter() {
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [lang, setLang] = useState<Lang>('en')
 
   async function pick(file: File) {
     setError(null)
@@ -73,11 +76,13 @@ export function BookImporter() {
         bookId,
         grade: '自定义',
         source: '自制词库',
+        lang,
       })
       if (words.length === 0) throw new Error('没解析出任何单词')
       setPending({
         bookId,
         name: file.name.replace(/\.(xlsx|xls|csv|txt)$/i, ''),
+        lang,
         words,
         report,
         map,
@@ -99,6 +104,7 @@ export function BookImporter() {
         name: pending.name.trim() || '未命名词库',
         grade: '自定义',
         source: '自制词库',
+        lang: pending.lang,
         wordCount: pending.words.length,
         units: [...new Set(pending.words.map((w) => w.unit).filter(Boolean))],
         words: pending.words,
@@ -127,6 +133,28 @@ export function BookImporter() {
       </div>
       <div className="mt-1 text-[11px] leading-relaxed text-neutral-400">
         按模板填好 Excel 传上来就行，只要有「单词」和「中文含义」两列就能用
+      </div>
+
+      <div className="mt-3">
+        <div className="text-[12px] text-neutral-500">这门语言</div>
+        <div className="mt-2 flex overflow-hidden rounded-lg ring-1 ring-black/5">
+          {(['en', 'es'] as Lang[]).map((id) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setLang(id)}
+              className={`h-9 flex-1 text-[12px] ${
+                lang === id ? 'bg-brand-500 text-white' : 'bg-white text-neutral-500'
+              }`}
+            >
+              {LANG_LABEL[id]}
+            </button>
+          ))}
+        </div>
+        <div className="mt-1 text-[11px] text-neutral-300">
+          决定发音音色和屏幕键盘
+          {lang === 'es' && '（西语会多出 ñ 和重音键）'}
+        </div>
       </div>
 
       <input
@@ -196,7 +224,8 @@ export function BookImporter() {
                       {b.name}
                     </div>
                     <div className="text-[11px] text-neutral-400">
-                      {b.wordCount} 词 · {new Set(b.words.map((w) => w.unit).filter(Boolean)).size || 1} 单元
+                      {LANG_LABEL[langOf(b.lang)]} · {b.wordCount} 词 ·{' '}
+                      {new Set(b.words.map((w) => w.unit).filter(Boolean)).size || 1} 单元
                     </div>
                   </div>
                   <div className="flex shrink-0 gap-2 text-[11px]">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { WordEntry } from '../types'
 import { estimateDuration, speak } from '../lib/speech'
 import { useTyping } from '../lib/useTyping'
+import { blankOut, checkSpelling, normalize } from '../lib/spell'
 import { LetterKeyboard } from './LetterKeyboard'
 
 interface TrainerProps {
@@ -20,28 +21,27 @@ interface TrainerProps {
  * 键盘上根本没有句点和逗号，严格要求标点只会让孩子卡死。
  * 拼写训练要抓的是字母序列对不对，不是标点。
  */
-function normalize(s: string) {
-  return s.toLowerCase().replace(/[^a-z0-9]/g, '')
-}
-
-/** 把例句里的目标词挖空，找不到就整句展示 */
-function blankOut(sentence: string, word: string) {
-  const re = new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i')
-  if (!re.test(sentence)) return { text: sentence, blanked: false }
-  return { text: sentence.replace(re, '________'), blanked: true }
-}
-
 function ResultBanner({
   ok,
   word,
   phonetic,
   note,
+  article,
+  pos,
+  accentOnly,
 }: {
   ok: boolean
   word: string
-  phonetic: string
+  /** 英语显示音标；西语不显示（西语拼写即发音，教材也不标） */
+  phonetic?: string
   note?: string
+  /** 西语的冠词 el / la，比音标有用得多 —— 性数才是西语要记的东西 */
+  article?: string
+  pos?: string
+  /** 字母对但重音写错了 */
+  accentOnly?: boolean
 }) {
+  const meta = article ? `${article} ${word}${pos ? ` · ${pos}` : ''}` : (phonetic ?? '')
   return (
     <div
       className={`pop mt-4 rounded-card px-4 py-3 ${
@@ -49,9 +49,14 @@ function ResultBanner({
       }`}
     >
       <div className="text-[15px] font-medium">
-        {ok ? '答对了' : `正确拼写：${word}`}
+        {ok ? '答对了' : `正确拼写：${article ? `${article} ${word}` : word}`}
       </div>
-      <div className="mt-0.5 text-[12px] opacity-80">{phonetic}</div>
+      {meta && <div className="mt-0.5 text-[12px] opacity-80">{meta}</div>}
+      {accentOnly && (
+        <div className="mt-1.5 text-[11px] opacity-80">
+          字母都对，注意重音符号：{word}
+        </div>
+      )}
       {note && <div className="mt-1.5 text-[11px] opacity-60">{note}</div>}
     </div>
   )
@@ -145,6 +150,8 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
   const [checked, setChecked] = useState(false)
   const [ok, setOk] = useState(false)
   const [usedHint, setUsedHint] = useState(false)
+  /** 字母都对，只是重音符号写错了 */
+  const [accentOnly, setAccentOnly] = useState(false)
   const { arm, manual, clear } = useAdvance(onDone)
   // 必须用 ref：submit 里赋值后会触发 re-render，
   // 用普通变量的话按钮的 onClick 闭包会拿到 null，点了没反应
@@ -155,17 +162,21 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
     setChecked(false)
     setOk(false)
     setUsedHint(false)
+    setAccentOnly(false)
     return () => clear()
   }, [entry.id])
 
   const submit = () => {
     if (checked || value.trim() === '') return
-    const correct = normalize(value) === normalize(entry.word)
+    const r = checkSpelling(value, entry.word)
     setChecked(true)
-    setOk(correct)
+    setOk(r.ok)
+    setAccentOnly(r.accentOnly)
+    // 重音写错也算过，但和"听了提示"一样按半掌握记，别让孩子觉得重音无所谓
+    const penalized = usedHint || r.accentOnly
     // 写完才发音：让孩子先自己拼，再用耳朵验证
-    if (correct) {
-      finishRef.current = arm(entry.word, { audioId: entry.id }, 0.9, true, value, usedHint)
+    if (r.ok) {
+      finishRef.current = arm(entry.word, { audioId: entry.id }, 0.9, true, value, penalized)
     } else {
       speak(entry.word, { audioId: entry.id })
     }
@@ -227,6 +238,9 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
             word={entry.word}
             phonetic={entry.phoneticUk}
             note={entry.note}
+            article={entry.article}
+            pos={entry.pos}
+            accentOnly={accentOnly}
           />
         )}
 
@@ -234,7 +248,7 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
         {checked && !ok && (
           <NextButton
             label="我记住了，下一个"
-            onClick={() => manual(false, value, usedHint)}
+            onClick={() => manual(false, value, usedHint || accentOnly)}
           />
         )}
       </div>
@@ -246,6 +260,7 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
           onBackspace={() => setValue((v) => v.slice(0, -1))}
           onSubmit={submit}
           visible={showKeyboard}
+          lang={entry.lang}
         />
       </div>
     </div>
@@ -258,6 +273,8 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
   const [checked, setChecked] = useState(false)
   const [ok, setOk] = useState(false)
   const [usedHint, setUsedHint] = useState(false)
+  /** 字母都对，只是重音符号写错了 */
+  const [accentOnly, setAccentOnly] = useState(false)
   const { arm, manual, clear } = useAdvance(onDone)
   const finishRef = useRef<(() => void) | null>(null)
 
@@ -271,17 +288,21 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
     setChecked(false)
     setOk(false)
     setUsedHint(false)
+    setAccentOnly(false)
     return () => clear()
   }, [entry.id])
 
   const submit = () => {
     if (checked || value.trim() === '') return
-    const correct = normalize(value) === normalize(entry.word)
+    const r = checkSpelling(value, entry.word)
     setChecked(true)
-    setOk(correct)
+    setOk(r.ok)
+    setAccentOnly(r.accentOnly)
+    // 重音写错也算过，但和"听了提示"一样按半掌握记，别让孩子觉得重音无所谓
+    const penalized = usedHint || r.accentOnly
     // 填完才读整句，否则等于把答案念出来了
-    if (correct) {
-      finishRef.current = arm(entry.exampleEn, { audioId: entry.id, kind: 'example' }, 0.9, true, value, usedHint)
+    if (r.ok) {
+      finishRef.current = arm(entry.exampleEn, { audioId: entry.id, kind: 'example' }, 0.9, true, value, penalized)
     } else {
       speak(entry.exampleEn, { audioId: entry.id, kind: 'example' })
     }
@@ -345,6 +366,9 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
             word={entry.word}
             phonetic={entry.phoneticUk}
             note={entry.note}
+            article={entry.article}
+            pos={entry.pos}
+            accentOnly={accentOnly}
           />
         )}
 
@@ -352,7 +376,7 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
         {checked && !ok && (
           <NextButton
             label="我记住了，下一个"
-            onClick={() => manual(false, value, usedHint)}
+            onClick={() => manual(false, value, usedHint || accentOnly)}
           />
         )}
       </div>
@@ -364,6 +388,7 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
           onBackspace={() => setValue((v) => v.slice(0, -1))}
           onSubmit={submit}
           visible={showKeyboard}
+          lang={entry.lang}
         />
       </div>
     </div>

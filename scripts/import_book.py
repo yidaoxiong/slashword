@@ -78,7 +78,10 @@ def main():
         print(f"-> 已写出 data/{book_id}.json")
 
         # 2. 并入 all.json（同 id 覆盖，可以重复导入同一个词库来更新）
+        #    补默认值：老词库没有 lang / article 字段
         for w in words:
+            w.setdefault("lang", meta.get("lang") or "en")
+            w.setdefault("article", "")
             by_id[w["id"]] = w
 
         # 3. 登记到词书目录
@@ -87,6 +90,7 @@ def main():
             "name": meta.get("name") or book_id,
             "grade": meta.get("grade") or "自定义",
             "source": meta.get("source") or "自制词库",
+            "lang": meta.get("lang") or "en",
             "wordCount": len(words),
             "unitCount": len(meta.get("units") or []),
         }

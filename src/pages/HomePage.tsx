@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { currentUnitLabel, unlockedCount, unitsOf } from '../core/queue'
+import { LANG_LABEL, langOf } from '../core/lang'
 
 const STEP = 5
 
@@ -71,7 +72,8 @@ export function HomePage() {
                     {book.name}
                   </div>
                   <div className="mt-0.5 text-[11px] text-neutral-400">
-                    {book.source} · {book.unitCount} 个单元
+                    {LANG_LABEL[langOf(book.lang)]} · {book.unitCount} 个单元 ·{' '}
+                    {book.source}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

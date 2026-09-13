@@ -1,3 +1,6 @@
+import { EXTRA_KEYS } from '../core/lang'
+import type { Lang } from '../types'
+
 interface Props {
   onKey: (ch: string) => void
   onBackspace: () => void
@@ -5,6 +8,8 @@ interface Props {
   disabled?: boolean
   /** 桌面端默认收起：有物理键盘时屏幕键盘纯占地方 */
   visible?: boolean
+  /** 词库语言，决定要不要多一行特殊字符（西语的 ñ 和重音） */
+  lang?: Lang
 }
 
 const ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']
@@ -15,7 +20,9 @@ export function LetterKeyboard({
   onSubmit,
   disabled,
   visible = true,
+  lang = 'en',
 }: Props) {
+  const extra = EXTRA_KEYS[lang] ?? []
   if (!visible) {
     return (
       <div className="mt-5 rounded-xl bg-neutral-50 px-4 py-3 text-center text-[12px] text-neutral-400">
@@ -60,6 +67,21 @@ export function LetterKeyboard({
           )}
         </div>
       ))}
+      {extra.length > 0 && (
+        <div className="mb-2 flex flex-wrap justify-center gap-1.5">
+          {extra.map((ch) => (
+            <button
+              key={ch}
+              type="button"
+              disabled={disabled}
+              onClick={() => onKey(ch)}
+              className="h-10 w-10 rounded-lg bg-neutral-100 text-[15px] font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
+            >
+              {ch}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="mt-2 flex justify-center gap-1.5">
         <button
           type="button"

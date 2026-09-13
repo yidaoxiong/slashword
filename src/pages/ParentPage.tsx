@@ -6,11 +6,9 @@ import type { Card, CheckinRecord, Skill } from '../types'
 import { SKILL_LABEL, SKILLS } from '../types'
 import { speak } from '../lib/speech'
 import { BookImporter } from '../components/BookImporter'
+import { ACCENTS, langOf, resolveAccent } from '../core/lang'
 
 const repo = getRepo()
-
-/** 试听用的示例词：car 的英音 /kɑː/ 和美音 /kɑːr/ 差别最明显，一耳朵就能听出来 */
-const SAMPLE = { text: 'car', audioId: 'g5a-0094' }
 
 export function ParentPage() {
   const { config, streak, entries, catalog, init, setConfig, reset } = useAppStore()
@@ -70,6 +68,11 @@ export function ParentPage() {
   }, [checkins])
 
   if (!config) return null
+
+  // 试听就用当前词库的第一个词 —— 不写死，换语言换词书都自动跟着变
+  const sample = entries[0]
+  const lang = langOf(catalog.find((b) => b.id === config.activeBook)?.lang)
+  const currentAccent = resolveAccent(lang, config.accent)
 
   return (
     <div className="mx-auto min-h-full w-full max-w-md sm:max-w-lg px-5 py-8">
@@ -199,41 +202,43 @@ export function ParentPage() {
         <div className="mt-4">
           <div className="flex items-center justify-between">
             <span className="text-[12px] text-neutral-500">发音口音</span>
-            <button
-              type="button"
-              onClick={() =>
-                void speak(SAMPLE.text, {
-                  audioId: SAMPLE.audioId,
-                  us: (config.accent ?? 'uk') === 'us',
-                })
-              }
-              className="text-[11px] text-brand-500"
-            >
-              再听一遍 car
-            </button>
+            {sample && (
+              <button
+                type="button"
+                onClick={() =>
+                  void speak(sample.word, {
+                    audioId: sample.id,
+                    accent: currentAccent,
+                  })
+                }
+                className="text-[11px] text-brand-500"
+              >
+                再听一遍 {sample.word}
+              </button>
+            )}
           </div>
           <div className="mt-2 flex overflow-hidden rounded-lg ring-1 ring-black/5">
-            {(
-              [
-                ['uk', '英音 Sonia'],
-                ['us', '美音 Aria'],
-              ] as const
-            ).map(([id, label]) => (
+            {ACCENTS[lang].map((a) => (
               <button
-                key={id}
+                key={a.id}
                 type="button"
                 onClick={() => {
-                  void setConfig({ accent: id })
+                  void setConfig({ accent: a.id })
                   // 点哪个就立刻念一遍，不用猜两种口音有什么区别
-                  void speak(SAMPLE.text, { audioId: SAMPLE.audioId, us: id === 'us' })
+                  if (sample) {
+                    void speak(sample.word, {
+                      audioId: sample.id,
+                      accent: a.id,
+                    })
+                  }
                 }}
                 className={`h-9 flex-1 text-[12px] ${
-                  (config.accent ?? 'uk') === id
+                  currentAccent === a.id
                     ? 'bg-brand-500 text-white'
                     : 'bg-white text-neutral-500'
                 }`}
               >
-                {label}
+                {a.label}
               </button>
             ))}
           </div>

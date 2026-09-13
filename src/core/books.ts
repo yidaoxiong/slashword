@@ -1,4 +1,5 @@
-import type { UserBook } from '../types'
+import type { Lang, UserBook } from '../types'
+import { langOf } from './lang'
 
 export interface BookInfo {
   id: string
@@ -9,6 +10,7 @@ export interface BookInfo {
   unitCount: number
   /** 用户自己导入的词库。true 时不能去 fetch data/<id>.json，只能从本地库读 */
   custom?: boolean
+  lang: Lang
 }
 
 /**
@@ -21,7 +23,8 @@ export interface BookInfo {
 export async function loadCatalog(): Promise<BookInfo[]> {
   const res = await fetch('./data/books.json')
   if (!res.ok) throw new Error('词书目录加载失败')
-  return (await res.json()) as BookInfo[]
+  const list = (await res.json()) as BookInfo[]
+  return list.map((b) => ({ ...b, lang: langOf(b.lang) }))
 }
 
 /** 内置词书 + 用户导入的词书，合并成首页看到的一张列表 */
@@ -37,6 +40,7 @@ export function mergeCatalog(
     wordCount: b.wordCount,
     unitCount: b.units.length || 1,
     custom: true,
+    lang: langOf(b.lang),
   }))
   return [...builtin, ...custom]
 }
