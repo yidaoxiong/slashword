@@ -1,11 +1,13 @@
 /**
  * 后端接口。
- * 生产环境走同源 /api（Worker 挂在同一个域名下），本地开发直连 workers.dev。
- * Worker 已开放 CORS，跨域没问题。
+ *
+ * 直接指向 Worker 自己的域名，不走同源 /api ——
+ * 这样就不需要在 Cloudflare 配 Workers 路由（/api/* → worker），
+ * 换个域名部署也能直接用。Worker 已开放 CORS，跨域没问题。
+ * 将来若想走同源，把这里改成 '/api' 并在 Cloudflare 加一条 Workers 路由即可。
  */
-export const API_BASE = import.meta.env.DEV
-  ? 'https://slashword-api.ray-lee.workers.dev/api'
-  : '/api'
+export const API_BASE = import.meta.env.VITE_API_BASE
+  ?? 'https://slashword-api.ray-lee.workers.dev/api'
 
 const TOKEN_KEY = 'slashword.token'
 const USER_KEY = 'slashword.username'
