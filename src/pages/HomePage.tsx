@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { currentUnitLabel, unlockedCount, unitsOf } from '../core/queue'
 import { LANG_LABEL, langOf } from '../core/lang'
+import { visibleBooks } from '../core/books'
 
 const STEP = 5
 
@@ -54,7 +55,7 @@ export function HomePage() {
       <div className="mt-6">
         <div className="text-[13px] font-medium text-neutral-800">今天学哪本</div>
         <div className="mt-2 space-y-2">
-          {catalog.map((book) => {
+          {visibleBooks(catalog, config?.hiddenBooks).map((book) => {
             const active = book.id === config?.activeBook
             return (
               <button

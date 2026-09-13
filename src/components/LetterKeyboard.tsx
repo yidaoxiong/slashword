@@ -25,8 +25,27 @@ export function LetterKeyboard({
   const extra = EXTRA_KEYS[lang] ?? []
   if (!visible) {
     return (
-      <div className="mt-5 rounded-xl bg-neutral-50 px-4 py-3 text-center text-[12px] text-neutral-400">
-        直接用键盘拼写，回车提交
+      <div className="mt-5 rounded-xl bg-neutral-50 px-4 py-3">
+        <div className="text-center text-[12px] text-neutral-400">
+          直接用键盘拼写，回车提交
+        </div>
+        {/* 收起也保留特殊字符键：Mac 上打 ñ 要 Option+N 再按 n，
+            孩子根本记不住，只能靠点。字母用物理键盘敲，特殊字符用点的最省事 */}
+        {extra.length > 0 && (
+          <div className="mt-3 flex flex-wrap justify-center gap-1.5">
+            {extra.map((ch) => (
+              <button
+                key={ch}
+                type="button"
+                disabled={disabled}
+                onClick={() => onKey(ch)}
+                className="h-10 w-10 rounded-lg bg-white text-[15px] font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
+              >
+                {ch}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     )
   }

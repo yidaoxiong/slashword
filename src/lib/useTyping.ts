@@ -37,8 +37,10 @@ export function useTyping(params: {
       if (e.key === 'Escape') {
         return
       }
-      // 单词可能出现的字符：字母、空格、连字符、撇号
-      if (e.key.length === 1 && /[a-zA-Z '\-]/.test(e.key)) {
+      // 单词可能出现的字符：任意语言的字母、空格、连字符、撇号，外加西语的 ¿ ¡。
+      // 不能写成 [a-zA-Z] —— 那样会把西语的 ñ 和 á é í ó ú ü 全部静默丢掉，
+      // 键盘敲了没反应，孩子只会以为是自己按错了。
+      if (e.key.length === 1 && /^[\p{L} '\-¿¡]$/u.test(e.key)) {
         e.preventDefault()
         onChar(e.key.toLowerCase())
       }

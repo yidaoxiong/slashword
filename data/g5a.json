@@ -6,6 +6,7 @@
     "grade": "五年级上",
     "source": "校内教材",
     "lang": "en",
+    "locked": true,
     "wordCount": 173,
     "units": [
       "Unit One",

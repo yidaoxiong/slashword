@@ -32,6 +32,7 @@ BOOKS = [
         "grade": "五年级上",
         "source": "校内教材",
         "lang": "en",
+        "locked": True,  # 主线教材，不允许从列表里移除
         "columns": {
             "word": "单词",
             "phonetic": "注音",
@@ -53,6 +54,7 @@ BOOKS = [
         "grade": "四年级下",
         "source": "厚海校外教材",
         "lang": "en",
+        "locked": True,  # 主线教材，不允许从列表里移除
         "columns": {
             "word": "单词",
             "phonetic": "音标",
@@ -230,8 +232,30 @@ def report(words, name):
 
 def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    all_words = []
-    catalog = []
+
+    # 本脚本只管 BOOKS 里这几本。all.json / books.json 里还有别处来的条目
+    # （比如 gen_es_basico.py 生成的西语库），重跑时必须原样留着，
+    # 否则每次跑 vocab 都会把其它词库悄悄抹掉。
+    owned_ids = {cfg["id"] for cfg in BOOKS}
+    prev_all = []
+    if (DATA_DIR / "all.json").exists():
+        prev_all = [
+            w
+            for w in json.loads((DATA_DIR / "all.json").read_text(encoding="utf-8"))
+            if w.get("book") not in owned_ids
+        ]
+    prev_catalog = []
+    if (DATA_DIR / "books.json").exists():
+        prev_catalog = [
+            c
+            for c in json.loads((DATA_DIR / "books.json").read_text(encoding="utf-8"))
+            if c.get("id") not in owned_ids
+        ]
+    if prev_all or prev_catalog:
+        print(f"保留其它来源的词库：{sorted({c['id'] for c in prev_catalog})}")
+
+    all_words = list(prev_all)
+    catalog = list(prev_catalog)
     parsed_any = False
     for cfg in BOOKS:
         if not cfg["file"].exists():
@@ -260,6 +284,7 @@ def main():
                 "grade": cfg["grade"],
                 "source": cfg["source"],
                 "lang": cfg.get("lang", "en"),
+                "locked": cfg.get("locked", False),
                 "wordCount": len(words),
                 "unitCount": len(book_meta["units"]),
             }

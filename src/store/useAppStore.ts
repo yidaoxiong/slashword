@@ -14,6 +14,7 @@ import {
   isCustomBook,
   loadCatalog,
   mergeCatalog,
+  visibleBooks,
   type BookInfo,
 } from '../core/books'
 import {
@@ -145,8 +146,9 @@ export const useAppStore = create<AppState>((set, get) => ({
       if (!config) {
         config = defaultConfig(LOCAL_USER)
         await repo.putConfig(config)
-      } else if (config.accent === undefined) {
-        // 老配置没有新增字段，用默认值补齐（以后加字段也走这条路）
+      } else {
+        // 老配置用默认值补齐新字段（hiddenBooks 等），已有的一律保留。
+        // 无条件跑而不是判断某个字段在不在 —— 以前那样判断，加第二个新字段时又会漏
         config = { ...defaultConfig(config.userId), ...config }
         await repo.putConfig(config)
       }
@@ -326,8 +328,15 @@ export const useAppStore = create<AppState>((set, get) => ({
     const builtin = await loadCatalog()
     const catalog = mergeCatalog(builtin, userBooks)
     set({ userBooks, catalog })
-    if (config?.activeBook === id && catalog.length > 0) {
-      await get().switchBook(catalog[0].id)
+    if (config?.activeBook === id) {
+      // 只能切到「没被移除」的词书，否则会跳到一个看不见的列表项上。
+      // 全被移除光了就把移除列表清空，不留死局
+      let next = visibleBooks(catalog, config.hiddenBooks)[0]
+      if (!next && catalog.length > 0) {
+        await get().setConfig({ hiddenBooks: [] })
+        next = catalog[0]
+      }
+      if (next) await get().switchBook(next.id)
     }
   },
 

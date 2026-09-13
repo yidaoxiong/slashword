@@ -194,6 +194,14 @@ export interface EngineConfig {
    * 存成 string 是为了加语言时不用再改数据模型。
    */
   accent: string
+  /**
+   * 不想再看到的词书 id。
+   *
+   * 内置词库是从 data/*.json 每次 fetch 回来的，浏览器改不了源文件，
+   * 所以"删除"只能是不让它出现在列表里（还能恢复）。
+   * 自己导入的词库是真删除 —— 记录本身就存在本地。
+   */
+  hiddenBooks: string[]
   /** 目标：真正记住 = 四维都达标 */
   masteryThreshold: number
 }

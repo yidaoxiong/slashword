@@ -7,6 +7,7 @@ import { SKILL_LABEL, SKILLS } from '../types'
 import { speak } from '../lib/speech'
 import { BookImporter } from '../components/BookImporter'
 import { ACCENTS, langOf, resolveAccent } from '../core/lang'
+import { visibleBooks } from '../core/books'
 
 const repo = getRepo()
 
@@ -133,7 +134,7 @@ export function ParentPage() {
         <div className="mt-3">
           <div className="text-[12px] text-neutral-500">词书</div>
           <div className="mt-2 grid grid-cols-2 gap-2">
-            {catalog.map((book) => (
+            {visibleBooks(catalog, config.hiddenBooks).map((book) => (
               <button
                 key={book.id}
                 type="button"

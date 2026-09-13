@@ -12,6 +12,7 @@ import {
 } from '../lib/importer'
 import type { Lang, WordEntry } from '../types'
 import { LANG_LABEL, langOf } from '../core/lang'
+import { canHideBook, visibleBooks } from '../core/books'
 
 const TEMPLATE_URL = './词库导入模板.xlsx'
 
@@ -39,7 +40,8 @@ interface Pending {
 }
 
 export function BookImporter() {
-  const { userBooks, importBook, removeBook } = useAppStore()
+  const { userBooks, importBook, removeBook, catalog, config, setConfig } =
+    useAppStore()
   const fileRef = useRef<HTMLInputElement>(null)
   const [pending, setPending] = useState<Pending | null>(null)
   const [busy, setBusy] = useState(false)
@@ -47,6 +49,20 @@ export function BookImporter() {
   const [done, setDone] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [lang, setLang] = useState<Lang>('en')
+
+  const visible = visibleBooks(catalog, config?.hiddenBooks)
+  const hidden = catalog.filter((b) => (config?.hiddenBooks ?? []).includes(b.id))
+  const builtin = visible.filter((b) => !b.custom)
+
+  const hide = async (id: string) => {
+    const next = [...(config?.hiddenBooks ?? []), id]
+    await setConfig({ hiddenBooks: next })
+  }
+
+  const restore = async (id: string) => {
+    const next = (config?.hiddenBooks ?? []).filter((b) => b !== id)
+    await setConfig({ hiddenBooks: next })
+  }
 
   async function pick(file: File) {
     setError(null)
@@ -206,6 +222,73 @@ export function BookImporter() {
           >
             取消
           </button>
+        </div>
+      )}
+
+      {builtin.length > 0 && (
+        <div className="mt-4 border-t border-black/5 pt-3">
+          <div className="text-[12px] text-neutral-500">内置词库</div>
+          <div className="mt-2 space-y-2">
+            {builtin.map((b) => (
+              <div key={b.id} className="rounded-lg bg-neutral-50 px-3 py-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="truncate text-[13px] text-neutral-800">
+                      {b.name}
+                    </div>
+                    <div className="text-[11px] text-neutral-400">
+                      {LANG_LABEL[langOf(b.lang)]} · {b.wordCount} 词 ·{' '}
+                      {b.unitCount} 单元
+                    </div>
+                  </div>
+                  {b.locked ? (
+                    <span className="shrink-0 text-[11px] text-neutral-300">
+                      主线教材
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={
+                        !canHideBook(b, config?.activeBook, visible.length)
+                      }
+                      onClick={() => void hide(b.id)}
+                      className="shrink-0 text-[11px] text-neutral-400 disabled:opacity-30"
+                    >
+                      {b.id === config?.activeBook ? '使用中' : '移除'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-1 text-[11px] leading-relaxed text-neutral-300">
+            内置词库是从站点加载的，移除只是在列表里不显示（可从下面恢复）。
+            主线教材锁死不能移除，至少要留一本在学
+          </div>
+        </div>
+      )}
+
+      {hidden.length > 0 && (
+        <div className="mt-4 border-t border-black/5 pt-3">
+          <div className="text-[12px] text-neutral-500">已移除的词库</div>
+          <div className="mt-2 space-y-2">
+            {hidden.map((b) => (
+              <div key={b.id} className="rounded-lg bg-neutral-50 px-3 py-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate text-[13px] text-neutral-500">
+                    {b.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => void restore(b.id)}
+                    className="shrink-0 text-[11px] text-brand-500"
+                  >
+                    恢复
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

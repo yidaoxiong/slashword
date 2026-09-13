@@ -148,6 +148,7 @@ export function defaultConfig(userId = 'local'): EngineConfig {
     // 默认英音。人教版小学英语偏美音，家里如果要跟教材一致，
     // 去家长端切成"美音"即可，单词和例句会整体切换
     accent: 'uk',
+    hiddenBooks: [],
     masteryThreshold: 80,
   }
 }
