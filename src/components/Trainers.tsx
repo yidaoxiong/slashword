@@ -86,6 +86,7 @@ function useAdvance(onDone: TrainerProps['onDone']) {
 
   const arm = (
     text: string,
+    audio: { audioId: string; kind?: 'word' | 'example' },
     rate: number,
     correct: boolean,
     input: string,
@@ -98,7 +99,7 @@ function useAdvance(onDone: TrainerProps['onDone']) {
       clear()
       onDone(correct, input, usedHint)
     }
-    speak(text, { rate, onEnd: finish })
+    speak(text, { ...audio, rate, onEnd: finish })
     // 兜底：iOS Safari 偶尔不回调 onend，别让界面卡死
     timer.current = window.setTimeout(finish, estimateDuration(text, rate) + 800)
     return finish
@@ -164,9 +165,9 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
     setOk(correct)
     // 写完才发音：让孩子先自己拼，再用耳朵验证
     if (correct) {
-      finishRef.current = arm(entry.word, 0.8, true, value, usedHint)
+      finishRef.current = arm(entry.word, { audioId: entry.id }, 0.9, true, value, usedHint)
     } else {
-      speak(entry.word, { rate: 0.8 })
+      speak(entry.word, { audioId: entry.id })
     }
   }
 
@@ -215,7 +216,7 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
             used={usedHint}
             onClick={() => {
               setUsedHint(true)
-              speak(entry.word, { rate: 0.7 })
+              speak(entry.word, { audioId: entry.id, rate: 0.7 })
             }}
           />
         )}
@@ -280,9 +281,9 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
     setOk(correct)
     // 填完才读整句，否则等于把答案念出来了
     if (correct) {
-      finishRef.current = arm(entry.exampleEn, 0.85, true, value, usedHint)
+      finishRef.current = arm(entry.exampleEn, { audioId: entry.id, kind: 'example' }, 0.9, true, value, usedHint)
     } else {
-      speak(entry.exampleEn, { rate: 0.85 })
+      speak(entry.exampleEn, { audioId: entry.id, kind: 'example' })
     }
   }
 
@@ -333,7 +334,7 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
             used={usedHint}
             onClick={() => {
               setUsedHint(true)
-              speak(entry.exampleEn, { rate: 0.8 })
+              speak(entry.exampleEn, { audioId: entry.id, kind: 'example' })
             }}
           />
         )}
@@ -388,7 +389,7 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
 
   useEffect(() => {
     setPicked(null)
-    const t = window.setTimeout(() => speak(entry.word, { rate: 0.8 }), 220)
+    const t = window.setTimeout(() => speak(entry.word, { audioId: entry.id }), 220)
     return () => {
       window.clearTimeout(t)
       clear()
@@ -400,9 +401,9 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
     setPicked(word)
     const correct = normalize(word) === normalize(entry.word)
     if (correct) {
-      finishRef.current = arm(entry.word, 0.8, true, word, false)
+      finishRef.current = arm(entry.word, { audioId: entry.id }, 0.9, true, word, false)
     } else {
-      speak(entry.word, { rate: 0.8 })
+      speak(entry.word, { audioId: entry.id })
     }
   }
 
@@ -414,7 +415,7 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
 
       <button
         type="button"
-        onClick={() => speak(entry.word, { rate: 0.7 })}
+        onClick={() => speak(entry.word, { audioId: entry.id, rate: 0.7 })}
         className="mt-3 flex h-14 w-full items-center justify-center rounded-xl bg-brand-50 text-[13px] text-brand-600 active:bg-brand-100"
       >
         再听一遍
