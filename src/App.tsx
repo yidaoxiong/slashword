@@ -17,11 +17,22 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('learn')
   const [view, setView] = useState<'main' | 'login'>('main')
 
+  // 顺序不能反：先确定身份，再按身份加载数据，最后才同步。
+  // 反过来会先把未登录那批数据当成新账号的推上云端（Ray 选的是「登录后从零开始」）
   useEffect(() => {
-    void init()
     void restore()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // 身份一变（登录 / 登出 / 刷新后恢复会话）就整套重新加载，
+  // 顺便把上一个用户的进度从界面上清掉，不留混在一起的观感
+  useEffect(() => {
+    void (async () => {
+      await init()
+      if (username) await sync()
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username])
 
   // 语言由当前词书决定，口音由用户配置决定 —— 一起下发给发音模块，
   // 这样各处 speak() 一个参数都不用传

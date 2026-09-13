@@ -83,6 +83,11 @@ export interface Book {
  */
 export interface UserBook {
   id: string
+  /**
+   * 归属账号。未登录是 'local'。
+   * 不同账号各自上传自己的词库，互相看不见 —— 内置词库是大家共有的，不受这个约束。
+   */
+  userId: string
   name: string
   grade: string
   source: string

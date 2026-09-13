@@ -25,7 +25,8 @@ export interface Repository {
   // ---- 用户自己导入的词库（词条嵌在记录里，跨设备不丢）----
   putUserBook(book: UserBook): Promise<void>
   getUserBook(id: string): Promise<UserBook | undefined>
-  listUserBooks(): Promise<UserBook[]>
+  /** 只列这个账号自己的词库 */
+  listUserBooks(userId: string): Promise<UserBook[]>
   /** 连 meta 带词条一起删 */
   deleteUserBook(id: string): Promise<void>
 

@@ -22,9 +22,9 @@ import {
   applySkillResult,
   finalizeReview,
 } from '../core/scheduler'
+import { getUserId } from './useAuthStore'
 
 const repo = getRepo()
-const LOCAL_USER = 'local'
 
 export type Phase = 'loading' | 'idle' | 'learning' | 'done'
 
@@ -57,8 +57,10 @@ interface AppState {
   userBooks: UserBook[]
 
   init: () => Promise<void>
-  /** 导入一个自制词库，导入后自动出现在首页词书列表里 */
-  importBook: (input: Omit<UserBook, 'createdAt' | 'updatedAt'>) => Promise<void>
+  /** 导入一个自制词库，导入后自动出现在首页词书列表里。userId 自动取当前账号 */
+  importBook: (
+    input: Omit<UserBook, 'createdAt' | 'updatedAt' | 'userId'>,
+  ) => Promise<void>
   /** 删除自制词库；删的正好是当前词书就自动切到第一本 */
   removeBook: (id: string) => Promise<void>
   startDay: () => Promise<void>
@@ -135,26 +137,27 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   async init() {
     try {
-      if (get().catalog.length === 0) {
-        const [builtin, userBooks] = await Promise.all([
-          loadCatalog(),
-          repo.listUserBooks(),
-        ])
-        set({ catalog: mergeCatalog(builtin, userBooks), userBooks })
-      }
-      let config = await repo.getConfig(LOCAL_USER)
+      // 每次都重算：切账号后可用的自制词库不一样，不能沿用上一本账的目录
+      const userId = getUserId()
+      const [builtin, userBooks] = await Promise.all([
+        loadCatalog(),
+        repo.listUserBooks(userId),
+      ])
+      set({ catalog: mergeCatalog(builtin, userBooks), userBooks })
+
+      let config = await repo.getConfig(userId)
       if (!config) {
-        config = defaultConfig(LOCAL_USER)
+        config = defaultConfig(userId)
         await repo.putConfig(config)
       } else {
         // 老配置用默认值补齐新字段（hiddenBooks 等），已有的一律保留。
         // 无条件跑而不是判断某个字段在不在 —— 以前那样判断，加第二个新字段时又会漏
-        config = { ...defaultConfig(config.userId), ...config }
+        config = { ...defaultConfig(userId), ...config, userId }
         await repo.putConfig(config)
       }
       await loadBook(config.activeBook, isCustomBook(get().catalog, config.activeBook))
-      const checkin = await repo.getCheckin(LOCAL_USER, todayKey())
-      const streak = await computeStreak(LOCAL_USER)
+      const checkin = await repo.getCheckin(userId, todayKey())
+      const streak = await computeStreak(userId)
       const entries = await repo.listEntries(config.activeBook)
       set({
         phase: 'idle',
@@ -165,6 +168,12 @@ export const useAppStore = create<AppState>((set, get) => ({
         entries,
         bookLoaded: true,
         error: null,
+        // 切账号时把上一个人的会话彻底清掉，否则会留着上一个用户的待学队列和进度
+        queue: [],
+        idx: 0,
+        card: null,
+        entry: null,
+        session: null,
       })
     } catch (e) {
       set({ error: e instanceof Error ? e.message : String(e), phase: 'idle' })
@@ -177,10 +186,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     const now = Date.now()
     const queue = await buildDailyQueue(repo, config, now)
 
-    let checkin = await repo.getCheckin(LOCAL_USER, todayKey(now))
+    let checkin = await repo.getCheckin(getUserId(), todayKey(now))
     if (!checkin) {
       checkin = {
-        userId: LOCAL_USER,
+        userId: getUserId(),
         date: todayKey(now),
         newCount: queue.filter((q) => q.isNew).length,
         reviewCount: queue.filter((q) => !q.isNew).length,
@@ -212,7 +221,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     await repo.putCard(updated)
 
     await repo.appendLog({
-      userId: LOCAL_USER,
+      userId: getUserId(),
       cardId: card.id,
       wordKey: card.wordKey,
       reviewedAt: now,
@@ -239,7 +248,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const finalized = finalizeReview(updated, skills, now)
     await repo.putCard(finalized.card)
     await repo.appendLog({
-      userId: LOCAL_USER,
+      userId: getUserId(),
       cardId: card.id,
       wordKey: card.wordKey,
       reviewedAt: now,
@@ -266,7 +275,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({
         phase: 'done',
         card: finalized.card,
-        streak: await computeStreak(LOCAL_USER),
+        streak: await computeStreak(getUserId()),
       })
       return
     }
@@ -313,10 +322,16 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   async importBook(input) {
     const now = Date.now()
-    const book: UserBook = { ...input, createdAt: now, updatedAt: now }
+    // 归属当前账号：别的账号登录后看不到这本
+    const book: UserBook = {
+      ...input,
+      userId: getUserId(),
+      createdAt: now,
+      updatedAt: now,
+    }
     await repo.putUserBook(book)
     await repo.importEntries(book.id, book.words)
-    const userBooks = await repo.listUserBooks()
+    const userBooks = await repo.listUserBooks(getUserId())
     const builtin = await loadCatalog()
     set({ userBooks, catalog: mergeCatalog(builtin, userBooks) })
   },
@@ -324,7 +339,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   async removeBook(id) {
     const { config } = get()
     await repo.deleteUserBook(id)
-    const userBooks = await repo.listUserBooks()
+    const userBooks = await repo.listUserBooks(getUserId())
     const builtin = await loadCatalog()
     const catalog = mergeCatalog(builtin, userBooks)
     set({ userBooks, catalog })

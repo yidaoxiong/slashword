@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
+import { useAuthStore } from '../store/useAuthStore'
 import {
   buildEntries,
   downloadBook,
@@ -42,6 +43,7 @@ interface Pending {
 export function BookImporter() {
   const { userBooks, importBook, removeBook, catalog, config, setConfig } =
     useAppStore()
+  const username = useAuthStore((s) => s.username)
   const fileRef = useRef<HTMLInputElement>(null)
   const [pending, setPending] = useState<Pending | null>(null)
   const [busy, setBusy] = useState(false)
@@ -148,7 +150,10 @@ export function BookImporter() {
         </a>
       </div>
       <div className="mt-1 text-[11px] leading-relaxed text-neutral-400">
-        按模板填好 Excel 传上来就行，只要有「单词」和「中文含义」两列就能用
+        按模板填好 Excel 传上来就行，只要有「单词」和「中文含义」两列就能用。
+        {username
+          ? `导入的词库归「${username}」所有，换账号登录后看不到`
+          : '未登录时导入的词库只属于本机，登录后看不到'}
       </div>
 
       <div className="mt-3">

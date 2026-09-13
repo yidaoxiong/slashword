@@ -10,7 +10,23 @@ import { getRepo } from '../storage'
 import type { Card, CheckinRecord, EngineConfig } from '../types'
 
 const repo = getRepo()
-const LOCAL_USER = 'local'
+
+/** 未登录时数据挂在这个用户下。登出后回到它，未登录时的进度不会丢 */
+export const LOCAL_USER = 'local'
+
+/**
+ * 当前生效的用户。
+ *
+ * 未登录是 'local'，登录后是用户名 —— 卡片、复习记录、打卡、配置、自制词库
+ * 全部按它隔离。登出就回到 'local'，所以「登录前学的东西」一直都在，只是
+ * 不属于任何账号。
+ *
+ * 这里不能反过来让 useAppStore 依赖它之外的东西：useAuthStore 不 import
+ * useAppStore，靠 App 监听 username 变化去触发 init，避免循环依赖。
+ */
+export function getUserId(): string {
+  return useAuthStore.getState().username ?? LOCAL_USER
+}
 
 type Status = 'guest' | 'authed'
 
@@ -41,6 +57,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   lastSyncAt: null,
   error: null,
 
+  /**
+   * 只恢复身份，不同步。
+   *
+   * 同步必须等 useAppStore 切到这个用户之后再做 —— 否则会把未登录时
+   * 'local' 那批数据当成当前账号的推上云端，等于把别人的进度灌进新账号。
+   * 顺序由 App 控制：restore -> init(切用户) -> sync。
+   */
   async restore() {
     const token = getToken()
     const username = getStoredUsername()
@@ -48,7 +71,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       await api.me()
       set({ status: 'authed', username })
-      await get().sync()
     } catch {
       clearSession()
       set({ status: 'guest', username: null })
@@ -60,7 +82,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const res = await api.login(username, password)
     saveSession(res.token, res.username)
     set({ status: 'authed', username: res.username })
-    await get().sync()
   },
 
   async register(username, password) {
@@ -68,7 +89,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const res = await api.register(username, password)
     saveSession(res.token, res.username)
     set({ status: 'authed', username: res.username })
-    await get().sync()
   },
 
   async logout() {
@@ -84,6 +104,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   async sync() {
     if (get().syncing) return
     set({ syncing: true, error: null })
+    // 只同步当前账号的数据。切账号前必须先 init，否则会把上一个用户的记录推上去
+    const userId = getUserId()
     try {
       const remote = await api.pull()
 
@@ -97,24 +119,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
       for (const item of remote.checkins || []) {
         const incoming = item.data as CheckinRecord
-        const local = await repo.getCheckin(incoming.userId, incoming.date)
+        // 用当前 userId 查，不用 incoming.userId —— 云端返回的一定是这个账号的
+        const local = await repo.getCheckin(userId, incoming.date)
         if (!local || (incoming.updatedAt ?? 0) > (local.updatedAt ?? 0)) {
           await repo.putCheckin(incoming)
         }
       }
       if (remote.config?.data) {
         const incoming = remote.config.data as EngineConfig
-        const local = await repo.getConfig(LOCAL_USER)
+        const local = await repo.getConfig(userId)
         if (!local || (remote.config.updatedAt ?? 0) > 0) {
-          await repo.putConfig(incoming)
+          await repo.putConfig({ ...incoming, userId })
         }
       }
 
       // ---- 本地 → 云端 ----
-      const localCards = await repo.listCards(LOCAL_USER)
-      const localLogs = await repo.listLogs(LOCAL_USER)
-      const localCheckins = await repo.listCheckins(LOCAL_USER)
-      const localConfig = await repo.getConfig(LOCAL_USER)
+      const localCards = await repo.listCards(userId)
+      const localLogs = await repo.listLogs(userId)
+      const localCheckins = await repo.listCheckins(userId)
+      const localConfig = await repo.getConfig(userId)
 
       await api.push({
         cards: localCards.map((c) => ({ id: c.id, data: c, updatedAt: c.updatedAt ?? 0 })),

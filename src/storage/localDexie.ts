@@ -30,6 +30,19 @@ class WordDatabase extends Dexie {
     this.version(2).stores({
       userBooks: 'id, createdAt',
     })
+    // v3：词库归属账号。老记录没有 userId，统一归给未登录的 'local'
+    this.version(3)
+      .stores({
+        userBooks: 'id, createdAt, userId, [userId+createdAt]',
+      })
+      .upgrade((tx) =>
+        tx
+          .table('userBooks')
+          .toCollection()
+          .modify((b: UserBook) => {
+            if (!b.userId) b.userId = 'local'
+          }),
+      )
   }
 }
 
@@ -139,8 +152,8 @@ export class DexieRepository implements Repository {
     return db.userBooks.get(id)
   }
 
-  listUserBooks() {
-    return db.userBooks.orderBy('createdAt').toArray()
+  listUserBooks(userId: string) {
+    return db.userBooks.where('userId').equals(userId).sortBy('createdAt')
   }
 
   async deleteUserBook(id: string): Promise<void> {
