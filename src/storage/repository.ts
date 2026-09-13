@@ -3,6 +3,7 @@ import type {
   CheckinRecord,
   EngineConfig,
   ReviewLog,
+  UserBook,
   WordEntry,
 } from '../types'
 
@@ -20,6 +21,13 @@ export interface Repository {
   getEntries(ids: string[]): Promise<WordEntry[]>
   listEntries(book: string): Promise<WordEntry[]>
   countEntries(book: string): Promise<number>
+
+  // ---- 用户自己导入的词库（词条嵌在记录里，跨设备不丢）----
+  putUserBook(book: UserBook): Promise<void>
+  getUserBook(id: string): Promise<UserBook | undefined>
+  listUserBooks(): Promise<UserBook[]>
+  /** 连 meta 带词条一起删 */
+  deleteUserBook(id: string): Promise<void>
 
   // ---- 学习卡 ----
   getCard(id: string): Promise<Card | undefined>

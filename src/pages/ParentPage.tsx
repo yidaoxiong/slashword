@@ -5,6 +5,7 @@ import { currentUnitLabel, unlockedCount, unitsOf } from '../core/queue'
 import type { Card, CheckinRecord, Skill } from '../types'
 import { SKILL_LABEL, SKILLS } from '../types'
 import { speak } from '../lib/speech'
+import { BookImporter } from '../components/BookImporter'
 
 const repo = getRepo()
 
@@ -251,6 +252,8 @@ export function ParentPage() {
           />
         </label>
       </div>
+
+      <BookImporter />
 
       <div className="mt-5">
         {confirmReset ? (

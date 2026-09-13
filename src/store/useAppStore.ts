@@ -5,11 +5,17 @@ import type {
   EngineConfig,
   QueueItem,
   Skill,
+  UserBook,
   WordEntry,
 } from '../types'
 import { getRepo } from '../storage'
 import { buildDailyQueue, defaultConfig, todayKey } from '../core/queue'
-import { loadCatalog, type BookInfo } from '../core/books'
+import {
+  isCustomBook,
+  loadCatalog,
+  mergeCatalog,
+  type BookInfo,
+} from '../core/books'
 import {
   SCHEDULER_VERSION,
   applySkillResult,
@@ -44,10 +50,16 @@ interface AppState {
   error: string | null
   /** 当前词书全部词条，内存缓存（几百条，用于出干扰项） */
   entries: WordEntry[]
-  /** 可选词书目录 */
+  /** 可选词书目录（内置 + 自制） */
   catalog: BookInfo[]
+  /** 用户导入的词库 */
+  userBooks: UserBook[]
 
   init: () => Promise<void>
+  /** 导入一个自制词库，导入后自动出现在首页词书列表里 */
+  importBook: (input: Omit<UserBook, 'createdAt' | 'updatedAt'>) => Promise<void>
+  /** 删除自制词库；删的正好是当前词书就自动切到第一本 */
+  removeBook: (id: string) => Promise<void>
   startDay: () => Promise<void>
   submitSkill: (
     skill: Skill,
@@ -65,11 +77,20 @@ interface AppState {
 }
 
 /**
- * 每次启动都重新导入词库。
+ * 每次启动都重新导入**内置**词库。
  * 词表会改（比如这次清洗掉了括号注释），只判断"本地有没有"的话，
  * 老数据会一直卡在浏览器里不更新。396 条重写只要几十毫秒，不值得为此做版本号。
+ *
+ * 用户导入的词库不能这么干 —— 它没有 JSON 文件可 fetch，
+ * 只能从本地 userBooks 记录里读（记录本身带全部词条）。
  */
-async function loadBook(bookId: string) {
+async function loadBook(bookId: string, custom: boolean) {
+  if (custom) {
+    const ub = await repo.getUserBook(bookId)
+    if (!ub) throw new Error(`自制词库已丢失，请在家长页重新导入：${bookId}`)
+    await repo.importEntries(bookId, ub.words)
+    return
+  }
   const res = await fetch(`./data/${bookId}.json`)
   if (!res.ok) throw new Error(`词库加载失败：${bookId}`)
   const data = (await res.json()) as { meta: unknown; words: WordEntry[] }
@@ -109,12 +130,16 @@ export const useAppStore = create<AppState>((set, get) => ({
   error: null,
   entries: [],
   catalog: [],
+  userBooks: [],
 
   async init() {
     try {
       if (get().catalog.length === 0) {
-        const catalog = await loadCatalog()
-        set({ catalog })
+        const [builtin, userBooks] = await Promise.all([
+          loadCatalog(),
+          repo.listUserBooks(),
+        ])
+        set({ catalog: mergeCatalog(builtin, userBooks), userBooks })
       }
       let config = await repo.getConfig(LOCAL_USER)
       if (!config) {
@@ -125,7 +150,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         config = { ...defaultConfig(config.userId), ...config }
         await repo.putConfig(config)
       }
-      await loadBook(config.activeBook)
+      await loadBook(config.activeBook, isCustomBook(get().catalog, config.activeBook))
       const checkin = await repo.getCheckin(LOCAL_USER, todayKey())
       const streak = await computeStreak(LOCAL_USER)
       const entries = await repo.listEntries(config.activeBook)
@@ -282,6 +307,28 @@ export const useAppStore = create<AppState>((set, get) => ({
     const next = { ...cur, ...patch }
     await repo.putConfig(next)
     set({ config: next })
+  },
+
+  async importBook(input) {
+    const now = Date.now()
+    const book: UserBook = { ...input, createdAt: now, updatedAt: now }
+    await repo.putUserBook(book)
+    await repo.importEntries(book.id, book.words)
+    const userBooks = await repo.listUserBooks()
+    const builtin = await loadCatalog()
+    set({ userBooks, catalog: mergeCatalog(builtin, userBooks) })
+  },
+
+  async removeBook(id) {
+    const { config } = get()
+    await repo.deleteUserBook(id)
+    const userBooks = await repo.listUserBooks()
+    const builtin = await loadCatalog()
+    const catalog = mergeCatalog(builtin, userBooks)
+    set({ userBooks, catalog })
+    if (config?.activeBook === id && catalog.length > 0) {
+      await get().switchBook(catalog[0].id)
+    }
   },
 
   async switchBook(bookId) {

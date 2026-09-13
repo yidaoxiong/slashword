@@ -10,6 +10,7 @@
 """
 import json
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -227,6 +228,7 @@ def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     all_words = []
     catalog = []
+    parsed_any = False
     for cfg in BOOKS:
         if not cfg["file"].exists():
             print(f"!! 文件不存在：{cfg['file']}", file=sys.stderr)
@@ -234,6 +236,7 @@ def main():
         words = parse_book(cfg)
         report(words, cfg["name"])
         all_words.extend(words)
+        parsed_any = True
         book_meta = {k: v for k, v in cfg.items() if k not in ("file", "columns")}
         book_meta["wordCount"] = len(words)
         book_meta["units"] = sorted(
@@ -257,6 +260,12 @@ def main():
             }
         )
 
+    # 源文件（iCloud 目录）没同步下来时会一本都读不到，
+    # 这时候直接退出，别把已有的 all.json / books.json 清空
+    if not parsed_any:
+        print("\n!! 一本词书都没读到，已中止（现有的 data/ 文件没有被改动）", file=sys.stderr)
+        return
+
     print(f"\n合计 {len(all_words)} 条")
     (DATA_DIR / "all.json").write_text(
         json.dumps(all_words, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -267,6 +276,24 @@ def main():
         json.dumps(catalog, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     print(f"-> 已写出 data/books.json（{len(catalog)} 本词书）")
+
+    sync_public_data()
+
+
+def sync_public_data():
+    """前端实际读的是 public/data/，这里同步过去，省得每次手动拷。
+
+    all.json 是给 gen_audio.py 用的（几百 KB），不打进包里。
+    """
+    public = ROOT / "public" / "data"
+    public.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for f in DATA_DIR.glob("*.json"):
+        if f.name == "all.json":
+            continue
+        shutil.copy2(f, public / f.name)
+        n += 1
+    print(f"-> 已同步 {n} 个文件到 public/data/")
 
 
 if __name__ == "__main__":

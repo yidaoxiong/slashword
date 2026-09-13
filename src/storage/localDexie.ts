@@ -4,6 +4,7 @@ import type {
   CheckinRecord,
   EngineConfig,
   ReviewLog,
+  UserBook,
   WordEntry,
 } from '../types'
 import type { Repository } from './repository'
@@ -14,6 +15,7 @@ class WordDatabase extends Dexie {
   logs!: Table<ReviewLog, number>
   checkins!: Table<CheckinRecord, number>
   config!: Table<EngineConfig, string>
+  userBooks!: Table<UserBook, string>
 
   constructor() {
     super('word-app')
@@ -23,6 +25,10 @@ class WordDatabase extends Dexie {
       logs: '++id, userId, cardId, wordKey, reviewedAt, [userId+reviewedAt]',
       checkins: '++id, userId, date, [userId+date]',
       config: 'userId',
+    })
+    // v2：用户自己导入的词库。词条嵌在记录里，换设备/清缓存都不丢
+    this.version(2).stores({
+      userBooks: 'id, createdAt',
     })
   }
 }
@@ -121,6 +127,27 @@ export class DexieRepository implements Repository {
 
   putConfig(config: EngineConfig) {
     return db.config.put(config).then(() => undefined)
+  }
+
+  // ---- 用户导入的词库 ----
+
+  putUserBook(book: UserBook) {
+    return db.userBooks.put(book).then(() => undefined)
+  }
+
+  getUserBook(id: string) {
+    return db.userBooks.get(id)
+  }
+
+  listUserBooks() {
+    return db.userBooks.orderBy('createdAt').toArray()
+  }
+
+  async deleteUserBook(id: string): Promise<void> {
+    await db.transaction('rw', db.userBooks, db.entries, async () => {
+      await db.userBooks.delete(id)
+      await db.entries.where('book').equals(id).delete()
+    })
   }
 
   async resetProgress(userId: string): Promise<void> {

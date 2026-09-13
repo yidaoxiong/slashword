@@ -64,6 +64,24 @@ export interface Book {
   words: WordEntry[]
 }
 
+/**
+ * 用户自己导入的词库。
+ *
+ * 词条直接嵌在记录里（而不是只存 meta）—— 这样换设备、清浏览器缓存、
+ * 甚至同步到别的机器都不会丢。内置词库可以每次从 JSON 重新灌，自制的丢了就没了。
+ */
+export interface UserBook {
+  id: string
+  name: string
+  grade: string
+  source: string
+  wordCount: number
+  units: string[]
+  words: WordEntry[]
+  createdAt: number
+  updatedAt: number
+}
+
 /** 四个技能维度的掌握度，0-100 */
 export type Mastery = Record<Skill, number>
 

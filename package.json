@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "vocab": "/Users/ray/.workbuddy/binaries/python/envs/default/bin/python scripts/parse_vocab.py",
     "audio": "/Users/ray/.workbuddy/binaries/python/envs/default/bin/python scripts/gen_audio.py",
+    "template": "/Users/ray/.workbuddy/binaries/python/envs/default/bin/python scripts/make_template.py",
+    "import-book": "/Users/ray/.workbuddy/binaries/python/envs/default/bin/python scripts/import_book.py",
     "deploy": "vite build && ./node_modules/.bin/wrangler pages deploy dist --project-name slashword --branch main --commit-dirty=true"
   },
   "keywords": [],
@@ -24,6 +26,7 @@
     "fsrs.js": "^1.2.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "xlsx": "^0.18.5",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
