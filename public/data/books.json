@@ -1,0 +1,18 @@
+[
+  {
+    "id": "g5a",
+    "name": "五年级上 英语单词表",
+    "grade": "五年级上",
+    "source": "校内教材",
+    "wordCount": 173,
+    "unitCount": 6
+  },
+  {
+    "id": "g4b-houhai",
+    "name": "四下 厚海单词表",
+    "grade": "四年级下",
+    "source": "厚海校外教材",
+    "wordCount": 223,
+    "unitCount": 6
+  }
+]

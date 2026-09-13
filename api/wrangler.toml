@@ -1,0 +1,10 @@
+name = "slashword-api"
+main = "worker.js"
+compatibility_date = "2026-08-01"
+
+# 与 copilot-checkin 绑定同一个 D1 —— 共用 users / sessions 表，
+# 因此两个站点账号完全通用。
+[[d1_databases]]
+binding = "DB"
+database_name = "copilot-checkin"
+database_id = "796da529-eaec-4f25-89d0-ec191059cd9c"
