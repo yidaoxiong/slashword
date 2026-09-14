@@ -121,7 +121,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const incoming = item.data as CheckinRecord
         // 用当前 userId 查，不用 incoming.userId —— 云端返回的一定是这个账号的
         const local = await repo.getCheckin(userId, incoming.date)
-        if (!local || (incoming.updatedAt ?? 0) > (local.updatedAt ?? 0)) {
+        // 已完成的打卡优先级更高：别的设备打完了，本地这条还写着"没开始"的话，
+        // 不能因为本地时间戳新就把它挡回去（和工作端的规则一致）
+        const beatsLocal =
+          !local ||
+          (incoming.updatedAt ?? 0) > (local.updatedAt ?? 0) ||
+          (incoming.completed && !local.completed)
+        if (beatsLocal) {
           await repo.putCheckin(incoming)
         }
       }

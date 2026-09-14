@@ -276,6 +276,12 @@ export const useAppStore = create<AppState>((set, get) => ({
           completed: true,
           completedAt: now,
           durationSec: Math.round((now - session.startedAt) / 1000),
+          // 必须刷新：同步靠 updatedAt 判断谁新（last-write-wins）。
+          // 不刷的话它还是"开始学习"那一刻的时间戳 ——
+          // 万一那条 completed=false 已经推上云端，这次推送会因为
+          // 「时间戳不比云端新」被拒，云端永远是未打卡状态，
+          // 别的设备也就永远同步不到今天已打卡
+          updatedAt: now,
         }
         await repo.putCheckin(done)
         set({ checkin: done })

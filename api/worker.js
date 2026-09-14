@@ -232,10 +232,15 @@ async function handlePostSync(user, request, env) {
 
   for (const item of body.checkins || []) {
     if (!item || typeof item.id !== 'string' || !item.data) continue;
+    // 除了比时间戳，还有一条语义规则：已完成的打卡永远赢过未完成的。
+    // 「今天学完了」是个不可逆的事实，不该被别的设备那句「还没开始」盖掉 ——
+    // 否则 A 打完卡，B 因为时间戳更新把 completed=false 推上来，A 刷新又变没打卡
     stmts.push(env.DB.prepare(
-      'INSERT INTO word_checkins (user_id, date, data, updated_at) VALUES (?, ?, ?, ?) ' +
-      'ON CONFLICT (user_id, date) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at ' +
-      'WHERE excluded.updated_at > word_checkins.updated_at'
+      `INSERT INTO word_checkins (user_id, date, data, updated_at) VALUES (?, ?, ?, ?)
+       ON CONFLICT (user_id, date) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at
+       WHERE excluded.updated_at > word_checkins.updated_at
+          OR (json_extract(excluded.data, '$.completed') = 1
+              AND json_extract(word_checkins.data, '$.completed') = 0)`
     ).bind(user.id, item.id, JSON.stringify(item.data), item.updatedAt || Date.now()));
     if (++n > 10000) break;
   }
