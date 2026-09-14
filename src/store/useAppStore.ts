@@ -49,6 +49,8 @@ interface AppState {
   streak: number
   /** 奖金：累计总额 / 今天这一笔 / 当前连续第几天 */
   reward: RewardSummary
+  /** 上一次删掉的词条快照，供「撤销」用 */
+  lastRemovedWords: { bookId: string; words: WordEntry[]; at: number } | null
   totalWords: number
   bookLoaded: boolean
   error: string | null
@@ -61,6 +63,10 @@ interface AppState {
 
   init: () => Promise<void>
   refreshCatalog: () => Promise<void>
+  /** 从自制词库里删掉若干词条（连带清理已学卡片、单元进度） */
+  removeWordsFromBook: (bookId: string, wordIds: string[]) => Promise<void>
+  /** 撤回上一次删除，把整本词库恢复成删之前的样子 */
+  undoRemoveWords: () => Promise<void>
   /** 导入一个自制词库，导入后自动出现在首页词书列表里。userId 自动取当前账号 */
   importBook: (
     input: Omit<UserBook, 'createdAt' | 'updatedAt' | 'userId'>,
@@ -133,6 +139,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   checkin: null,
   streak: 0,
   reward: { total: 0, today: 0, perDay: new Map(), day: 0 },
+  lastRemovedWords: null,
   totalWords: 0,
   bookLoaded: false,
   error: null,
@@ -376,6 +383,101 @@ export const useAppStore = create<AppState>((set, get) => ({
     const userBooks = await repo.listUserBooks(getUserId())
     const builtin = await loadCatalog()
     set({ userBooks, catalog: mergeCatalog(builtin, userBooks) })
+  },
+
+  /**
+   * 从自制词库里删掉若干词条。
+   *
+   * 难的不是删词条，是删完要收的尾巴：
+   *   1. 已经背过的卡片要处理 —— 不清理的话明天复习还会冒出这个词，
+   *      而它已经不在词库里了，变成"幽灵词"
+   *   2. 解锁到第几单元的记录可能超出新的单元数，要 clamp
+   *   3. updatedAt 必须刷新，否则别的设备同步不到这次修改
+   */
+  async removeWordsFromBook(bookId, wordIds) {
+    const book = await repo.getUserBook(bookId)
+    if (!book || wordIds.length === 0) return
+    const drop = new Set(wordIds)
+    const nextWords = book.words.filter((w) => !drop.has(w.id))
+    if (nextWords.length === book.words.length) return
+
+    const userId = getUserId()
+    const now = Date.now()
+
+    // 受影响的卡片：引用了被删词条的都算
+    const cards = await repo.listCards(userId)
+    const affected = cards.filter(
+      (c) => c.book === bookId && c.entryIds.some((id) => drop.has(id)),
+    )
+    const orphan: string[] = []
+    const keep: Card[] = []
+    for (const c of affected) {
+      const rest = c.entryIds.filter((id) => !drop.has(id))
+      if (rest.length === 0) orphan.push(c.id)
+      else keep.push({ ...c, entryIds: rest })
+    }
+
+    const nextUnits = [
+      ...new Set(nextWords.map((w) => w.unit).filter(Boolean)),
+    ].sort()
+    await repo.putUserBook({
+      ...book,
+      words: nextWords,
+      units: nextUnits,
+      wordCount: nextWords.length,
+      updatedAt: now,
+    })
+    await repo.deleteEntries([...drop])
+    await repo.deleteCards(orphan)
+    if (keep.length > 0) await repo.bulkPutCards(keep)
+
+    // 解锁进度可能已经超出新的单元数
+    const { config } = get()
+    if (config) {
+      const cur = config.unitProgress[bookId] ?? 1
+      const max = Math.max(1, nextUnits.length)
+      if (cur > max) {
+        await get().setConfig({
+          unitProgress: { ...config.unitProgress, [bookId]: max },
+        })
+      }
+    }
+
+    await get().refreshCatalog()
+    if (get().config?.activeBook === bookId) {
+      const entries = await repo.listEntries(bookId)
+      set({ entries, totalWords: entries.length })
+    }
+
+    // 留一份快照，删错了能一键撤回
+    set({
+      lastRemovedWords: { bookId, words: book.words, at: now },
+    })
+  },
+
+  async undoRemoveWords() {
+    const snap = get().lastRemovedWords
+    if (!snap) return
+    const book = await repo.getUserBook(snap.bookId)
+    if (!book) return
+    const now = Date.now()
+    const nextUnits = [
+      ...new Set(snap.words.map((w) => w.unit).filter(Boolean)),
+    ].sort()
+    await repo.putUserBook({
+      ...book,
+      words: snap.words,
+      units: nextUnits,
+      wordCount: snap.words.length,
+      updatedAt: now,
+    })
+    await repo.importEntries(snap.bookId, snap.words)
+    await get().refreshCatalog()
+    if (get().config?.activeBook === snap.bookId) {
+      const entries = await repo.listEntries(snap.bookId)
+      set({ entries, totalWords: entries.length })
+    }
+    set({ lastRemovedWords: null })
   },
 
   async removeBook(id) {

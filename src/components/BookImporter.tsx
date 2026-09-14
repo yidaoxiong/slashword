@@ -14,6 +14,7 @@ import {
 import type { Lang, WordEntry } from '../types'
 import { LANG_LABEL, langOf } from '../core/lang'
 import { canHideBook, visibleBooks } from '../core/books'
+import { BookEditor } from './BookEditor'
 
 const TEMPLATE_URL = './词库导入模板.xlsx'
 
@@ -51,6 +52,7 @@ export function BookImporter() {
   const [done, setDone] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [lang, setLang] = useState<Lang>('en')
+  const [editing, setEditing] = useState<string | null>(null)
 
   const visible = visibleBooks(catalog, config?.hiddenBooks)
   const hidden = catalog.filter((b) => (config?.hiddenBooks ?? []).includes(b.id))
@@ -135,6 +137,14 @@ export function BookImporter() {
     } finally {
       setBusy(false)
     }
+  }
+
+  // 管理词条时整张卡片换成编辑器 —— 列表塞进小卡片里会挤得没法看
+  const editingBook = editing
+    ? userBooks.find((b) => b.id === editing)
+    : undefined
+  if (editingBook) {
+    return <BookEditor book={editingBook} onClose={() => setEditing(null)} />
   }
 
   return (
@@ -317,6 +327,13 @@ export function BookImporter() {
                     </div>
                   </div>
                   <div className="flex shrink-0 gap-2 text-[11px]">
+                    <button
+                      type="button"
+                      onClick={() => setEditing(b.id)}
+                      className="text-neutral-500"
+                    >
+                      管理词条
+                    </button>
                     <button
                       type="button"
                       onClick={() =>

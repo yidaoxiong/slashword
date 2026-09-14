@@ -21,6 +21,8 @@ export interface Repository {
   getEntries(ids: string[]): Promise<WordEntry[]>
   listEntries(book: string): Promise<WordEntry[]>
   countEntries(book: string): Promise<number>
+  /** 从自制词库里挑着删词条时用 */
+  deleteEntries(ids: string[]): Promise<void>
 
   // ---- 用户自己导入的词库（词条嵌在记录里，跨设备不丢）----
   putUserBook(book: UserBook): Promise<void>
@@ -40,6 +42,8 @@ export interface Repository {
   putCard(card: Card): Promise<void>
   bulkPutCards(cards: Card[]): Promise<void>
   listCards(userId: string): Promise<Card[]>
+  /** 删掉词条后清掉没人再引用的卡片 */
+  deleteCards(ids: string[]): Promise<void>
   listDueCards(userId: string, now: number, limit: number): Promise<Card[]>
 
   // ---- 复习事件流（append-only，只增不改不删）----

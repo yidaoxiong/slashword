@@ -94,6 +94,14 @@ export class DexieRepository implements Repository {
     return db.entries.where('book').equals(book).toArray()
   }
 
+  deleteEntries(ids: string[]) {
+    return db.entries.bulkDelete(ids)
+  }
+
+  deleteCards(ids: string[]) {
+    return db.cards.bulkDelete(ids)
+  }
+
   countEntries(book: string) {
     return db.entries.where('book').equals(book).count()
   }
