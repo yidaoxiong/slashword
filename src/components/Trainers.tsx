@@ -44,7 +44,7 @@ function ResultBanner({
   const meta = article ? `${article} ${word}${pos ? ` · ${pos}` : ''}` : (phonetic ?? '')
   return (
     <div
-      className={`pop mt-4 rounded-card px-4 py-3 ${
+      className={`pop mt-4 rounded-card px-4 py-3 short:mt-2.5 short:px-3 short:py-2 ${
         ok ? 'bg-ok-soft text-[#0f6e56]' : 'bg-bad-soft text-[#a32d2d]'
       }`}
     >
@@ -67,7 +67,7 @@ function NextButton({ label, onClick }: { label: string; onClick: () => void }) 
     <button
       type="button"
       onClick={onClick}
-      className="mt-3 h-11 w-full rounded-xl bg-neutral-900 text-[14px] text-white active:bg-neutral-700"
+      className="mt-3 h-11 w-full rounded-xl bg-neutral-900 text-[14px] text-white active:bg-neutral-700 short:mt-2 short:h-10"
     >
       {label}
     </button>
@@ -120,8 +120,9 @@ function useAdvance(onDone: TrainerProps['onDone']) {
 }
 
 function TypingHint() {
+  // 手机上本来就只有屏幕键盘，这句提示没信息量，矮屏直接省掉 —— 一屏放得下更要紧
   return (
-    <div className="mt-2 text-center text-[11px] text-neutral-300">
+    <div className="mt-2 text-center text-[11px] text-neutral-300 short:hidden">
       可以直接敲键盘，也可以点下面的字母
     </div>
   )
@@ -133,7 +134,7 @@ function PeekButton({ used, onClick }: { used: boolean; onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className={`mt-3 h-9 w-full rounded-lg text-[12px] ${
+      className={`mt-3 h-9 w-full rounded-lg text-[12px] short:mt-2 short:h-8 ${
         used
           ? 'bg-neutral-100 text-neutral-400'
           : 'bg-white text-neutral-400 ring-1 ring-black/5 active:bg-neutral-50'
@@ -193,15 +194,25 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
 
   return (
     <div className="flex flex-col">
-      <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5">
-        <div className="text-[12px] tracking-wide text-neutral-400">
-          根据意思，拼出这个单词
+      <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5 short:p-3.5">
+        {/* 答完之后这行引导语就没用了，收掉能省一行 —— 手机上每一行都换算成键高 */}
+        {!checked && (
+          <div className="text-[12px] tracking-wide text-neutral-400">
+            根据意思，拼出这个单词
+          </div>
+        )}
+        {/* 词性并到中文同一行，不再单独占一行 */}
+        <div className="mt-2 text-[22px] font-medium text-neutral-900 short:mt-0.5 short:text-[19px]">
+          {entry.cn}
+          {entry.pos && (
+            <span className="ml-2 align-middle text-[12px] font-normal text-neutral-400">
+              {entry.pos}
+            </span>
+          )}
         </div>
-        <div className="mt-2 text-[22px] font-medium text-neutral-900">{entry.cn}</div>
-        {entry.pos && <div className="mt-1 text-[12px] text-neutral-400">{entry.pos}</div>}
 
         <div
-          className={`mt-4 flex min-h-[52px] items-center justify-center rounded-xl border-2 px-3 text-center text-[20px] tracking-widest ${
+          className={`mt-4 flex min-h-[52px] items-center justify-center rounded-xl border-2 px-3 text-center text-[20px] tracking-widest short:mt-2.5 short:min-h-[44px] short:text-[18px] ${
             checked
               ? ok
                 ? 'border-ok bg-ok-soft text-[#0f6e56]'
@@ -217,7 +228,7 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
         </div>
 
         {hint && !checked && (
-          <div className="mt-2 text-center text-[12px] text-neutral-400">
+          <div className="mt-2 text-center text-[12px] text-neutral-400 short:mt-1.5">
             提示：{entry.word[0]} … （{letterCount} 个字母）
           </div>
         )}
@@ -317,26 +328,27 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
 
   return (
     <div className="flex flex-col">
-      <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5">
+      <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5 short:p-3.5">
         <div className="text-[12px] tracking-wide text-neutral-400">
           放进句子里，这个词怎么用
         </div>
 
-        <div className="mt-3 rounded-xl bg-neutral-50 p-4">
-          <div className="text-[15px] leading-relaxed text-neutral-800">
+        <div className="mt-3 rounded-xl bg-neutral-50 p-4 short:mt-2 short:p-2.5">
+          <div className="text-[15px] leading-relaxed text-neutral-800 short:text-[14px] short:leading-snug">
             {blanked ? text : entry.exampleEn}
           </div>
-          <div className="mt-2 text-[13px] leading-relaxed text-neutral-500">
+          <div className="mt-2 text-[13px] leading-relaxed text-neutral-500 short:mt-0.5 short:text-[12px] short:leading-snug">
             {entry.exampleCn}
           </div>
         </div>
 
-        <div className="mt-4 text-[13px] text-neutral-500">
+        {/* 上面已经写了「放进句子里，这个词怎么用」，这句是重复的，矮屏去掉 */}
+        <div className="mt-4 text-[13px] text-neutral-500 short:hidden">
           {blanked ? '把句子补完整：' : '写出这个句子里的生词：'}
         </div>
 
         <div
-          className={`mt-2 flex min-h-[52px] items-center justify-center rounded-xl border-2 px-3 text-center text-[20px] tracking-widest ${
+          className={`mt-2 flex min-h-[52px] items-center justify-center rounded-xl border-2 px-3 text-center text-[20px] tracking-widest short:min-h-[44px] short:text-[18px] ${
             checked
               ? ok
                 ? 'border-ok bg-ok-soft text-[#0f6e56]'

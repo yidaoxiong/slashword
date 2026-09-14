@@ -33,7 +33,7 @@ export function LearnPage() {
   const progress = (idx + (session.skillIdx + 1) / skills.length) / total
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-5 py-6 sm:max-w-lg">
+    <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-5 py-6 sm:max-w-lg short:py-3">
       <div className="flex items-center gap-3">
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-200">
           <div
@@ -46,7 +46,7 @@ export function LearnPage() {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-2">
+      <div className="mt-4 flex items-center justify-between gap-2 short:mt-2.5">
         <div className="text-[13px] font-medium text-neutral-700">
           {SKILL_TITLE[skill]}
         </div>
@@ -75,7 +75,7 @@ export function LearnPage() {
         </div>
       </div>
 
-      <div className="mt-4 flex-1">
+      <div className="mt-4 flex-1 short:mt-2.5">
         {skill === 'spell' && (
           <SpellTrainer
             entry={entry}
@@ -106,10 +106,14 @@ export function LearnPage() {
         )}
       </div>
 
-      <div className="pt-4 text-center text-[11px] text-neutral-300">
-        {bookName && <span className="text-neutral-400">{bookName} · </span>}
-        {entry.unit} · {entry.lesson}
-        {entry.category ? ` · ${entry.category}` : ''}
+      {/* 词书/单元是给家长看的，孩子做题时用不上；矮屏直接让位给键盘。
+          顺手修了原来 lesson 为空时会多出一个孤零零的「·」 */}
+      <div className="pt-4 text-center text-[11px] text-neutral-300 short:hidden">
+        {bookName && <span className="text-neutral-400">{bookName}</span>}
+        {bookName && (entry.unit || entry.lesson) && <span> · </span>}
+        {[entry.unit, entry.lesson, entry.category]
+          .filter(Boolean)
+          .join(' · ')}
       </div>
     </div>
   )

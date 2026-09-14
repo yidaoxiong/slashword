@@ -51,62 +51,47 @@ export function LetterKeyboard({
   }
   return (
     <div className="w-full select-none">
-      {ROWS.map((row, ri) => (
-        <div key={ri} className="mb-2 flex justify-center gap-1.5">
-          {ri === 2 && (
-            <button
-              type="button"
-              disabled={disabled}
-              onClick={onBackspace}
-              className="h-11 w-9 rounded-lg bg-white text-[13px] font-medium text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
-            >
-              ⌫
-            </button>
-          )}
-          {row.split('').map((ch) => (
-            <button
-              key={ch}
-              type="button"
-              disabled={disabled}
-              onClick={() => onKey(ch)}
-              className="h-11 flex-1 rounded-lg bg-white text-[15px] font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
-            >
-              {ch}
-            </button>
-          ))}
-          {ri === 2 && (
-            <button
-              type="button"
-              disabled={disabled}
-              onClick={onSubmit}
-              className="h-11 w-12 rounded-lg bg-brand-500 text-[13px] font-medium text-white shadow-sm active:bg-brand-600 disabled:opacity-40"
-            >
-              确定
-            </button>
-          )}
-        </div>
-      ))}
+      {/* 西语特殊字符单独一行，且用 flex-1 均分 ——
+          原来固定 w-10 会在窄屏折成两行，把卡片挤没了 */}
       {extra.length > 0 && (
-        <div className="mb-2 flex flex-wrap justify-center gap-1.5">
+        <div className="kb-row flex justify-center">
           {extra.map((ch) => (
             <button
               key={ch}
               type="button"
               disabled={disabled}
               onClick={() => onKey(ch)}
-              className="h-10 w-10 rounded-lg bg-neutral-100 text-[15px] font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
+              className="kb-key-sm relative mx-[2px] flex-1 rounded-lg bg-neutral-100 font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
             >
               {ch}
             </button>
           ))}
         </div>
       )}
-      <div className="mt-2 flex justify-center gap-1.5">
+
+      {ROWS.map((row, ri) => (
+        <div key={ri} className="kb-row flex justify-center">
+          {row.split('').map((ch) => (
+            <button
+              key={ch}
+              type="button"
+              disabled={disabled}
+              onClick={() => onKey(ch)}
+              className="kb-key relative mx-[2px] flex-1 rounded-lg bg-white font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
+            >
+              {ch}
+            </button>
+          ))}
+        </div>
+      ))}
+
+      {/* 空格 / 连字符 / 退格 / 确定 挤在一行：手机上每一行都是钱 */}
+      <div className="kb-row flex justify-center">
         <button
           type="button"
           disabled={disabled}
           onClick={() => onKey(' ')}
-          className="h-10 w-24 rounded-lg bg-white text-[12px] text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
+          className="kb-key relative mx-[2px] flex-[2] rounded-lg bg-white text-[12px] text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
         >
           空格
         </button>
@@ -114,9 +99,25 @@ export function LetterKeyboard({
           type="button"
           disabled={disabled}
           onClick={() => onKey('-')}
-          className="h-10 w-16 rounded-lg bg-white text-[12px] text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
+          className="kb-key relative mx-[2px] flex-1 rounded-lg bg-white text-[12px] text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
         >
           连字符
+        </button>
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={onBackspace}
+          className="kb-key relative mx-[2px] w-10 shrink-0 rounded-lg bg-white text-[13px] font-medium text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
+        >
+          ⌫
+        </button>
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={onSubmit}
+          className="kb-key relative mx-[2px] w-14 shrink-0 rounded-lg bg-brand-500 text-[13px] font-medium text-white shadow-sm active:bg-brand-600 disabled:opacity-40"
+        >
+          确定
         </button>
       </div>
     </div>
