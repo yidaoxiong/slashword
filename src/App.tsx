@@ -12,7 +12,7 @@ import { langOf, DEFAULT_ACCENT } from './core/lang'
 type Tab = 'learn' | 'parent'
 
 export default function App() {
-  const { phase, init, error, config, catalog } = useAppStore()
+  const { phase, init, refreshCatalog, error, config, catalog } = useAppStore()
   const { status, username, syncing, lastSyncAt, restore, sync } = useAuthStore()
   const [tab, setTab] = useState<Tab>('learn')
   const [view, setView] = useState<'main' | 'login'>('main')
@@ -29,7 +29,11 @@ export default function App() {
   useEffect(() => {
     void (async () => {
       await init()
-      if (username) await sync()
+      // 同步可能从别的设备拉到新词库，拉完要重算目录才会出现在列表里
+      if (username) {
+        await sync()
+        await refreshCatalog()
+      }
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [username])
@@ -45,7 +49,9 @@ export default function App() {
 
   // 学完一轮就同步一次，换设备能看到最新进度
   useEffect(() => {
-    if (phase === 'done' && status === 'authed') void sync()
+    if (phase === 'done' && status === 'authed') {
+      void sync().then(() => void refreshCatalog())
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, status])
 

@@ -25,10 +25,14 @@ export interface Repository {
   // ---- 用户自己导入的词库（词条嵌在记录里，跨设备不丢）----
   putUserBook(book: UserBook): Promise<void>
   getUserBook(id: string): Promise<UserBook | undefined>
-  /** 只列这个账号自己的词库 */
+  /** 只列这个账号没被删的词库 */
   listUserBooks(userId: string): Promise<UserBook[]>
-  /** 连 meta 带词条一起删 */
+  /** 同步用：连墓碑一起，否则"删除"传不到别的设备 */
+  listAllUserBooks(userId: string): Promise<UserBook[]>
+  /** 删成墓碑（不真删），词条一并清掉 */
   deleteUserBook(id: string): Promise<void>
+  /** 真删：收到别处传来的墓碑时调用 */
+  purgeUserBook(id: string): Promise<void>
 
   // ---- 学习卡 ----
   getCard(id: string): Promise<Card | undefined>

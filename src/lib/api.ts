@@ -57,11 +57,26 @@ async function request(path: string, options: RequestInit = {}) {
   return data
 }
 
+/**
+ * 词库分片大小，必须和 api/worker.js 的 CHUNK_SIZE 一致。
+ * D1 单条语句上限 100KB，200 词的词库 JSON 就有 127KB，所以必须切开存。
+ */
+export const CHUNK_SIZE = 50
+
+export interface SyncBook {
+  id: string
+  data: unknown
+  updatedAt: number
+  /** 墓碑：这本已在别的设备删掉，收到的一方也要删 */
+  deleted?: boolean
+}
+
 export interface SyncPayload {
   cards: { id: string; data: unknown; updatedAt: number }[]
   logs: { id: string; data: unknown; createdAt: number }[]
   checkins: { id: string; data: unknown; updatedAt: number }[]
   config: { data: unknown; updatedAt: number } | null
+  books?: SyncBook[]
 }
 
 export const api = {
@@ -87,6 +102,7 @@ export const api = {
       logs: { id: string; data: unknown; createdAt: number }[]
       checkins: { id: string; data: unknown; updatedAt: number }[]
       config: { data: unknown; updatedAt: number } | null
+      books?: SyncBook[]
       serverTime: number
     }>,
 

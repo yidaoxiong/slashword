@@ -7,7 +7,7 @@ import {
   saveSession,
 } from '../lib/api'
 import { getRepo } from '../storage'
-import type { Card, CheckinRecord, EngineConfig } from '../types'
+import type { Card, CheckinRecord, EngineConfig, UserBook } from '../types'
 
 const repo = getRepo()
 
@@ -125,6 +125,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           await repo.putCheckin(incoming)
         }
       }
+      // 自制词库：整体 last-write-wins，谁新听谁的。
+      // 墓碑（deleted）是"这本被删了"这个动作的载体，必须处理，
+      // 否则在 A 设备删掉的词库，到 B 设备同步完又冒出来
+      for (const item of remote.books || []) {
+        const incoming = item.data as UserBook
+        if (!incoming?.id) continue
+        const local = await repo.getUserBook(incoming.id)
+        const incomingNewer = !local || (item.updatedAt ?? 0) > (local.updatedAt ?? 0)
+        if (!incomingNewer) continue
+
+        if (item.deleted) {
+          await repo.purgeUserBook(incoming.id)
+        } else {
+          await repo.putUserBook({ ...incoming, userId, updatedAt: item.updatedAt })
+          // 词条也要跟着进本地库，不然切过去是空的
+          await repo.importEntries(incoming.id, incoming.words ?? [])
+        }
+      }
+
       if (remote.config?.data) {
         const incoming = remote.config.data as EngineConfig
         const local = await repo.getConfig(userId)
@@ -139,7 +158,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const localCheckins = await repo.listCheckins(userId)
       const localConfig = await repo.getConfig(userId)
 
+      // 连墓碑一起推，删除才能传出去
+      const localBooks = await repo.listAllUserBooks(userId)
+
       await api.push({
+        books: localBooks.map((b) => ({
+          id: b.id,
+          data: b,
+          updatedAt: b.updatedAt ?? 0,
+          deleted: b.deleted === true,
+        })),
         cards: localCards.map((c) => ({ id: c.id, data: c, updatedAt: c.updatedAt ?? 0 })),
         logs: localLogs.map((l) => ({
           id: `${l.cardId}:${l.reviewedAt}:${l.skill}`,

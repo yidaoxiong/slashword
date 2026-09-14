@@ -152,11 +152,41 @@ export class DexieRepository implements Repository {
     return db.userBooks.get(id)
   }
 
+  /** 只列没被删的（墓碑不算） */
   listUserBooks(userId: string) {
+    return db.userBooks
+      .where('userId')
+      .equals(userId)
+      .filter((b) => !b.deleted)
+      .sortBy('createdAt')
+  }
+
+  /** 同步用：连墓碑一起列出来，否则"删除"这个动作传不到别的设备 */
+  listAllUserBooks(userId: string) {
     return db.userBooks.where('userId').equals(userId).sortBy('createdAt')
   }
 
+  /**
+   * 不真删，改成插墓碑 —— 真删的话同步时对方根本不知道这本曾经存在过。
+   * 词条一并清掉，墓碑要跟着走好几个来回，没必要一直占着本地空间。
+   */
   async deleteUserBook(id: string): Promise<void> {
+    await db.transaction('rw', db.userBooks, db.entries, async () => {
+      const book = await db.userBooks.get(id)
+      if (!book) return
+      await db.userBooks.put({
+        ...book,
+        words: [],
+        units: book.units,
+        deleted: true,
+        updatedAt: Date.now(),
+      })
+      await db.entries.where('book').equals(id).delete()
+    })
+  }
+
+  /** 墓碑落地：别的设备删了这本，本地也彻底清掉 */
+  async purgeUserBook(id: string): Promise<void> {
     await db.transaction('rw', db.userBooks, db.entries, async () => {
       await db.userBooks.delete(id)
       await db.entries.where('book').equals(id).delete()

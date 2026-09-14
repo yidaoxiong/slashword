@@ -138,23 +138,67 @@ async function ensureSchema(env) {
       data TEXT NOT NULL,
       updated_at INTEGER NOT NULL
     )`),
+    // 自制词库。只存 meta（不含词条）—— 词条在 word_book_chunks 里分片存。
+    // 不能整本塞成一个 TEXT：D1 单条语句上限 100KB，
+    // 而 200 词的词库 JSON 就有 127KB，直接写会失败。
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS word_books (
+      user_id INTEGER NOT NULL,
+      book_id TEXT NOT NULL,
+      data TEXT NOT NULL,
+      updated_at INTEGER NOT NULL,
+      deleted INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (user_id, book_id)
+    )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS word_book_chunks (
+      user_id INTEGER NOT NULL,
+      book_id TEXT NOT NULL,
+      chunk_idx INTEGER NOT NULL,
+      data TEXT NOT NULL,
+      PRIMARY KEY (user_id, book_id, chunk_idx)
+    )`),
   ]);
 }
 
+/**
+ * 一本词库切成多少条存一片。
+ * 50 条 × 约 400 字节 ≈ 20KB，离 D1 的 100KB 上限还有很大余量。
+ * 前端必须用同样的值，改这里要同步改 src/lib/api.ts 的 CHUNK_SIZE。
+ */
+const CHUNK_SIZE = 50;
+
 async function handleGetSync(user, env) {
   await ensureSchema(env);
-  const [cards, logs, checkins, config] = await Promise.all([
+  const [cards, logs, checkins, config, books, chunks] = await Promise.all([
     env.DB.prepare('SELECT card_id, data, updated_at FROM word_cards WHERE user_id = ?').bind(user.id).all(),
     env.DB.prepare('SELECT log_id, data, created_at FROM word_logs WHERE user_id = ? ORDER BY created_at DESC LIMIT 5000').bind(user.id).all(),
     env.DB.prepare('SELECT date, data, updated_at FROM word_checkins WHERE user_id = ?').bind(user.id).all(),
     env.DB.prepare('SELECT data, updated_at FROM word_config WHERE user_id = ?').bind(user.id).first(),
+    env.DB.prepare('SELECT book_id, data, updated_at, deleted FROM word_books WHERE user_id = ?').bind(user.id).all(),
+    env.DB.prepare('SELECT book_id, chunk_idx, data FROM word_book_chunks WHERE user_id = ? ORDER BY book_id, chunk_idx').bind(user.id).all(),
   ]);
+
+  // 把分片拼回 words。墓碑（deleted=1）也要带回去，别的设备才知道该删
+  const wordsByBook = new Map();
+  for (const r of chunks.results) {
+    if (!wordsByBook.has(r.book_id)) wordsByBook.set(r.book_id, []);
+    try {
+      wordsByBook.get(r.book_id).push(...JSON.parse(r.data));
+    } catch {
+      // 分片坏了就跳过，别让一本词库的问题拖垮整次同步
+    }
+  }
 
   return json({
     cards: cards.results.map((r) => ({ id: r.card_id, data: JSON.parse(r.data), updatedAt: r.updated_at })),
     logs: logs.results.map((r) => ({ id: r.log_id, data: JSON.parse(r.data), createdAt: r.created_at })),
     checkins: checkins.results.map((r) => ({ id: r.date, data: JSON.parse(r.data), updatedAt: r.updated_at })),
     config: config ? { data: JSON.parse(config.data), updatedAt: config.updated_at } : null,
+    books: books.results.map((r) => ({
+      id: r.book_id,
+      data: { ...JSON.parse(r.data), words: wordsByBook.get(r.book_id) || [] },
+      updatedAt: r.updated_at,
+      deleted: r.deleted === 1,
+    })),
     serverTime: Date.now(),
   });
 }
@@ -194,6 +238,33 @@ async function handlePostSync(user, request, env) {
       'WHERE excluded.updated_at > word_checkins.updated_at'
     ).bind(user.id, item.id, JSON.stringify(item.data), item.updatedAt || Date.now()));
     if (++n > 10000) break;
+  }
+
+  // 自制词库：meta 单独存，词条按 CHUNK_SIZE 分片。
+  // 删除靠墓碑（deleted=1）传过来，别的设备 pull 到才知道要删 ——
+  // 所以 push 前先清掉旧分片，保证分片数和内容都对得上。
+  for (const item of body.books || []) {
+    if (!item || typeof item.id !== 'string' || !item.data) continue;
+    const meta = { ...item.data };
+    const words = Array.isArray(meta.words) ? meta.words : [];
+    meta.words = [];
+
+    stmts.push(env.DB.prepare('DELETE FROM word_book_chunks WHERE user_id = ? AND book_id = ?').bind(user.id, item.id));
+    stmts.push(env.DB.prepare(
+      'INSERT INTO word_books (user_id, book_id, data, updated_at, deleted) VALUES (?, ?, ?, ?, ?) ' +
+      'ON CONFLICT (user_id, book_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at, deleted = excluded.deleted ' +
+      'WHERE excluded.updated_at > word_books.updated_at'
+    ).bind(user.id, item.id, JSON.stringify(meta), item.updatedAt || Date.now(), item.deleted ? 1 : 0));
+
+    // 删掉的词库不用再传词条，省空间也省流量
+    if (!item.deleted) {
+      for (let i = 0; i < words.length; i += CHUNK_SIZE) {
+        stmts.push(env.DB.prepare(
+          'INSERT INTO word_book_chunks (user_id, book_id, chunk_idx, data) VALUES (?, ?, ?, ?) ' +
+          'ON CONFLICT (user_id, book_id, chunk_idx) DO UPDATE SET data = excluded.data'
+        ).bind(user.id, item.id, i / CHUNK_SIZE, JSON.stringify(words.slice(i, i + CHUNK_SIZE))));
+      }
+    }
   }
 
   if (body.config && body.config.data) {

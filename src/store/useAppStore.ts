@@ -57,6 +57,7 @@ interface AppState {
   userBooks: UserBook[]
 
   init: () => Promise<void>
+  refreshCatalog: () => Promise<void>
   /** 导入一个自制词库，导入后自动出现在首页词书列表里。userId 自动取当前账号 */
   importBook: (
     input: Omit<UserBook, 'createdAt' | 'updatedAt' | 'userId'>,
@@ -318,6 +319,18 @@ export const useAppStore = create<AppState>((set, get) => ({
     const next = { ...cur, ...patch }
     await repo.putConfig(next)
     set({ config: next })
+  },
+
+  /**
+   * 只重算词书目录，不动正在进行的会话。
+   * 同步从别的设备拉到新词库后要调它 —— 走 init 会打断孩子正在做的题。
+   */
+  async refreshCatalog() {
+    const [builtin, userBooks] = await Promise.all([
+      loadCatalog(),
+      repo.listUserBooks(getUserId()),
+    ])
+    set({ userBooks, catalog: mergeCatalog(builtin, userBooks) })
   },
 
   async importBook(input) {

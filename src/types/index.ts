@@ -97,6 +97,12 @@ export interface UserBook {
   words: WordEntry[]
   createdAt: number
   updatedAt: number
+  /**
+   * 墓碑。删除时不清记录，而是打这个标记并把 words 清空 ——
+   * 这样别的设备同步时才知道「这本被删了」，否则删掉的动作传不出去，
+   * 换台设备它又冒出来了。界面上永远不显示墓碑。
+   */
+  deleted?: boolean
 }
 
 /** 四个技能维度的掌握度，0-100 */
