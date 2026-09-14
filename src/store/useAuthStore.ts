@@ -147,8 +147,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (remote.config?.data) {
         const incoming = remote.config.data as EngineConfig
         const local = await repo.getConfig(userId)
-        if (!local || (remote.config.updatedAt ?? 0) > 0) {
-          await repo.putConfig({ ...incoming, userId })
+        // 按 updatedAt 比，跟卡片/打卡一个规则。
+        // 原来是 `(remote.config.updatedAt ?? 0) > 0` —— 只要云端有配置就无条件
+        // 覆盖本地，等于每次同步把用户在本地改的设置（词书、每天新词数、口音）
+        // 冲掉，换回云端的旧值
+        if (!local || (remote.config.updatedAt ?? 0) > (local.updatedAt ?? 0)) {
+          await repo.putConfig({
+            ...incoming,
+            userId,
+            updatedAt: remote.config.updatedAt ?? Date.now(),
+          })
         }
       }
 
@@ -179,8 +187,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           data: c,
           updatedAt: c.updatedAt ?? 0,
         })),
+        // 用配置自己的 updatedAt，不能用 Date.now() ——
+        // 否则每次同步都声称自己是最新，会把云端真正新的设置盖掉。
+        // 本地真改过的话 setConfig 已经刷新过它了
         config: localConfig
-          ? { data: localConfig, updatedAt: Date.now() }
+          ? { data: localConfig, updatedAt: localConfig.updatedAt ?? Date.now() }
           : null,
       })
 

@@ -150,5 +150,6 @@ export function defaultConfig(userId = 'local'): EngineConfig {
     accent: 'uk',
     hiddenBooks: [],
     masteryThreshold: 80,
+    updatedAt: Date.now(),
   }
 }

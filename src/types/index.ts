@@ -215,4 +215,10 @@ export interface EngineConfig {
   hiddenBooks: string[]
   /** 目标：真正记住 = 四维都达标 */
   masteryThreshold: number
+  /**
+   * 同步冲突裁决的唯一依据（last-write-wins）。
+   * setConfig 每次都会刷新它 —— 不刷的话本地改完永远是旧时间戳，
+   * 推上去云端不收、拉下来又被云端旧配置盖掉。
+   */
+  updatedAt: number
 }

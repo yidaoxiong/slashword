@@ -43,6 +43,28 @@ class WordDatabase extends Dexie {
             if (!b.userId) b.userId = 'local'
           }),
       )
+    // v4：清理历史重复打卡。
+    // 以前 putCheckin 每次都插新行，同一个「用户+日期」攒了好几条，
+    // 读的时候只取第一条（往往是最早那条未完成的）。这里每个日期只留
+    // 最新的一条 —— completed=true 优先，其次 updatedAt 最大。
+    this.version(4).upgrade(async (tx) => {
+      const table = tx.table('checkins')
+      const all = (await table.toArray()) as (CheckinRecord & { id: number })[]
+      const byKey = new Map<string, (CheckinRecord & { id: number })[]>()
+      for (const r of all) {
+        const k = `${r.userId}:${r.date}`
+        if (!byKey.has(k)) byKey.set(k, [])
+        byKey.get(k)!.push(r)
+      }
+      for (const rows of byKey.values()) {
+        if (rows.length <= 1) continue
+        rows.sort((a, b) => {
+          if (a.completed !== b.completed) return a.completed ? -1 : 1
+          return (b.updatedAt ?? 0) - (a.updatedAt ?? 0)
+        })
+        await table.bulkDelete(rows.slice(1).map((r) => r.id))
+      }
+    })
   }
 }
 
@@ -126,8 +148,26 @@ export class DexieRepository implements Repository {
     return db.checkins.where('[userId+date]').equals([userId, date]).first()
   }
 
-  putCheckin(record: CheckinRecord) {
-    return db.checkins.put(record).then(() => undefined)
+  /**
+   * 按「用户 + 日期」upsert。
+   *
+   * 不能裸 put：CheckinRecord 没有 id 字段、主键是 ++id 自增，
+   * 裸 put 等于每次都插一条新的。于是「开始学习」写一条 completed=false、
+   * 「学完打卡」又写一条 completed=true，而 getCheckin 用 .first() 取的是
+   * 最早那条 —— 打卡明明记下来了，刷新后又变成没完成。
+   */
+  async putCheckin(record: CheckinRecord): Promise<void> {
+    await db.transaction('rw', db.checkins, async () => {
+      const existing = await db.checkins
+        .where('[userId+date]')
+        .equals([record.userId, record.date])
+        .first()
+      if (existing) {
+        await db.checkins.update(existing.id as number, record)
+      } else {
+        await db.checkins.add(record)
+      }
+    })
   }
 
   listCheckins(userId: string) {

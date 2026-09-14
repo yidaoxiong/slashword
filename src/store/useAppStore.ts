@@ -153,7 +153,14 @@ export const useAppStore = create<AppState>((set, get) => ({
       } else {
         // 老配置用默认值补齐新字段（hiddenBooks 等），已有的一律保留。
         // 无条件跑而不是判断某个字段在不在 —— 以前那样判断，加第二个新字段时又会漏
-        config = { ...defaultConfig(userId), ...config, userId }
+        // updatedAt 只在缺失时补：老配置没有这个字段，用默认值填会让它
+        // 一启动就变成"最新"，下次同步就把云端真正新的配置盖掉
+        config = {
+          ...defaultConfig(userId),
+          ...config,
+          userId,
+          updatedAt: config.updatedAt ?? Date.now(),
+        }
         await repo.putConfig(config)
       }
       await loadBook(config.activeBook, isCustomBook(get().catalog, config.activeBook))
@@ -316,7 +323,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   async setConfig(patch) {
     const cur = get().config
     if (!cur) return
-    const next = { ...cur, ...patch }
+    // 必须刷新 updatedAt：同步时它是 last-write-wins 的唯一依据。
+    // 不改的话本地改完永远是旧时间戳，推上去云端不收、拉下来又被云端盖掉
+    const next = { ...cur, ...patch, updatedAt: Date.now() }
     await repo.putConfig(next)
     set({ config: next })
   },
