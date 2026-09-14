@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
+import { nextMilestone } from '../core/reward'
 
 export function DonePage() {
-  const { checkin, streak, queue, addMore } = useAppStore()
+  const { checkin, streak, reward, queue, addMore } = useAppStore()
   const [adding, setAdding] = useState(false)
 
   const minutes = Math.max(1, Math.round((checkin?.durationSec ?? 0) / 60))
@@ -29,6 +30,26 @@ export function DonePage() {
         <Row label="今日新学" value={`${queue.filter((q) => q.isNew).length} 个`} />
         <Row label="今日复习" value={`${queue.filter((q) => !q.isNew).length} 个`} />
         <Row label="用时" value={`约 ${minutes} 分钟`} />
+        <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
+          <span className="text-[13px] text-neutral-500">今日奖金</span>
+          <span className="flex items-baseline gap-1.5">
+            {reward.today > 0 ? (
+              <>
+                <span className="pop text-[20px] font-semibold text-[#ff8f1f]">
+                  +¥{reward.today}
+                </span>
+                <span className="text-[12px] text-neutral-400">
+                  累计 ¥{reward.total}
+                </span>
+              </>
+            ) : (
+              <span className="text-[13px] text-neutral-400">
+                再 {nextMilestone(reward.day).daysLeft} 天可得 ¥
+                {nextMilestone(reward.day).amount}
+              </span>
+            )}
+          </span>
+        </div>
       </div>
 
       <div className="mt-6 w-full">

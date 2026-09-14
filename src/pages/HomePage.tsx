@@ -10,6 +10,7 @@ export function HomePage() {
   const {
     config,
     streak,
+    reward,
     checkin,
     catalog,
     entries,
@@ -45,10 +46,21 @@ export function HomePage() {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-[26px] font-medium leading-none text-brand-500">
-            {streak}
+          <div className="flex items-baseline justify-end gap-1">
+            <span className="text-[26px] font-medium leading-none text-brand-500">
+              {streak}
+            </span>
+            {/* 奖金比连续天数更抓眼球：目标感要看得见 */}
+            <span className="pop rounded-md bg-[#ff8f1f] px-1.5 py-0.5 text-[15px] font-semibold leading-none text-white shadow-sm">
+              ¥{reward.total}
+            </span>
           </div>
-          <div className="mt-1 text-[11px] text-neutral-400">连续天数</div>
+          <div className="mt-1 text-[11px] text-neutral-400">
+            连续天数 · 奖金
+            {reward.today > 0 && (
+              <span className="ml-1 text-[#ff8f1f]">今日 +¥{reward.today}</span>
+            )}
+          </div>
         </div>
       </header>
 

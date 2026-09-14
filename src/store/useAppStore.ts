@@ -22,6 +22,7 @@ import {
   applySkillResult,
   finalizeReview,
 } from '../core/scheduler'
+import { computeRewards, dailyReward, type RewardSummary } from '../core/reward'
 import { getUserId } from './useAuthStore'
 
 const repo = getRepo()
@@ -46,6 +47,8 @@ interface AppState {
   session: SessionState | null
   checkin: CheckinRecord | null
   streak: number
+  /** 奖金：累计总额 / 今天这一笔 / 当前连续第几天 */
+  reward: RewardSummary
   totalWords: number
   bookLoaded: boolean
   error: string | null
@@ -129,6 +132,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   session: null,
   checkin: null,
   streak: 0,
+  reward: { total: 0, today: 0, perDay: new Map(), day: 0 },
   totalWords: 0,
   bookLoaded: false,
   error: null,
@@ -166,12 +170,15 @@ export const useAppStore = create<AppState>((set, get) => ({
       await loadBook(config.activeBook, isCustomBook(get().catalog, config.activeBook))
       const checkin = await repo.getCheckin(userId, todayKey())
       const streak = await computeStreak(userId)
+      // 奖金按打卡记录整体算，历史记录自动回填 —— 不用洗数据
+      const reward = computeRewards(await repo.listCheckins(userId))
       const entries = await repo.listEntries(config.activeBook)
       set({
         phase: 'idle',
         config,
         checkin: checkin ?? null,
         streak,
+        reward,
         totalWords: entries.length,
         entries,
         bookLoaded: true,
@@ -271,11 +278,15 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (nextItemIdx >= queue.length) {
       const rec = state.checkin
       if (rec) {
+        // 今天的奖金：连到第几天就拿多少（规则见 core/reward.ts）
+        const allCheckins = await repo.listCheckins(getUserId())
+        const rewardYuan = dailyReward(computeRewards(allCheckins).day)
         const done: CheckinRecord = {
           ...rec,
           completed: true,
           completedAt: now,
           durationSec: Math.round((now - session.startedAt) / 1000),
+          rewardYuan,
           // 必须刷新：同步靠 updatedAt 判断谁新（last-write-wins）。
           // 不刷的话它还是"开始学习"那一刻的时间戳 ——
           // 万一那条 completed=false 已经推上云端，这次推送会因为
@@ -286,10 +297,13 @@ export const useAppStore = create<AppState>((set, get) => ({
         await repo.putCheckin(done)
         set({ checkin: done })
       }
+      // 打卡刚落地，奖金和连续天数一起重算，右上角立刻跳
+      const records = await repo.listCheckins(getUserId())
       set({
         phase: 'done',
         card: finalized.card,
         streak: await computeStreak(getUserId()),
+        reward: computeRewards(records),
       })
       return
     }

@@ -169,6 +169,11 @@ export interface CheckinRecord {
   durationSec: number
   completed: boolean
   completedAt: number | null
+  /**
+   * 当天打卡发出去的奖金（元）。存档用 —— 真正算钱在 core/reward.ts，
+   * 规则改了可以整体重算，这个字段只是留个当时的凭据。
+   */
+  rewardYuan?: number
   updatedAt: number
 }
 
