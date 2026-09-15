@@ -8,6 +8,7 @@ import { speak } from '../lib/speech'
 import { BookImporter } from '../components/BookImporter'
 import { ACCENTS, langOf, resolveAccent } from '../core/lang'
 import { visibleBooks } from '../core/books'
+import { SiteFooter } from '../components/SiteFooter'
 
 const repo = getRepo()
 
@@ -300,6 +301,10 @@ export function ParentPage() {
 
       <div className="mt-4 text-[11px] leading-relaxed text-neutral-300">
         当前词书 {entries.length} 条 · 数据存在本机浏览器，不上传
+      </div>
+
+      <div className="mt-6">
+        <SiteFooter />
       </div>
     </div>
   )

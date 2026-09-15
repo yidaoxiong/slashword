@@ -1,4 +1,4 @@
-import type { EngineConfig, QueueItem, WordEntry } from '../types'
+import type { Card, EngineConfig, QueueItem, WordEntry } from '../types'
 import { createCard } from './scheduler'
 import type { Repository } from '../storage'
 
@@ -15,6 +15,27 @@ export function wordKeyOf(word: string, cn: string): string {
     h = (h * 31 + cn.charCodeAt(i)) >>> 0
   }
   return `${w}#${h.toString(36)}`
+}
+
+/**
+ * 从当前词表里找回一张卡片对应的那条词。
+ *
+ * 词条 id 是位置编号（g5a-0001、g5a-0002…），词表清洗一次就整体重排 ——
+ * 卡片里存下来的 entryIds[0] 会指向另一个词，甚至指向已经不存在的编号。
+ * 直接拿它去 getEntry，轻则显示成别的词，重则查不到、整页变空白。
+ *
+ * 所以不信存下来的 id，用 wordKey 反查。wordKey = 单词 + 释义指纹，
+ * 只要这个词还在表里就对得上，跟编号怎么排没关系。
+ */
+export function resolveEntry(
+  entries: WordEntry[],
+  card: Card,
+): WordEntry | undefined {
+  const byKey = entries.find((e) => wordKeyOf(e.word, e.cn) === card.wordKey)
+  if (byKey) return byKey
+  // 释义被改过 → wordKey 变了。退一步只认单词本身，总比显示成别的词强
+  const w = card.display.trim().toLowerCase()
+  return entries.find((e) => e.word.trim().toLowerCase() === w)
 }
 
 export function sortEntries(entries: WordEntry[]): WordEntry[] {
@@ -38,19 +59,34 @@ export async function buildDailyQueue(
   now: number,
 ): Promise<QueueItem[]> {
   const items: QueueItem[] = []
+  const entries = await repo.listEntries(config.activeBook)
 
   // 1) 到期的复习卡 —— 只取当前词书的，否则学厚海时会混进五年级的复习词
   const allDue = await repo.listDueCards(config.userId, now, config.dailyReviewLimit * 3)
   const dueSorted = allDue
     .filter((c) => c.book === config.activeBook)
     .sort((a, b) => a.due - b.due)
-    .slice(0, config.dailyReviewLimit)
   for (const card of dueSorted) {
-    const entryId = card.entryIds[0]
-    if (!entryId) continue
+    if (items.length >= config.dailyReviewLimit) break
+    const entry = resolveEntry(entries, card)
+    // 词表里已经找不到这个词了（改过词表）—— 跳过，而且不能让白跳的卡
+    // 占掉复习名额，所以限额判断放在这里而不是提前 slice
+    if (!entry) continue
+    // 顺手把卡片上过期的位置编号改回来，之后就不用每次都反查了
+    if (card.entryIds[0] !== entry.id) {
+      await repo.putCard({
+        ...card,
+        entryIds: [entry.id],
+        unit: entry.unit,
+        unitOrder: entry.unitOrder,
+        lesson: entry.lesson,
+        lessonOrder: entry.lessonOrder,
+        updatedAt: now,
+      })
+    }
     items.push({
       cardId: card.id,
-      entryId,
+      entryId: entry.id,
       word: card.display,
       isNew: false,
     })
@@ -59,7 +95,6 @@ export async function buildDailyQueue(
   // 2) 新词：取已解锁单元中还没建过卡的前 N 个
   const newNeeded = config.dailyNewLimit
   if (newNeeded > 0) {
-    const entries = await repo.listEntries(config.activeBook)
     const allowed = unlockedUnitSet(entries, config)
     const candidates = sortEntries(entries.filter((e) => allowed.has(e.unitOrder)))
 

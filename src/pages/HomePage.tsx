@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore'
 import { currentUnitLabel, unlockedCount, unitsOf } from '../core/queue'
 import { LANG_LABEL, langOf } from '../core/lang'
 import { visibleBooks } from '../core/books'
+import { SiteFooter } from '../components/SiteFooter'
 
 const STEP = 5
 
@@ -205,8 +206,11 @@ export function HomePage() {
         </div>
       )}
 
-      <div className="mt-auto pt-8 text-center text-[11px] text-neutral-300">
-        每天完成全部训练环节才算打卡成功
+      <div className="mt-auto space-y-4 pt-6 text-center">
+        <div className="text-[11px] text-neutral-300">
+          每天完成全部训练环节才算打卡成功
+        </div>
+        <SiteFooter />
       </div>
     </div>
   )

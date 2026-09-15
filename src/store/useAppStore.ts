@@ -13,6 +13,7 @@ import {
   autoUnlock,
   buildDailyQueue,
   defaultConfig,
+  resolveEntry,
   todayKey,
 } from '../core/queue'
 import {
@@ -566,32 +567,51 @@ export const useAppStore = create<AppState>((set, get) => ({
       const skills = config.enabledSkills
       const avgOf = (c: Card) =>
         skills.reduce((a, s) => a + c.mastery[s], 0) / skills.length
-      added = (await repo.listCards(userId))
-        .filter((c) => c.reps > 0 && c.entryIds.length > 0)
+      // 词条必须按 wordKey 反查当前词表，不能拿卡片里存的 entryIds[0] ——
+      // 那是位置编号，词表一清洗就指向别的词 / 空号，loadItem 直接装不上
+      const entries = get().entries
+      const practiced = (await repo.listCards(userId))
+        .filter((c) => c.reps > 0 && c.book === config.activeBook)
         .sort((a, b) => {
           const pa = have.has(a.id) ? 1 : 0
           const pb = have.has(b.id) ? 1 : 0
           return pa - pb || avgOf(a) - avgOf(b)
         })
-        .slice(0, count)
-        .map((c) => ({
-          cardId: c.id,
-          entryId: c.entryIds[0],
-          word: c.display,
-          isNew: false,
-        }))
+      const resolved: QueueItem[] = []
+      for (const c of practiced) {
+        if (resolved.length >= count) break
+        const e = resolveEntry(entries, c)
+        if (!e) continue
+        // 顺手把过期的位置编号修回去，以后不用每次反查
+        if (c.entryIds[0] !== e.id) {
+          await repo.putCard({
+            ...c,
+            entryIds: [e.id],
+            unit: e.unit,
+            unitOrder: e.unitOrder,
+            lesson: e.lesson,
+            lessonOrder: e.lessonOrder,
+            updatedAt: Date.now(),
+          })
+        }
+        resolved.push({ cardId: c.id, entryId: e.id, word: c.display, isNew: false })
+      }
+      added = resolved
+      if (added.length === 0) {
+        return {
+          added: 0,
+          reason:
+            practiced.length === 0
+              ? '这本词书还没练过词，先学几天再来做薄弱专攻'
+              : '薄弱词都没能和词表对上，先去学几个新词再回来',
+        }
+      }
     }
 
     // 必须给个说法：以前直接 return 0，用户点了按钮什么反应都没有，
-    // 只会觉得是 app 坏了
+    // 只会觉得是 app 坏了。（薄弱词的"加不上"在上面已经单独说过了）
     if (added.length === 0) {
-      return {
-        added: 0,
-        reason:
-          kind === 'new'
-            ? '这本词库已经学完了，没有更多新词'
-            : '还没有学过足够多的词，先学几天再来做薄弱专攻',
-      }
+      return { added: 0, reason: '这本词库已经学完了，没有更多新词' }
     }
 
     const nextQueue = [...queue, ...added]
