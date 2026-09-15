@@ -1,19 +1,33 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useAppStore } from '../store/useAppStore'
-import type { UserBook } from '../types'
+import type { UserBook, WordDraft, WordEntry } from '../types'
+import { EMPTY_WORD_DRAFT } from '../types'
 
 /**
- * 自制词库的内容管理：挑出不要的词条删掉。
+ * 自制词库的内容管理：改词条、加词条、删词条。
  *
- * 只做删除 —— 加词和改释义用 Excel 改完重新导入更顺手，
- * 在手机上一个个填反而难用。
+ * 一开始只做了删除（改词用 Excel 重导更顺手），但实际用起来是：
+ * 发现一个词填错了，只想就地改两个字的释义，为它重新导一遍表太重。
  */
-export function BookEditor({ book, onClose }: { book: UserBook; onClose: () => void }) {
-  const { removeWordsFromBook, undoRemoveWords, lastRemovedWords } = useAppStore()
+export function BookEditor({
+  book,
+  onClose,
+}: {
+  book: UserBook
+  onClose: () => void
+}) {
+  const {
+    removeWordsFromBook,
+    undoRemoveWords,
+    lastRemovedWords,
+    updateWordInBook,
+    addWordToBook,
+  } = useAppStore()
   const [picked, setPicked] = useState<Set<string>>(new Set())
   const [query, setQuery] = useState('')
   const [confirming, setConfirming] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [form, setForm] = useState<FormState | null>(null)
 
   const words = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -43,15 +57,64 @@ export function BookEditor({ book, onClose }: { book: UserBook; onClose: () => v
     setConfirming(false)
   }
 
+  // 表单是整个页面切过去的，不塞在小卡片里 —— 手机上塞不下
+  if (form) {
+    return (
+      <Shell key="form">
+        <WordForm
+          title={form.mode === 'new' ? '新增词条' : '改词条'}
+          draft={form.draft}
+          error={form.error}
+          busy={busy}
+          units={[...new Set(book.words.map((w) => w.unit).filter(Boolean))]}
+          onChange={(draft) => setForm({ ...form, draft, error: '' })}
+          onCancel={() => setForm(null)}
+          onSave={async () => {
+            const word = form.draft.word.trim()
+            const cn = form.draft.cn.trim()
+            if (!word) return setForm({ ...form, error: '得填单词' })
+            if (!cn)
+              return setForm({
+                ...form,
+                error: '得填中文含义 —— 卡片上是看着中文拼单词的',
+              })
+            // 同一个词 + 同样的释义 = 重复。词同释义不同是多义词，允许
+            const dup = book.words.find(
+              (w) =>
+                w.id !== form.entryId &&
+                w.word.toLowerCase() === word.toLowerCase() &&
+                w.cn.trim() === cn,
+            )
+            if (dup)
+              return setForm({
+                ...form,
+                error: `已经有「${word}」配这个释义了，改个不同的意思再存`,
+              })
+
+            setBusy(true)
+            try {
+              if (form.mode === 'new') await addWordToBook(book.id, form.draft)
+              else if (form.entryId)
+                await updateWordInBook(book.id, form.entryId, form.draft)
+              setForm(null)
+            } finally {
+              setBusy(false)
+            }
+          }}
+        />
+      </Shell>
+    )
+  }
+
   return (
-    <div className="mx-auto min-h-full w-full max-w-md sm:max-w-lg px-5 py-6">
+    <Shell key="list">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-[16px] font-medium text-neutral-900">
             {book.name}
           </div>
           <div className="mt-0.5 text-[12px] text-neutral-400">
-            共 {book.words.length} 词，删掉不想要的
+            共 {book.words.length} 词 · 点词条可改，左边勾选可删
           </div>
         </div>
         <button
@@ -72,6 +135,25 @@ export function BookEditor({ book, onClose }: { book: UserBook; onClose: () => v
           撤销上一次删除（恢复成 {lastRemovedWords.words.length} 词）
         </button>
       )}
+
+      <button
+        type="button"
+        onClick={() =>
+          setForm({
+            mode: 'new',
+            entryId: null,
+            // 单元默认填最后一条的 —— 通常是往正在学的单元里加词
+            draft: {
+              ...EMPTY_WORD_DRAFT,
+              unit: book.words[book.words.length - 1]?.unit ?? '',
+            },
+            error: '',
+          })
+        }
+        className="mt-3 h-10 w-full rounded-lg bg-brand-500 text-[13px] text-white active:bg-brand-600"
+      >
+        + 新增词条
+      </button>
 
       <input
         value={query}
@@ -97,30 +179,46 @@ export function BookEditor({ book, onClose }: { book: UserBook; onClose: () => v
         {words.map((w) => {
           const on = picked.has(w.id)
           return (
-            <button
-              key={w.id}
-              type="button"
-              onClick={() => toggle(w.id)}
-              className={`flex w-full items-center gap-3 px-3 py-2.5 text-left ${
-                on ? 'bg-bad-soft' : ''
-              }`}
-            >
-              <span
-                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
-                  on ? 'border-[#a32d2d] bg-[#a32d2d] text-white' : 'border-neutral-300'
-                }`}
+            <div key={w.id} className={`flex items-center ${on ? 'bg-bad-soft' : ''}`}>
+              <button
+                type="button"
+                onClick={() => toggle(w.id)}
+                aria-label={on ? '取消选择' : '选择删除'}
+                className="flex h-full shrink-0 items-center px-3 py-3"
               >
-                {on && <span className="text-[10px] leading-none">✓</span>}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] text-neutral-900">
-                  {w.word}
+                <span
+                  className={`flex h-4 w-4 items-center justify-center rounded border ${
+                    on
+                      ? 'border-[#a32d2d] bg-[#a32d2d] text-white'
+                      : 'border-neutral-300'
+                  }`}
+                >
+                  {on && <span className="text-[10px] leading-none">✓</span>}
                 </span>
-                <span className="block truncate text-[11px] text-neutral-400">
-                  {w.cn}
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setForm({
+                    mode: 'edit',
+                    entryId: w.id,
+                    draft: draftOf(w),
+                    error: '',
+                  })
+                }
+                className="flex min-w-0 flex-1 items-center gap-2 py-2.5 pr-3 text-left"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[14px] text-neutral-900">
+                    {w.word}
+                  </span>
+                  <span className="block truncate text-[11px] text-neutral-400">
+                    {w.cn || '（缺中文）'}
+                  </span>
                 </span>
-              </span>
-            </button>
+                <span className="shrink-0 text-[13px] text-neutral-300">›</span>
+              </button>
+            </div>
           )
         })}
         {words.length === 0 && (
@@ -169,8 +267,228 @@ export function BookEditor({ book, onClose }: { book: UserBook; onClose: () => v
       )}
 
       <div className="mt-4 text-[11px] leading-relaxed text-neutral-300">
-        删完记得在账号页同步一次，别的设备才会跟着更新
+        改完记得在账号页同步一次，别的设备才会跟着更新。
+        改了单词或释义，已经背过的进度会跟着这个词走，不会丢
+      </div>
+    </Shell>
+  )
+}
+
+/**
+ * 编辑器是独立的一整屏，不是嵌在家长页里的一张卡。
+ * 之前它是顶着「词库管理」那张卡的位置渲染的 —— 家长页滚到下面点进来，
+ * 表单就出现在半页腰上，标题和「完成」都在屏幕外，看着像页面卡住了。
+ * 自带滚动容器，进出都从顶部开始，不受上级滚动位置影响。
+ */
+function Shell({ children }: { children: ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[#f6f5fb]">
+      <div className="mx-auto min-h-full w-full max-w-md px-5 py-6 pb-16 sm:max-w-lg">
+        {children}
       </div>
     </div>
+  )
+}
+
+interface FormState {
+  mode: 'edit' | 'new'
+  entryId: string | null
+  draft: WordDraft
+  error: string
+}
+
+function draftOf(w: WordEntry): WordDraft {
+  return {
+    word: w.word,
+    cn: w.cn,
+    phonetic: w.phoneticUk || w.phoneticUs,
+    pos: w.pos,
+    exampleEn: w.exampleEn,
+    exampleCn: w.exampleCn,
+    unit: w.unit,
+    lesson: w.lesson,
+    category: w.category,
+  }
+}
+
+function WordForm({
+  title,
+  draft,
+  error,
+  busy,
+  units,
+  onChange,
+  onSave,
+  onCancel,
+}: {
+  title: string
+  draft: WordDraft
+  error: string
+  busy: boolean
+  units: string[]
+  onChange: (d: WordDraft) => void
+  onSave: () => void | Promise<void>
+  onCancel: () => void
+}) {
+  const set = (patch: Partial<WordDraft>) => onChange({ ...draft, ...patch })
+
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <div className="text-[16px] font-medium text-neutral-900">{title}</div>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="text-[13px] text-neutral-400"
+        >
+          取消
+        </button>
+      </div>
+
+      <div className="mt-4 space-y-3">
+        <Field
+          label="单词"
+          required
+          value={draft.word}
+          onChange={(v) => set({ word: v })}
+          placeholder="cat"
+        />
+        <Field
+          label="中文含义"
+          required
+          value={draft.cn}
+          onChange={(v) => set({ cn: v })}
+          placeholder="猫"
+        />
+        <Field
+          label="音标"
+          value={draft.phonetic}
+          onChange={(v) => set({ phonetic: v })}
+          placeholder="/kæt/"
+        />
+        <Field
+          label="词性"
+          value={draft.pos}
+          onChange={(v) => set({ pos: v })}
+          placeholder="n."
+        />
+        <Field
+          label="单元"
+          value={draft.unit}
+          onChange={(v) => set({ unit: v })}
+          placeholder="Unit 1"
+          options={units}
+        />
+        <Field
+          label="课文"
+          value={draft.lesson}
+          onChange={(v) => set({ lesson: v })}
+          placeholder="Lesson 2"
+        />
+        <Field
+          label="词汇类别"
+          value={draft.category}
+          onChange={(v) => set({ category: v })}
+          placeholder="动物"
+        />
+        <Field
+          label="英文例句"
+          value={draft.exampleEn}
+          onChange={(v) => set({ exampleEn: v })}
+          placeholder="The cat is sleeping."
+          multiline
+        />
+        <Field
+          label="例句中文"
+          value={draft.exampleCn}
+          onChange={(v) => set({ exampleCn: v })}
+          placeholder="那只猫在睡觉。"
+          multiline
+        />
+      </div>
+
+      {error && (
+        <div className="mt-3 rounded-lg bg-bad-soft px-3 py-2 text-[12px] leading-relaxed text-[#a32d2d]">
+          {error}
+        </div>
+      )}
+
+      <div className="mt-5 flex gap-2">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void onSave()}
+          className="h-11 flex-1 rounded-xl bg-brand-500 text-[14px] text-white active:bg-brand-600 disabled:opacity-50"
+        >
+          {busy ? '保存中…' : '保存'}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="h-11 rounded-xl bg-white px-5 text-[14px] text-neutral-600 ring-1 ring-black/5"
+        >
+          取消
+        </button>
+      </div>
+
+      <div className="mt-4 text-[11px] leading-relaxed text-neutral-300">
+        单元填一个新的名字就会多出一个单元，排在最后面。
+        例句留空也能学，只是少一个环节
+      </div>
+    </>
+  )
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+  required,
+  multiline,
+  options,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
+  required?: boolean
+  multiline?: boolean
+  options?: string[]
+}) {
+  const cls =
+    'mt-1 w-full rounded-lg bg-white px-3 text-[14px] ring-1 ring-black/5 outline-none focus:ring-brand-400'
+  return (
+    <label className="block">
+      <span className="text-[12px] text-neutral-500">
+        {label}
+        {required && <span className="ml-0.5 text-[#a32d2d]">*</span>}
+      </span>
+      {multiline ? (
+        <textarea
+          value={value}
+          rows={2}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={`${cls} py-2`}
+        />
+      ) : (
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          // 单元给个候选：手打容易拼出"Unit1"和"Unit 1"两个单元
+          list={options?.length ? `opts-${label}` : undefined}
+          className={`${cls} h-10`}
+        />
+      )}
+      {options && options.length > 0 && (
+        <datalist id={`opts-${label}`}>
+          {options.map((o) => (
+            <option key={o} value={o} />
+          ))}
+        </datalist>
+      )}
+    </label>
   )
 }

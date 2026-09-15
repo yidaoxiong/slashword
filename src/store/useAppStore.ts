@@ -6,6 +6,7 @@ import type {
   QueueItem,
   Skill,
   UserBook,
+  WordDraft,
   WordEntry,
 } from '../types'
 import { getRepo } from '../storage'
@@ -15,6 +16,7 @@ import {
   defaultConfig,
   resolveEntry,
   todayKey,
+  wordKeyOf,
 } from '../core/queue'
 import {
   isCustomBook,
@@ -73,6 +75,18 @@ interface AppState {
   removeWordsFromBook: (bookId: string, wordIds: string[]) => Promise<void>
   /** 撤回上一次删除，把整本词库恢复成删之前的样子 */
   undoRemoveWords: () => Promise<void>
+  /**
+   * 改自制词库里的一个词条。
+   * 单词 / 中文改了会连带把已学卡片的 wordKey 也改掉 ——
+   * 不然改完这个词就对不上卡片，从此再也不会出现在复习里。
+   */
+  updateWordInBook: (
+    bookId: string,
+    entryId: string,
+    draft: WordDraft,
+  ) => Promise<void>
+  /** 往自制词库里加一个词条 */
+  addWordToBook: (bookId: string, draft: WordDraft) => Promise<void>
   /** 导入一个自制词库，导入后自动出现在首页词书列表里。userId 自动取当前账号 */
   importBook: (
     input: Omit<UserBook, 'createdAt' | 'updatedAt' | 'userId'>,
@@ -488,6 +502,51 @@ export const useAppStore = create<AppState>((set, get) => ({
     })
   },
 
+  async updateWordInBook(bookId, entryId, draft) {
+    const book = await repo.getUserBook(bookId)
+    if (!book) return
+    const idx = book.words.findIndex((w) => w.id === entryId)
+    if (idx < 0) return
+    const from = book.words[idx]
+    const to = applyDraft(from.id, from, draft, book.words)
+    const words = [...book.words]
+    words[idx] = to
+    await commitWords(bookId, words, [{ from, to }])
+  },
+
+  async addWordToBook(bookId, draft) {
+    const book = await repo.getUserBook(bookId)
+    if (!book) return
+    // 新词条的固定字段照着同本词库抄，语言 / 年级 / 来源不会跑偏
+    const seed = book.words[book.words.length - 1] ?? book.words[0]
+    const template: WordEntry = {
+      id: '',
+      word: '',
+      cn: '',
+      note: '',
+      phoneticUk: '',
+      phoneticUs: '',
+      lang: seed?.lang ?? book.lang,
+      pos: '',
+      exampleEn: '',
+      exampleCn: '',
+      book: bookId,
+      grade: seed?.grade ?? book.grade,
+      source: seed?.source ?? book.source,
+      unit: '',
+      unitOrder: seed?.unitOrder ?? 1,
+      unitTitle: seed?.unitTitle ?? '',
+      lesson: '',
+      lessonOrder: seed?.lessonOrder ?? 0,
+      lessonTitle: seed?.lessonTitle ?? '',
+      category: '',
+      phonics: [],
+      definitionEn: '',
+    }
+    const entry = applyDraft(newEntryId(bookId, book.words), template, draft, book.words)
+    await commitWords(bookId, [...book.words, entry], [])
+  },
+
   async undoRemoveWords() {
     const snap = get().lastRemovedWords
     if (!snap) return
@@ -679,6 +738,146 @@ async function applyAutoUnlock(
  * 于是 LearnPage 拿不到 entry 直接渲染成 null —— 用户看到的就是
  * 只剩顶部那条登录条的空白页，还以为点了按钮跳到登录去了。
  */
+/** 新词条 id：不能跟已有的撞上，用时间戳 + 随机，和导入时的四位编号区分开 */
+function newEntryId(bookId: string, words: WordEntry[]): string {
+  const taken = new Set(words.map((w) => w.id))
+  for (;;) {
+    const id = `${bookId}-x${Date.now().toString(36)}${Math.random()
+      .toString(36)
+      .slice(2, 5)}`
+    if (!taken.has(id)) return id
+  }
+}
+
+function firstNum(s: string, fallback: number): number {
+  const m = s.match(/\d+/)
+  return m ? Number(m[0]) : fallback
+}
+
+/**
+ * 把表单内容写进词条。
+ *
+ * 单元 / 课文的序号要跟着当前词库重算，不然会出怪事：
+ * 填一个全新的单元名，如果只是留空序号，这个词会排到第一单元前面去。
+ * 规则：填的是已有单元 → 用那个单元的序号；是新单元名 → 排到最后。
+ */
+function applyDraft(
+  id: string,
+  base: WordEntry,
+  draft: WordDraft,
+  allWords: WordEntry[],
+): WordEntry {
+  const unit = (draft.unit ?? '').trim()
+  const lesson = (draft.lesson ?? '').trim()
+
+  let unitOrder = base.unitOrder || 1
+  if (unit !== base.unit) {
+    if (!unit) {
+      unitOrder = base.unitOrder || 1
+    } else {
+      const same = allWords.find((w) => w.unit === unit && w.unitOrder < 999)
+      unitOrder = same
+        ? same.unitOrder
+        : Math.max(0, ...allWords.map((w) => (w.unitOrder < 999 ? w.unitOrder : 0))) + 1
+    }
+  }
+
+  // 音标只留了一格：动过就英式美式一起写，没动就原样保留
+  // （导入进来的词库可能两套都有，不能被编辑界面悄悄抹掉一套）
+  const shown = base.phoneticUk || base.phoneticUs
+  const typed = (draft.phonetic ?? '').trim()
+  const phoneticUk = typed === shown ? base.phoneticUk : typed
+  const phoneticUs = typed === shown ? base.phoneticUs : typed
+
+  return {
+    ...base,
+    id,
+    word: (draft.word ?? '').trim(),
+    cn: (draft.cn ?? '').trim(),
+    phoneticUk,
+    phoneticUs,
+    pos: (draft.pos ?? '').trim(),
+    exampleEn: (draft.exampleEn ?? '').trim(),
+    exampleCn: (draft.exampleCn ?? '').trim(),
+    unit,
+    unitOrder,
+    lesson,
+    lessonOrder: lesson ? firstNum(lesson, 999) : base.lessonOrder,
+    category: (draft.category ?? '').trim(),
+  }
+}
+
+/**
+ * 把改好的整份词条写回词库，并收拾三个尾巴：
+ *   1. 词条表要重灌 —— 学习时读的是这张表，不重灌读到的还是旧的
+ *   2. 已学卡片的 wordKey 要跟着改 —— 卡片主键就是 userId:wordKey，
+ *      改了词不改卡片，这个词从此再也不会出现在复习里
+ *   3. 单元数变了要 clamp 解锁进度
+ */
+async function commitWords(
+  bookId: string,
+  words: WordEntry[],
+  changed: { from: WordEntry; to: WordEntry }[],
+) {
+  const book = await repo.getUserBook(bookId)
+  if (!book) return
+  const now = Date.now()
+  const units = [...new Set(words.map((w) => w.unit).filter(Boolean))].sort()
+
+  await repo.putUserBook({
+    ...book,
+    words,
+    units,
+    wordCount: words.length,
+    updatedAt: now,
+  })
+  await repo.importEntries(bookId, words)
+
+  const userId = getUserId()
+  for (const { from, to } of changed) {
+    const card = await repo.getCardByWordKey(userId, wordKeyOf(from.word, from.cn))
+    if (!card) continue
+    const key = wordKeyOf(to.word, to.cn)
+    const next: Card = {
+      ...card,
+      id: `${userId}:${key}`,
+      wordKey: key,
+      display: to.word,
+      entryIds: [to.id],
+      unit: to.unit,
+      unitOrder: to.unitOrder,
+      lesson: to.lesson,
+      lessonOrder: to.lessonOrder,
+      updatedAt: now,
+    }
+    if (next.id === card.id) {
+      await repo.putCard(next)
+    } else {
+      // 主键换了只能删旧行插新行，调度状态（下次复习时间、掌握度）原样搬过去。
+      // 复习日志里记的还是旧 wordKey —— 那是历史记录，不改写
+      await repo.deleteCards([card.id])
+      await repo.putCard(next)
+    }
+  }
+
+  const { config } = useAppStore.getState()
+  if (config) {
+    const cur = config.unitProgress[bookId] ?? 1
+    const max = Math.max(1, units.length)
+    if (cur > max) {
+      await useAppStore.getState().setConfig({
+        unitProgress: { ...config.unitProgress, [bookId]: max },
+      })
+    }
+  }
+
+  await useAppStore.getState().refreshCatalog()
+  if (useAppStore.getState().config?.activeBook === bookId) {
+    const entries = await repo.listEntries(bookId)
+    useAppStore.setState({ entries, totalWords: entries.length })
+  }
+}
+
 async function loadItem(
   index: number,
   queue: QueueItem[],

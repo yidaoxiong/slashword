@@ -60,6 +60,35 @@ export interface WordEntry {
   definitionEn: string
 }
 
+/**
+ * 自制词库里能手工编辑的那些字段。
+ * 家长页用它改词条 / 加词条 —— 不开放 id、book、unitOrder 这类内部字段。
+ */
+export interface WordDraft {
+  word: string
+  cn: string
+  /** 音标。英式美式共用一格：手工维护分两套太麻烦 */
+  phonetic: string
+  pos: string
+  exampleEn: string
+  exampleCn: string
+  unit: string
+  lesson: string
+  category: string
+}
+
+export const EMPTY_WORD_DRAFT: WordDraft = {
+  word: '',
+  cn: '',
+  phonetic: '',
+  pos: '',
+  exampleEn: '',
+  exampleCn: '',
+  unit: '',
+  lesson: '',
+  category: '',
+}
+
 export interface BookMeta {
   id: string
   name: string
