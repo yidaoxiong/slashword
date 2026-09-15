@@ -9,7 +9,12 @@ import type {
   WordEntry,
 } from '../types'
 import { getRepo } from '../storage'
-import { buildDailyQueue, defaultConfig, todayKey } from '../core/queue'
+import {
+  autoUnlock,
+  buildDailyQueue,
+  defaultConfig,
+  todayKey,
+} from '../core/queue'
 import {
   isCustomBook,
   loadCatalog,
@@ -85,9 +90,18 @@ interface AppState {
   setConfig: (patch: Partial<EngineConfig>) => Promise<void>
   /** 切换词书（今天学厚海还是五年级） */
   switchBook: (bookId: string) => Promise<void>
-  /** 临时加量：今天想多背几个，不用改每天的默认设置 */
-  addMore: (count: number, kind?: 'new' | 'weak') => Promise<number>
+  /**
+   * 临时加量：今天想多背几个，不用改每天的默认设置。
+   * 返回实际加了几个；一个都没加上时 reason 说明为什么 ——
+   * 静默返回 0 的话，用户点了按钮只会觉得 app 坏了。
+   */
+  addMore: (
+    count: number,
+    kind?: 'new' | 'weak',
+  ) => Promise<{ added: number; reason?: string }>
 }
+
+export type AddMoreResult = { added: number; reason?: string }
 
 /**
  * 每次启动都重新导入**内置**词库。
@@ -180,9 +194,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       // 奖金按打卡记录整体算，历史记录自动回填 —— 不用洗数据
       const reward = computeRewards(await repo.listCheckins(userId))
       const entries = await repo.listEntries(config.activeBook)
+      // 顺手把该解锁的单元开了：不然首页进度条会一直停在旧的单元数上
+      const unlocked = await applyAutoUnlock(config, entries)
       set({
         phase: 'idle',
-        config,
+        config: unlocked,
         checkin: checkin ?? null,
         streak,
         reward,
@@ -206,7 +222,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     const { config } = get()
     if (!config) return
     const now = Date.now()
-    const queue = await buildDailyQueue(repo, config, now)
+    // 先解锁：上一个单元学完了不推进，今天就会 0 个新词直接跳到"已完成"
+    const cfg = await applyAutoUnlock(config, get().entries)
+    const queue = await buildDailyQueue(repo, cfg, now)
 
     let checkin = await repo.getCheckin(getUserId(), todayKey(now))
     if (!checkin) {
@@ -224,11 +242,25 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
 
     if (queue.length === 0) {
-      set({ phase: 'done', queue, idx: 0, checkin, card: null, entry: null })
+      // 今天确实没词可学（整本学完 / 复习都排到以后）—— 直接算完成，
+      // 别把孩子扔在空荡荡的首页上干瞪眼
+      set({
+        phase: 'done',
+        queue,
+        idx: 0,
+        checkin: { ...checkin, completed: true, completedAt: now },
+        card: null,
+        entry: null,
+      })
+      await repo.putCheckin({ ...checkin, completed: true, completedAt: now })
+      return
+    }
+    const ok = await loadItem(0, queue, set)
+    if (!ok) {
+      set({ phase: 'idle', error: '词卡数据没准备好，请重新打开页面' })
       return
     }
     set({ phase: 'learning', queue, idx: 0, checkin })
-    await loadItem(0, queue, set)
   },
 
   async submitSkill(skill, correct, input, usedHint = false) {
@@ -507,8 +539,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   async addMore(count, kind = 'new') {
-    const { config, queue, phase, checkin } = get()
-    if (!config) return 0
+    const { config: config0, queue, phase, checkin } = get()
+    if (!config0) return { added: 0, reason: '还没有选词书' }
+
+    const userId = getUserId()
+    // 先解锁：学完一个单元后不解锁的话，新词会永远是 0，加练点了没反应
+    const config = await applyAutoUnlock(config0, get().entries)
 
     const have = new Set(queue.map((q) => q.cardId))
     let added: QueueItem[] = []
@@ -524,13 +560,19 @@ export const useAppStore = create<AppState>((set, get) => ({
         (q) => !have.has(q.cardId),
       )
     } else {
-      // 专攻薄弱词：把掌握度最低、又不在今天队列里的挑出来
+      // 专攻薄弱词：按掌握度从低到高挑。
+      // 不再排除"今天已经练过的" —— 刚学完的孩子，他全部的卡就是今天这几张，
+      // 排除掉就一个都不剩，按钮点了没反应。今天练过的排后面，优先给没练过的
       const skills = config.enabledSkills
       const avgOf = (c: Card) =>
         skills.reduce((a, s) => a + c.mastery[s], 0) / skills.length
-      added = (await repo.listCards(config.userId))
-        .filter((c) => c.reps > 0 && !have.has(c.id) && c.entryIds.length > 0)
-        .sort((a, b) => avgOf(a) - avgOf(b))
+      added = (await repo.listCards(userId))
+        .filter((c) => c.reps > 0 && c.entryIds.length > 0)
+        .sort((a, b) => {
+          const pa = have.has(a.id) ? 1 : 0
+          const pb = have.has(b.id) ? 1 : 0
+          return pa - pb || avgOf(a) - avgOf(b)
+        })
         .slice(0, count)
         .map((c) => ({
           cardId: c.id,
@@ -540,7 +582,17 @@ export const useAppStore = create<AppState>((set, get) => ({
         }))
     }
 
-    if (added.length === 0) return 0
+    // 必须给个说法：以前直接 return 0，用户点了按钮什么反应都没有，
+    // 只会觉得是 app 坏了
+    if (added.length === 0) {
+      return {
+        added: 0,
+        reason:
+          kind === 'new'
+            ? '这本词库已经学完了，没有更多新词'
+            : '还没有学过足够多的词，先学几天再来做薄弱专攻',
+      }
+    }
 
     const nextQueue = [...queue, ...added]
 
@@ -557,13 +609,16 @@ export const useAppStore = create<AppState>((set, get) => ({
         : null
       if (reopened) await repo.putCheckin(reopened)
       const startIdx = phase === 'idle' ? 0 : queue.length
+      // 先装数据再切页面：装不上就停在原地说明原因，
+      // 不能切到 learning 让 LearnPage 渲染成空白
+      const ok = await loadItem(startIdx, nextQueue, set)
+      if (!ok) return { added: 0, reason: '这几张卡没准备好，回首页重新开始试试' }
       set({
         queue: nextQueue,
         phase: 'learning',
         idx: startIdx,
         checkin: reopened,
       })
-      await loadItem(startIdx, nextQueue, set)
     } else {
       if (checkin) {
         const bumped: CheckinRecord = {
@@ -577,22 +632,45 @@ export const useAppStore = create<AppState>((set, get) => ({
         set({ queue: nextQueue })
       }
     }
-    return added.length
+    return { added: added.length }
   },
 }))
 
+/**
+ * 跑一遍自动解锁，有变化就写回配置。
+ * startDay 和 addMore 都要调 —— 只在一处做的话，另一处照样没新词。
+ */
+async function applyAutoUnlock(
+  config: EngineConfig,
+  entries: WordEntry[],
+): Promise<EngineConfig> {
+  const next = await autoUnlock(repo, config, entries)
+  if (next !== config) {
+    await repo.putConfig(next)
+    useAppStore.setState({ config: next })
+  }
+  return next
+}
+
+/**
+ * 装载第 index 个任务。返回是否成功。
+ *
+ * 必须让调用方知道结果：以前这里静默 return，上层照切 phase='learning'，
+ * 于是 LearnPage 拿不到 entry 直接渲染成 null —— 用户看到的就是
+ * 只剩顶部那条登录条的空白页，还以为点了按钮跳到登录去了。
+ */
 async function loadItem(
   index: number,
   queue: QueueItem[],
   set: (partial: Partial<AppState>) => void,
-) {
+): Promise<boolean> {
   const item = queue[index]
-  if (!item) return
+  if (!item) return false
   const [card, entry] = await Promise.all([
     repo.getCard(item.cardId),
     repo.getEntry(item.entryId),
   ])
-  if (!card || !entry) return
+  if (!card || !entry) return false
   set({
     card,
     entry,
@@ -604,4 +682,5 @@ async function loadItem(
       startedAt: Date.now(),
     },
   })
+  return true
 }

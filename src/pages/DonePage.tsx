@@ -5,12 +5,16 @@ import { nextMilestone } from '../core/reward'
 export function DonePage() {
   const { checkin, streak, reward, queue, addMore } = useAppStore()
   const [adding, setAdding] = useState(false)
+  const [msg, setMsg] = useState('')
 
   const minutes = Math.max(1, Math.round((checkin?.durationSec ?? 0) / 60))
 
   const add = async (n: number, kind: 'new' | 'weak' = 'new') => {
     setAdding(true)
-    await addMore(n, kind)
+    setMsg('')
+    const r = await addMore(n, kind)
+    // 加了几个不会体现在这里（马上跳去学习了），只有加不上的时候才需要说话
+    if (r.added === 0) setMsg(r.reason ?? '没能加上，稍后再试')
     setAdding(false)
   }
 
@@ -75,6 +79,11 @@ export function DonePage() {
         >
           专攻薄弱词（10 个）
         </button>
+        {msg && (
+          <div className="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-center text-[12px] text-[#854f0b]">
+            {msg}
+          </div>
+        )}
       </div>
 
       <div className="mt-6 text-center text-[12px] leading-relaxed text-neutral-400">

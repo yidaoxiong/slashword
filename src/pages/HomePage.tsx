@@ -20,13 +20,16 @@ export function HomePage() {
     addMore,
   } = useAppStore()
   const [adding, setAdding] = useState(false)
+  const [msg, setMsg] = useState('')
 
   const activeBook = catalog.find((b) => b.id === config?.activeBook)
   const doneToday = checkin?.completed
 
   const add = async (n: number, kind: 'new' | 'weak') => {
     setAdding(true)
-    await addMore(n, kind)
+    setMsg('')
+    const r = await addMore(n, kind)
+    if (r.added === 0) setMsg(r.reason ?? '没能加上，稍后再试')
     setAdding(false)
   }
 
@@ -160,6 +163,11 @@ export function HomePage() {
           >
             专攻薄弱词（10 个）
           </button>
+          {msg && (
+            <div className="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-center text-[12px] text-[#854f0b]">
+              {msg}
+            </div>
+          )}
         </div>
       ) : (
         <button

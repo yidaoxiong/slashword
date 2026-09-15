@@ -24,7 +24,32 @@ export function LearnPage() {
     setShowKeyboard(window.innerWidth < 768)
   }, [])
 
-  if (!entry || !session || !config) return null
+  // 以前这里是 return null —— 数据一旦没装上，整页变空白，
+  // 只剩顶部那条登录条，看着就像"点错跳到登录页去了"。
+  // 给条能自救的出路：回到首页重新开始
+  if (!entry || !session || !config) {
+    return (
+      <div className="mx-auto flex min-h-full w-full max-w-md flex-col items-center justify-center px-5 py-16 text-center sm:max-w-lg">
+        <div className="text-[14px] text-neutral-500">这一张没准备好</div>
+        <button
+          type="button"
+          onClick={() => useAppStore.getState().skipItem()}
+          className="mt-4 h-11 rounded-xl bg-brand-500 px-6 text-[14px] text-white active:bg-brand-600"
+        >
+          跳过这一张
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            useAppStore.setState({ phase: 'idle', session: null, card: null })
+          }
+          className="mt-2 h-11 px-6 text-[13px] text-neutral-400"
+        >
+          回首页
+        </button>
+      </div>
+    )
+  }
 
   const bookName = catalog.find((b) => b.id === config.activeBook)?.name ?? ''
   const skills = config.enabledSkills

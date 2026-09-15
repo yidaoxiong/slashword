@@ -114,6 +114,50 @@ export function unlockedUnitSet(
   return new Set(unitsOf(entries).slice(0, unlockedCount(config)))
 }
 
+/**
+ * 自动解锁下一个单元。
+ *
+ * 以前 unitProgress 只能靠家长端手动拖滑杆，代码里没有任何推进 ——
+ * 结果就是孩子学完第 1 个单元后，buildDailyQueue 再也找不到新词，
+ * 加练按钮点了完全没反应，也没任何提示。
+ *
+ * 规则：已解锁单元里的词全部建过卡（即都见过）就往后开一个单元。
+ * 没掌握的词会由 FSRS 继续安排复习，所以"见过就解锁"不会漏掉谁。
+ *
+ * 返回更新后的 config；没变化就原样返回（调用方据此决定要不要写库）。
+ */
+export async function autoUnlock(
+  repo: Repository,
+  config: EngineConfig,
+  entries: WordEntry[],
+): Promise<EngineConfig> {
+  const units = unitsOf(entries)
+  let unlocked = unlockedCount(config)
+
+  while (unlocked < units.length) {
+    const allowed = new Set(units.slice(0, unlocked))
+    const pool = entries.filter((e) => allowed.has(e.unitOrder))
+    if (pool.length === 0) {
+      unlocked += 1
+      continue
+    }
+    const seen = await Promise.all(
+      pool.map(async (e) =>
+        repo.getCardByWordKey(config.userId, wordKeyOf(e.word, e.cn)),
+      ),
+    )
+    // 还有没见过的词就停在这里，别急着开新的
+    if (seen.some((c) => !c)) break
+    unlocked += 1
+  }
+
+  if (unlocked === unlockedCount(config)) return config
+  return {
+    ...config,
+    unitProgress: { ...config.unitProgress, [config.activeBook]: unlocked },
+  }
+}
+
 /** 当前学到哪个单元（返回课本上的真实叫法，比如 "Unit 7" / "Unit One"） */
 export function currentUnitLabel(
   entries: WordEntry[],
