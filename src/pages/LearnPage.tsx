@@ -117,8 +117,10 @@ export function LearnPage() {
             entry={entry}
             candidates={entries}
             showKeyboard={showKeyboard}
-            onDone={(ok, input, usedHint) =>
-              void submitSkill('example', ok, input, usedHint)
+            // 第一遍（拼写）写对了，第二遍就不用再敲一遍同一个词
+            canSkip={session.results.spell === true}
+            onDone={(ok, input, usedHint, skipped) =>
+              void submitSkill('example', ok, input, usedHint, skipped)
             }
           />
         )}

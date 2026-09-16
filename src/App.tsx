@@ -55,6 +55,28 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, status])
 
+  // 切走 / 锁屏 / 关页面时补一次同步。
+  // 学到一半的进度只存在本地的话，另一台设备根本接不上 ——
+  // 必须趁页面还在的时候把它推上去。同步是幂等的，多跑一次没坏处。
+  useEffect(() => {
+    const flush = () => {
+      const s = useAuthStore.getState()
+      if (s.status !== 'authed') return
+      void s.sync()
+    }
+    const onHide = () => {
+      if (document.visibilityState === 'hidden') flush()
+    }
+    document.addEventListener('visibilitychange', onHide)
+    // iOS Safari 上 pagehide 比 visibilitychange 可靠，
+    // 两个都挂，谁先触发算谁的（sync 内部有并发保护）
+    window.addEventListener('pagehide', flush)
+    return () => {
+      document.removeEventListener('visibilitychange', onHide)
+      window.removeEventListener('pagehide', flush)
+    }
+  }, [])
+
   if (view === 'login') {
     return <LoginPage onClose={() => setView('main')} />
   }

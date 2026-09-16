@@ -4,6 +4,7 @@ import type {
   CheckinRecord,
   EngineConfig,
   QueueItem,
+  SessionProgress,
   Skill,
   UserBook,
   WordDraft,
@@ -99,6 +100,8 @@ interface AppState {
     correct: boolean,
     input?: string,
     usedHint?: boolean,
+    /** 上一关已经证明会了，这一关按回车跳过。按半掌握记，不给满分 */
+    skipped?: boolean,
   ) => Promise<void>
   skipItem: () => void
   reset: () => Promise<void>
@@ -256,6 +259,14 @@ export const useAppStore = create<AppState>((set, get) => ({
       await repo.putCheckin(checkin)
     }
 
+    // 上次没打完就换设备 / 关了页面 —— 从存下来的进度接着学，
+    // 已经做完的那些不用再来一遍
+    const saved = checkin.progress
+    if (saved && !checkin.completed && saved.queue.length > 0) {
+      if (await resumeProgress(saved, set)) return
+      // 恢复失败（词库换过、卡片没了）就当新的一天重来，不留死局
+    }
+
     if (queue.length === 0) {
       // 今天确实没词可学（整本学完 / 复习都排到以后）—— 直接算完成，
       // 别把孩子扔在空荡荡的首页上干瞪眼
@@ -276,17 +287,25 @@ export const useAppStore = create<AppState>((set, get) => ({
       return
     }
     set({ phase: 'learning', queue, idx: 0, checkin })
+    await saveProgress(queue, 0, {
+      cardId: queue[0].cardId,
+      entryId: queue[0].entryId,
+      skillIdx: 0,
+      results: {},
+      startedAt: now,
+    }, set)
   },
 
-  async submitSkill(skill, correct, input, usedHint = false) {
+  async submitSkill(skill, correct, input, usedHint = false, skipped = false) {
     const state = get()
     const { card, session, config, queue, idx } = state
     if (!card || !session || !config) return
 
     const now = Date.now()
     const results = { ...session.results, [skill]: correct }
-    // 用过"先听一遍"的，即使拼对也只算半掌握
-    const updated = applySkillResult(card, skill, correct, usedHint)
+    // 用过"先听一遍"的、以及上一关拼对了直接回车跳过的，都只算半掌握：
+    // 这个环节本身没有新的证据，不该给满分
+    const updated = applySkillResult(card, skill, correct, usedHint || skipped)
     await repo.putCard(updated)
 
     await repo.appendLog({
@@ -306,10 +325,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     const skills = config.enabledSkills
 
     if (nextIdx < skills.length) {
-      set({
-        card: updated,
-        session: { ...session, skillIdx: nextIdx, results },
-      })
+      const nextSession = { ...session, skillIdx: nextIdx, results }
+      set({ card: updated, session: nextSession })
+      await saveProgress(queue, idx, nextSession, set)
       return
     }
 
@@ -341,6 +359,8 @@ export const useAppStore = create<AppState>((set, get) => ({
           completedAt: now,
           durationSec: Math.round((now - session.startedAt) / 1000),
           rewardYuan,
+          // 打完了就不用再存进度了，留着反而让别的设备以为还要接着学
+          progress: undefined,
           // 必须刷新：同步靠 updatedAt 判断谁新（last-write-wins）。
           // 不刷的话它还是"开始学习"那一刻的时间戳 ——
           // 万一那条 completed=false 已经推上云端，这次推送会因为
@@ -364,6 +384,8 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     set({ idx: nextItemIdx, card: finalized.card })
     await loadItem(nextItemIdx, queue, set)
+    const moved = get().session
+    if (moved) await saveProgress(queue, nextItemIdx, moved, set)
   },
 
   skipItem() {
@@ -374,7 +396,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       return
     }
     set({ idx: next })
-    void loadItem(next, queue, set)
+    void loadItem(next, queue, set).then((ok) => {
+      if (!ok) return
+      const moved = get().session
+      if (moved) void saveProgress(queue, next, moved, set)
+    })
   },
 
   async reset() {
@@ -698,6 +724,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         idx: startIdx,
         checkin: reopened,
       })
+      const s = get().session
+      if (s) await saveProgress(nextQueue, startIdx, s, set)
     } else {
       if (checkin) {
         const bumped: CheckinRecord = {
@@ -710,6 +738,9 @@ export const useAppStore = create<AppState>((set, get) => ({
       } else {
         set({ queue: nextQueue })
       }
+      // 队列变长了，进度里存的也得跟着换，不然别的设备拿到的是旧队列
+      const s = get().session
+      if (s) await saveProgress(nextQueue, get().idx, s, set)
     }
     return { added: added.length }
   },
@@ -878,6 +909,69 @@ async function commitWords(
   }
 }
 
+/**
+ * 把"今天学到哪了"写进打卡记录。
+ *
+ * 打卡记录本来就在同步范围内（按天一条），进度挂上去等于白捡了跨设备能力 ——
+ * 不用新开一张表、不用改同步协议。换台设备读到它就能接着学。
+ */
+async function saveProgress(
+  queue: QueueItem[],
+  idx: number,
+  session: SessionState,
+  set: (partial: Partial<AppState>) => void,
+) {
+  const checkin = useAppStore.getState().checkin
+  if (!checkin) return
+  const next: CheckinRecord = {
+    ...checkin,
+    progress: {
+      queue,
+      idx,
+      skillIdx: session.skillIdx,
+      results: session.results,
+      startedAt: session.startedAt,
+    },
+    updatedAt: Date.now(),
+  }
+  await repo.putCheckin(next)
+  set({ checkin: next })
+}
+
+/**
+ * 从存档的进度接着学。返回是否恢复成功。
+ * 失败（词库换过、卡片被删）时调用方会退回"今天重新开始"。
+ */
+async function resumeProgress(
+  saved: SessionProgress,
+  set: (partial: Partial<AppState>) => void,
+): Promise<boolean> {
+  const idx = Math.min(Math.max(0, saved.idx), saved.queue.length - 1)
+  if (!Number.isFinite(idx) || idx < 0) return false
+  const ok = await loadItem(idx, saved.queue, set)
+  if (!ok) return false
+
+  // 环节的档位可能被家长改过（比如关掉了释义关），夹一下别越界
+  const enabled = useAppStore.getState().config?.enabledSkills ?? []
+  const skillIdx = Math.min(Math.max(0, saved.skillIdx), Math.max(0, enabled.length - 1))
+
+  const item = saved.queue[idx]
+  // loadItem 装的是一个"从第 0 关开始"的新 session，用存档覆盖回去
+  set({
+    phase: 'learning',
+    queue: saved.queue,
+    idx,
+    session: {
+      cardId: item.cardId,
+      entryId: item.entryId,
+      skillIdx,
+      results: saved.results ?? {},
+      startedAt: saved.startedAt,
+    },
+  })
+  return true
+}
+
 async function loadItem(
   index: number,
   queue: QueueItem[],
@@ -885,11 +979,21 @@ async function loadItem(
 ): Promise<boolean> {
   const item = queue[index]
   if (!item) return false
-  const [card, entry] = await Promise.all([
+  const [card, entry0] = await Promise.all([
     repo.getCard(item.cardId),
     repo.getEntry(item.entryId),
   ])
-  if (!card || !entry) return false
+  if (!card) return false
+  // 换设备 / 词库更新后，存下来的 entryId 可能已经对不上（词条 id 是位置编号）。
+  // 不兜这一下的话界面会变成空白，和之前"只看到登录条"那次一模一样
+  let entry = entry0
+  if (!entry) {
+    const entries = await repo.listEntries(card.book)
+    entry = resolveEntry(entries, card)
+    if (!entry) return false
+    // 顺手把队列里这条改对，后面再用就不用重查
+    queue[index] = { ...item, entryId: entry.id }
+  }
   set({
     card,
     entry,

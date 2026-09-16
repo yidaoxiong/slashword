@@ -203,7 +203,32 @@ export interface CheckinRecord {
    * 规则改了可以整体重算，这个字段只是留个当时的凭据。
    */
   rewardYuan?: number
+  /**
+   * 今天学到哪了（跨设备接着学用）。
+   * 挂在打卡记录上而不是另开一张表 —— 打卡记录本来就按天同步、
+   * 按天清理，进度跟着它走最省心；换台设备打开，读到这儿接着学。
+   */
+  progress?: SessionProgress
   updatedAt: number
+}
+
+/**
+ * 一次未完成的打卡停在哪儿。
+ *
+ * 孩子常在 iPad 上学一半、回房间拿手机接着学。以前换设备等于从头再来 ——
+ * 队列是本地内存里的，只同步了卡片和打卡结果，没同步"做到第几个了"。
+ */
+export interface SessionProgress {
+  /** 今天的任务队列 */
+  queue: QueueItem[]
+  /** 当前在做第几个 */
+  idx: number
+  /** 当前这个做到第几个环节 */
+  skillIdx: number
+  /** 当前这个已经做完的环节 */
+  results: Partial<Record<Skill, boolean>>
+  /** 这一轮开始的时刻，用来算用时 */
+  startedAt: number
 }
 
 /** 每日任务队列中的一项 */

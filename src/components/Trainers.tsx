@@ -12,7 +12,16 @@ interface TrainerProps {
   /** 桌面端可收起屏幕键盘 */
   showKeyboard?: boolean
   /** usedHint：答题前听过发音。拼对了也只能算半掌握 */
-  onDone: (correct: boolean, input?: string, usedHint?: boolean) => void
+  /**
+   * skipped：这一关没真写，是上一关已经证明会了、按回车跳过的。
+   * 也按半掌握记 —— 这个环节本身没有新证据，不该给满分。
+   */
+  onDone: (
+    correct: boolean,
+    input?: string,
+    usedHint?: boolean,
+    skipped?: boolean,
+  ) => void
 }
 
 /**
@@ -29,6 +38,7 @@ function ResultBanner({
   article,
   pos,
   accentOnly,
+  skipped,
 }: {
   ok: boolean
   word: string
@@ -40,6 +50,8 @@ function ResultBanner({
   pos?: string
   /** 字母对但重音写错了 */
   accentOnly?: boolean
+  /** 这一关是回车跳过的 —— 不能显示成"答对了"，那是上一关的功劳 */
+  skipped?: boolean
 }) {
   const meta = article ? `${article} ${word}${pos ? ` · ${pos}` : ''}` : (phonetic ?? '')
   return (
@@ -49,7 +61,11 @@ function ResultBanner({
       }`}
     >
       <div className="text-[15px] font-medium">
-        {ok ? '答对了' : `正确拼写：${article ? `${article} ${word}` : word}`}
+        {ok
+          ? skipped
+            ? '跳过了（上一关拼对了）'
+            : '答对了'
+          : `正确拼写：${article ? `${article} ${word}` : word}`}
       </div>
       {meta && <div className="mt-0.5 text-[12px] opacity-80">{meta}</div>}
       {accentOnly && (
@@ -96,13 +112,14 @@ function useAdvance(onDone: TrainerProps['onDone']) {
     correct: boolean,
     input: string,
     usedHint: boolean,
+    skipped = false,
   ) => {
     fired.current = false
     const finish = () => {
       if (fired.current) return
       fired.current = true
       clear()
-      onDone(correct, input, usedHint)
+      onDone(correct, input, usedHint, skipped)
     }
     speak(text, { ...audio, rate, onEnd: finish })
     // 兜底：iOS Safari 偶尔不回调 onend，别让界面卡死
@@ -110,10 +127,15 @@ function useAdvance(onDone: TrainerProps['onDone']) {
     return finish
   }
 
-  const manual = (correct: boolean, input: string, usedHint: boolean) => {
+  const manual = (
+    correct: boolean,
+    input: string,
+    usedHint: boolean,
+    skipped = false,
+  ) => {
     fired.current = true
     clear()
-    onDone(correct, input, usedHint)
+    onDone(correct, input, usedHint, skipped)
   }
 
   return { arm, manual, clear }
@@ -278,14 +300,26 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
   )
 }
 
-/** 环节二：例句 —— 先把句子补完整，再听整句验证 */
-export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerProps) {
+/**
+ * 环节二：例句 —— 先把句子补完整，再听整句验证。
+ *
+ * canSkip：拼写关（第一遍）已经写对了。这时候再让他把同一个词敲一遍没意义，
+ * 直接按回车就能过；拼错了则必须老老实实写一遍 —— 错过的词要多写一次才记得住。
+ */
+export function ExampleTrainer({
+  entry,
+  showKeyboard = true,
+  canSkip = false,
+  onDone,
+}: TrainerProps & { canSkip?: boolean }) {
   const [value, setValue] = useState('')
   const [checked, setChecked] = useState(false)
   const [ok, setOk] = useState(false)
   const [usedHint, setUsedHint] = useState(false)
   /** 字母都对，只是重音符号写错了 */
   const [accentOnly, setAccentOnly] = useState(false)
+  /** 这一关是按回车跳过的，不是真写了一遍 */
+  const [skipped, setSkipped] = useState(false)
   const { arm, manual, clear } = useAdvance(onDone)
   const finishRef = useRef<(() => void) | null>(null)
 
@@ -300,11 +334,29 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
     setOk(false)
     setUsedHint(false)
     setAccentOnly(false)
+    setSkipped(false)
     return () => clear()
   }, [entry.id])
 
   const submit = () => {
-    if (checked || value.trim() === '') return
+    if (checked) return
+    // 空着按回车：拼写关已经写对了才放行，否则还是得写一遍
+    if (value.trim() === '') {
+      if (!canSkip) return
+      setChecked(true)
+      setOk(true)
+      setSkipped(true)
+      finishRef.current = arm(
+        entry.exampleEn,
+        { audioId: entry.id, kind: 'example' },
+        0.9,
+        true,
+        '',
+        false,
+        true,
+      )
+      return
+    }
     const r = checkSpelling(value, entry.word)
     setChecked(true)
     setOk(r.ok)
@@ -357,11 +409,22 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
           }`}
         >
           {value || (
-            <span className="text-[13px] tracking-normal text-neutral-300">拼写单词</span>
+            <span className="text-[13px] tracking-normal text-neutral-300">
+              {canSkip ? '按 ⏎ 跳过，或再写一遍' : '拼写单词'}
+            </span>
           )}
         </div>
 
-        {!checked && <TypingHint />}
+        {!checked &&
+          (canSkip ? (
+            <div className="mt-2 text-center text-[12px] text-brand-600 short:mt-1.5">
+              上一关拼对了 —— 直接按 ⏎ 过，不用再写一遍
+            </div>
+          ) : (
+            <TypingHint />
+          ))}
+        {/* 能跳过也照样留着"先听一遍" —— 那是独立的功能，
+            想把句子听清楚再决定跳不跳，是他的自由 */}
         {!checked && (
           <PeekButton
             used={usedHint}
@@ -381,6 +444,7 @@ export function ExampleTrainer({ entry, showKeyboard = true, onDone }: TrainerPr
             article={entry.article}
             pos={entry.pos}
             accentOnly={accentOnly}
+            skipped={skipped}
           />
         )}
 

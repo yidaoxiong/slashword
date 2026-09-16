@@ -170,8 +170,11 @@ export class DexieRepository implements Repository {
         .where('[userId+date]')
         .equals([record.userId, record.date])
         .first()
+      // 用 put（带上原主键）而不是 update：
+      // update 要的是 UpdateSpec，遇到 progress.queue 这种嵌套数组过不了类型，
+      // 运行时也会把数组整个替换掉而不是合并，容易出怪事
       if (existing) {
-        await db.checkins.update(existing.id as number, record)
+        await db.checkins.put({ ...record, id: existing.id as number })
       } else {
         await db.checkins.add(record)
       }

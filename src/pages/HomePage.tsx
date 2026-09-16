@@ -25,6 +25,15 @@ export function HomePage() {
 
   const activeBook = catalog.find((b) => b.id === config?.activeBook)
   const doneToday = checkin?.completed
+  // 没打完的进度：换设备 / 关过页面都会有，显示出来孩子才敢接着按
+  const progress = checkin && !checkin.completed ? checkin.progress : undefined
+  const resumeLabel = progress
+    ? progress.idx > 0
+      ? `继续今天的学习（${progress.idx}/${progress.queue.length}）`
+      : '继续今天的学习'
+    : checkin
+      ? '继续今天的学习'
+      : '开始今天的学习'
 
   const add = async (n: number, kind: 'new' | 'weak') => {
     setAdding(true)
@@ -171,13 +180,20 @@ export function HomePage() {
           )}
         </div>
       ) : (
-        <button
-          type="button"
-          onClick={() => void startDay()}
-          className="mt-6 h-14 rounded-card bg-brand-500 text-[16px] font-medium text-white shadow-sm active:bg-brand-600"
-        >
-          {checkin ? '继续今天的学习' : '开始今天的学习'}
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => void startDay()}
+            className="mt-6 h-14 rounded-card bg-brand-500 text-[16px] font-medium text-white shadow-sm active:bg-brand-600"
+          >
+            {resumeLabel}
+          </button>
+          {progress && progress.idx > 0 && (
+            <div className="mt-2 text-center text-[11px] text-neutral-400">
+              接着上次的进度，前面 {progress.idx} 个不用重做
+            </div>
+          )}
+        </>
       )}
 
       {config && (
