@@ -3,3 +3,8 @@ dist/
 .DS_Store
 *.local
 .vite/
+
+# iOS 构建产物
+ios/**/build/
+ios/**/xcuserdata/
+*.xcuserstate
