@@ -508,11 +508,37 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
     }
   }
 
+  /**
+   * 数字键 1–4 直接选答案。
+   *
+   * iPad 外接键盘和 Mac 上比戳屏幕快得多，孩子做题不容易被"找到并点中"
+   * 这个过程打断。四个选项刚好对上数字键，不用额外设计别的键位。
+   * 不和 useTyping 冲突 —— 那套只吃字母，数字键本来就不会被它处理。
+   */
+  useEffect(() => {
+    if (picked) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const n = Number(e.key)
+      if (!Number.isInteger(n) || n < 1 || n > options.length) return
+      e.preventDefault()
+      choose(options[n - 1].word)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [picked, options])
+
   return (
     <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5">
       <div className="text-[12px] tracking-wide text-neutral-400">
         听到这个词，是什么意思
       </div>
+      {/* 数字键选答案这件事不说明的话没人知道，答完就撤掉省地方 */}
+      {!picked && (
+        <div className="mt-1 text-[12px] text-neutral-300">
+          点选项，或按键盘 1–4
+        </div>
+      )}
 
       <button
         type="button"
@@ -523,13 +549,20 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
       </button>
 
       <div className="mt-4 grid gap-2">
-        {options.map((opt) => {
+        {options.map((opt, i) => {
           const isAnswer = normalize(opt.word) === normalize(entry.word)
           const chosen = picked === opt.word
           let cls = 'border-neutral-200 bg-white'
+          // 序号跟着选项一起变色，答完一眼能看出"该选的是第几个"
+          let badgeCls = 'bg-neutral-100 text-neutral-500'
           if (picked) {
-            if (isAnswer) cls = 'border-ok bg-ok-soft'
-            else if (chosen) cls = 'shake border-bad bg-bad-soft'
+            if (isAnswer) {
+              cls = 'border-ok bg-ok-soft'
+              badgeCls = 'bg-ok text-white'
+            } else if (chosen) {
+              cls = 'shake border-bad bg-bad-soft'
+              badgeCls = 'bg-bad text-white'
+            }
           }
           return (
             <button
@@ -537,9 +570,14 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
               type="button"
               disabled={!!picked}
               onClick={() => choose(opt.word)}
-              className={`rounded-xl border-2 px-4 py-3 text-left text-[15px] ${cls}`}
+              className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 text-left text-[15px] ${cls}`}
             >
-              {opt.cn}
+              <span
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[13px] font-medium tabular-nums ${badgeCls}`}
+              >
+                {i + 1}
+              </span>
+              <span>{opt.cn}</span>
             </button>
           )
         })}
