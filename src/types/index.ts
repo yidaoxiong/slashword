@@ -13,7 +13,24 @@
 
 export type Skill = 'pron' | 'spell' | 'example' | 'definition'
 
-export const SKILLS: Skill[] = ['pron', 'spell', 'example', 'definition']
+/**
+ * 环节顺序：拼写 → 听读音选中文释义 → 例句。
+ *
+ * 原来把「例句」排在「释义」前面，实际用下来顺序别扭：
+ * 孩子刚拼完单词，紧接着就要求补全整个例句，跨度太大；
+ * 中间插一道「听读音选中文释义」更顺 —— 先确认听得懂意思，
+ * 再进例句关把词放进句子里。
+ */
+export const SKILLS: Skill[] = ['pron', 'spell', 'definition', 'example']
+
+/**
+ * 默认启用的环节，以及它们的先后顺序。
+ * 不含 pron —— 发音不单独设关卡，是拼写关的一部分。
+ *
+ * 改顺序只改这一处：defaultConfig() 和老配置的迁移逻辑都读它，
+ * 否则又会出现"改了默认值、但老用户配置还是旧顺序"的情况。
+ */
+export const ENABLED_SKILL_ORDER: Skill[] = ['spell', 'definition', 'example']
 
 export const SKILL_LABEL: Record<Skill, string> = {
   pron: '能发音',

@@ -1,4 +1,5 @@
-import type { Card, EngineConfig, QueueItem, WordEntry } from '../types'
+import type { Card, EngineConfig, QueueItem, Skill, WordEntry } from '../types'
+import { ENABLED_SKILL_ORDER } from '../types'
 import { createCard } from './scheduler'
 import type { Repository } from '../storage'
 
@@ -213,6 +214,25 @@ export function todayKey(now: number = Date.now()): string {
   return `${y}-${m}-${day}`
 }
 
+/**
+ * 把已保存的环节顺序重排成当前规范顺序。
+ *
+ * 环节顺序改过一次（「听读音选中文释义」从第三项挪到第二项），但老配置已经
+ * 躺在 IndexedDB 里了 —— 光改 defaultConfig() 的默认值对老用户无效，
+ * spread 合并时旧数组会原样带过来。所以每次读配置都重排一遍。
+ *
+ * 只重排顺序、不动开关：家长端关掉的环节照样关着。
+ * 不在规范列表里的（比如 pron）原样保留在末尾，不会丢。
+ * 幂等：已经是新顺序的话原样返回。
+ */
+export function normalizeSkills(saved: Skill[] | undefined): Skill[] {
+  if (!saved?.length) return [...ENABLED_SKILL_ORDER]
+  const on = new Set(saved)
+  const ordered = ENABLED_SKILL_ORDER.filter((s) => on.has(s))
+  const extra = saved.filter((s) => !ENABLED_SKILL_ORDER.includes(s))
+  return [...ordered, ...extra]
+}
+
 export function defaultConfig(userId = 'local'): EngineConfig {
   return {
     userId,
@@ -220,7 +240,8 @@ export function defaultConfig(userId = 'local'): EngineConfig {
     dailyReviewLimit: 60,
     activeBook: 'g5a',
     unitProgress: {},
-    enabledSkills: ['spell', 'example', 'definition'],
+    // 拼写 → 听读音选中文释义 → 例句（释义调到例句前面，见 types/index.ts 的说明）
+    enabledSkills: [...ENABLED_SKILL_ORDER],
     // 默认不给首字母提示：这一关练的就是"从意思反推拼写"，
     // 给了首字母等于替孩子想了第一步。需要的话家长端可以打开
     spellHint: false,

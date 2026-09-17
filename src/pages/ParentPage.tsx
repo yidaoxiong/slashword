@@ -92,7 +92,7 @@ export function ParentPage() {
       <div className="mt-5 rounded-card bg-white p-4 shadow-sm ring-1 ring-black/5">
         <div className="text-[13px] font-medium text-neutral-800">四维掌握度</div>
         <div className="mt-3 space-y-3">
-          {(['spell', 'example', 'definition'] as Skill[]).map((s) => (
+          {(['spell', 'definition', 'example'] as Skill[]).map((s) => (
             <div key={s}>
               <div className="flex justify-between text-[12px]">
                 <span className="text-neutral-500">{SKILL_LABEL[s]}</span>

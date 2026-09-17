@@ -15,6 +15,7 @@ import {
   autoUnlock,
   buildDailyQueue,
   defaultConfig,
+  normalizeSkills,
   resolveEntry,
   todayKey,
   wordKeyOf,
@@ -202,6 +203,8 @@ export const useAppStore = create<AppState>((set, get) => ({
           ...defaultConfig(userId),
           ...config,
           userId,
+          // 顺序必须重排：老配置里存的是旧顺序，spread 会原样带过来
+          enabledSkills: normalizeSkills(config.enabledSkills),
           updatedAt: config.updatedAt ?? Date.now(),
         }
         await repo.putConfig(config)

@@ -7,6 +7,7 @@ import {
   saveSession,
 } from '../lib/api'
 import { getRepo } from '../storage'
+import { normalizeSkills } from '../core/queue'
 import type { Card, CheckinRecord, EngineConfig, UserBook } from '../types'
 
 const repo = getRepo()
@@ -161,6 +162,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           await repo.putConfig({
             ...incoming,
             userId,
+            // 另一台设备可能还是旧版本、推上来的是旧顺序，统一重排
+            enabledSkills: normalizeSkills(incoming.enabledSkills),
             updatedAt: remote.config.updatedAt ?? Date.now(),
           })
         }

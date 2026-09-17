@@ -7,11 +7,22 @@ import {
   SpellTrainer,
 } from '../components/Trainers'
 
-const SKILL_TITLE: Record<Skill, string> = {
-  pron: '第 1 关 · 发音',
-  spell: '第 1 关 · 拼写',
-  example: '第 2 关 · 例句',
-  definition: '第 3 关 · 释义',
+/**
+ * 只存环节名，不存关号。
+ *
+ * 关号原来写死在这里（example 是「第 2 关」、definition 是「第 3 关」），
+ * 结果调一次环节顺序，标题就和实际顺序对不上了 —— 孩子看到「第 3 关」
+ * 却是第二道题目。关号改成按当前顺序实时算，以后再调也不会错。
+ */
+const SKILL_NAME: Record<Skill, string> = {
+  pron: '发音',
+  spell: '拼写',
+  example: '例句',
+  definition: '释义',
+}
+
+function skillTitle(skill: Skill, order: number): string {
+  return `第 ${order} 关 · ${SKILL_NAME[skill]}`
 }
 
 export function LearnPage() {
@@ -73,7 +84,7 @@ export function LearnPage() {
 
       <div className="mt-4 flex items-center justify-between gap-2 short:mt-2.5">
         <div className="text-[13px] font-medium text-neutral-700">
-          {SKILL_TITLE[skill]}
+          {skillTitle(skill, session.skillIdx + 1)}
         </div>
         <div className="flex items-center gap-2">
           <button
