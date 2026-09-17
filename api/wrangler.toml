@@ -2,6 +2,18 @@ name = "slashword-api"
 main = "worker.js"
 compatibility_date = "2026-08-01"
 
+# 走站点自己的域名，不走 workers.dev ——
+# workers.dev 在国内被 DNS 污染 / SNI 阻断，登录请求必然超时。
+# 这里挂到前端同一个域名下，前端 API_BASE 就能用同源 '/api'。
+# 注意：workers.dev 那个地址依然保留，只是国内改用这条。
+routes = [
+  { pattern = "english-slashword.slashbro.top/api/*", zone_name = "slashbro.top" }
+]
+
+# 保留 workers.dev：海外/有代理的环境仍走老地址，两个通道并存互不影响
+workers_dev = true
+preview_urls = true
+
 # 与 copilot-checkin 绑定同一个 D1 —— 共用 users / sessions 表，
 # 因此两个站点账号完全通用。
 [[d1_databases]]

@@ -1,13 +1,15 @@
 /**
- * 后端接口。
+ * 后端接口 —— 走同源 '/api'。
  *
- * 直接指向 Worker 自己的域名，不走同源 /api ——
- * 这样就不需要在 Cloudflare 配 Workers 路由（/api/* → worker），
- * 换个域名部署也能直接用。Worker 已开放 CORS，跨域没问题。
- * 将来若想走同源，把这里改成 '/api' 并在 Cloudflare 加一条 Workers 路由即可。
+ * 原来指向 slashword-api.ray-lee.workers.dev，但 workers.dev 这个域名
+ * 在国内被 DNS 污染 + SNI 阻断，页面能打开、登录请求却必然超时。
+ * 现在 Worker 同时挂在 english-slashword.slashbro.top/api/* 上
+ * （见 api/wrangler.toml 的 routes），跟前端同一个域名，国内可直连。
+ *
+ * 同源还有两个顺带的好处：少一次跨域预检、少一次 DNS 解析和 TLS 握手。
+ * 要临时指回别处，设环境变量 VITE_API_BASE 即可。
  */
-export const API_BASE = import.meta.env.VITE_API_BASE
-  ?? 'https://slashword-api.ray-lee.workers.dev/api'
+export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
 const TOKEN_KEY = 'slashword.token'
 const USER_KEY = 'slashword.username'
