@@ -78,14 +78,41 @@ function ResultBanner({
   )
 }
 
+/**
+ * 答完之后的推进按钮。
+ *
+ * 回车等价于点它 —— 孩子一路键盘做过来，最后要抬手去戳屏幕上这个按钮
+ * 很别扭。用 ref 存回调是为了让监听只注册一次：onClick 每次渲染都是新的
+ * 箭头函数，直接进依赖数组的话每帧都要摘了重新挂。
+ *
+ * 不会和打字输入抢回车：那边的监听在 enabled 为 false 时根本不注册，
+ * 而这个按钮只在答完之后才出现，两者不会同时活着。
+ */
 function NextButton({ label, onClick }: { label: string; onClick: () => void }) {
+  const cbRef = useRef(onClick)
+  cbRef.current = onClick
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' || e.metaKey || e.ctrlKey || e.altKey) return
+      e.preventDefault()
+      cbRef.current()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="mt-3 h-11 w-full rounded-xl bg-neutral-900 text-[14px] text-white active:bg-neutral-700 short:mt-2 short:h-10"
+      className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-900 text-[14px] text-white active:bg-neutral-700 short:mt-2 short:h-10"
     >
       {label}
+      {/* 不标注的话没人知道能按回车 */}
+      <span className="rounded border border-white/25 px-1.5 py-px text-[10px] font-normal text-white/50">
+        Enter
+      </span>
     </button>
   )
 }
