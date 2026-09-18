@@ -92,7 +92,7 @@ export default function App() {
       <button
         type="button"
         onClick={() => setView('login')}
-        className={`w-full px-4 py-2 text-center text-[11px] ${
+        className={`w-full px-4 py-2 text-center text-[11px] land:py-1 ${
           status === 'authed'
             ? 'bg-ok-soft text-[#0f6e56]'
             : 'bg-amber-50 text-[#854f0b]'
@@ -103,7 +103,9 @@ export default function App() {
           : '未登录 · 数据只存在本机，点击登录可多设备同步'}
       </button>
 
-      <div className="flex-1 pb-20">
+      {/* pb-20 是给底部固定导航留的位置。竖屏要留 80，横屏导航只有 57 高，
+          land:pb-16（64）就够 —— 省下的 16px 直接变成键盘的键高 */}
+      <div className="flex-1 pb-20 land:pb-16">
         {error && (
           <div className="mx-auto mt-6 max-w-md rounded-card bg-bad-soft px-4 py-3 text-[13px] text-[#a32d2d]">
             {error}

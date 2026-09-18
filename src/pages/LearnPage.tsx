@@ -29,10 +29,18 @@ export function LearnPage() {
   const { entry, session, config, queue, idx, entries, catalog, submitSkill } =
     useAppStore()
 
-  // 窄屏（手机 / iPad 竖屏）默认给屏幕键盘，宽屏（Mac / PC / iPad 横屏）默认收起用物理键盘
+  /**
+   * 什么时候默认亮出屏幕键盘。
+   *
+   * 原来是只看宽度（< 768 才给），但 iPhone 横过来宽度是 852 —— 会被判成
+   * "宽屏"然后把键盘收起来，而手机上根本没有物理键盘，等于没法答题。
+   * 所以改成先问设备是不是触屏：有鼠标的（Mac / PC）才默认收起，
+   * 手指戳的（手机 / iPad，横竖都算）一律给键盘。
+   */
   const [showKeyboard, setShowKeyboard] = useState(true)
   useEffect(() => {
-    setShowKeyboard(window.innerWidth < 768)
+    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    setShowKeyboard(isTouch || window.innerWidth < 768)
   }, [])
 
   // 以前这里是 return null —— 数据一旦没装上，整页变空白，
@@ -69,7 +77,9 @@ export function LearnPage() {
   const progress = (idx + (session.skillIdx + 1) / skills.length) / total
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-5 py-6 sm:max-w-lg short:py-3">
+    // 手机横屏要放开 448/512 的宽度上限：那时候是卡片和键盘左右分栏，
+    // 再限宽等于把两栏硬塞进半个屏幕。Mac / iPad 不命中 land，保持窄栏易读
+    <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-5 py-6 sm:max-w-lg short:py-3 land:max-w-none land:px-4 land:py-1">
       <div className="flex items-center gap-3">
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-200">
           <div
@@ -82,7 +92,7 @@ export function LearnPage() {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-2 short:mt-2.5">
+      <div className="mt-4 flex items-center justify-between gap-2 short:mt-2.5 land:mt-2">
         <div className="text-[13px] font-medium text-neutral-700">
           {skillTitle(skill, session.skillIdx + 1)}
         </div>
@@ -111,7 +121,7 @@ export function LearnPage() {
         </div>
       </div>
 
-      <div className="mt-4 flex-1 short:mt-2.5">
+      <div className="mt-4 flex-1 short:mt-2.5 land:mt-2">
         {skill === 'spell' && (
           <SpellTrainer
             entry={entry}

@@ -53,6 +53,22 @@ button {
 @custom-variant short (@media (max-height: 820px));
 @custom-variant tiny (@media (max-height: 640px));
 
+/* ---------- land：只在「手机横屏」生效 ----------
+ *
+ * 单独造这个变体而不是直接用 Tailwind 自带的 landscape:，是因为 Mac 浏览器
+ * 常年就是横屏（宽>高），iPad 横屏高度也有 1000+ —— 它们都该保持上下布局。
+ * 真正需要处理的是手机横过来：宽 850 左右、高只剩 390 上下，
+ * 这时候上下排布必然挤到要滚动。
+ *
+ * 判定用「横屏 且 矮」两个条件相乘。560 这个上限按实测划：
+ *   iPhone 16 Pro Max 横屏 440
+ *   iPhone 16 Pro      横屏 402
+ *   iPhone 15 Pro      横屏 393
+ *   Safari 带工具栏后还要再少 90 左右 —— 全都远低于 560
+ * 而 iPad 横屏 1024+ 、Mac 通常 800+，都进不来。
+ */
+@custom-variant land (@media (orientation: landscape) and (max-height: 560px));
+
 /* ---------- 屏幕键盘 ----------
  *
  * 手机上必须一屏同时放下「卡片 + 键盘」，孩子不该边做题边滚动。
@@ -94,6 +110,20 @@ button {
   }
 }
 
+/* 手机横屏：布局改成左右分栏，键盘占了右半屏，
+   于是纵向空间一下子宽裕了 —— 键高可以直接翻倍，键也随之变大。
+   这是"键太小"这个抱怨的根治办法，不是把现有尺寸硬拉大。
+   4 行 × 56 + 间隙 ≈ 250px，竖屏高度 ~390 装得下还有富余。 */
+@media (orientation: landscape) and (max-height: 560px) {
+  :root {
+    --kb-row: 56px;
+    --kb-row-sm: 44px;
+    --kb-gap: 6px;
+    --kb-mb: 4px;
+    --kb-font: 18px;
+  }
+}
+
 .kb-key {
   height: var(--kb-row);
   font-size: var(--kb-font);
@@ -105,6 +135,11 @@ button {
 .kb-row {
   gap: var(--kb-gap);
   margin-bottom: var(--kb-mb);
+}
+
+/* 最后一行底下不需要留空 —— 这几像素在矮屏上直接换算成键高 */
+.kb-row:last-child {
+  margin-bottom: 0;
 }
 
 /* 触摸目标不能太小：视觉上压扁了，实际热区靠伪元素撑回 44px */

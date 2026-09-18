@@ -61,7 +61,7 @@ export function LetterKeyboard({
               type="button"
               disabled={disabled}
               onClick={() => onKey(ch)}
-              className="kb-key-sm relative mx-[2px] flex-1 rounded-lg bg-neutral-100 font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
+              className="kb-key-sm relative flex-1 rounded-lg bg-neutral-100 font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
             >
               {ch}
             </button>
@@ -77,7 +77,7 @@ export function LetterKeyboard({
               type="button"
               disabled={disabled}
               onClick={() => onKey(ch)}
-              className="kb-key relative mx-[2px] flex-1 rounded-lg bg-white font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
+              className="kb-key relative flex-1 rounded-lg bg-white font-medium text-neutral-800 shadow-sm ring-1 ring-black/8 active:bg-brand-50 disabled:opacity-40"
             >
               {ch}
             </button>
@@ -91,7 +91,7 @@ export function LetterKeyboard({
           type="button"
           disabled={disabled}
           onClick={() => onKey(' ')}
-          className="kb-key relative mx-[2px] flex-[2] rounded-lg bg-white text-[12px] text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
+          className="kb-key relative flex-[2] rounded-lg bg-white text-[12px] text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
         >
           空格
         </button>
@@ -99,7 +99,7 @@ export function LetterKeyboard({
           type="button"
           disabled={disabled}
           onClick={() => onKey('-')}
-          className="kb-key relative mx-[2px] flex-1 rounded-lg bg-white text-[12px] text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
+          className="kb-key relative flex-1 rounded-lg bg-white text-[12px] text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
         >
           连字符
         </button>
@@ -107,7 +107,7 @@ export function LetterKeyboard({
           type="button"
           disabled={disabled}
           onClick={onBackspace}
-          className="kb-key relative mx-[2px] w-10 shrink-0 rounded-lg bg-white text-[13px] font-medium text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
+          className="kb-key relative w-10 shrink-0 rounded-lg bg-white text-[13px] font-medium text-neutral-600 shadow-sm ring-1 ring-black/8 active:bg-neutral-100 disabled:opacity-40"
         >
           ⌫
         </button>
@@ -115,7 +115,7 @@ export function LetterKeyboard({
           type="button"
           disabled={disabled}
           onClick={onSubmit}
-          className="kb-key relative mx-[2px] w-14 shrink-0 rounded-lg bg-brand-500 text-[13px] font-medium text-white shadow-sm active:bg-brand-600 disabled:opacity-40"
+          className="kb-key relative w-14 shrink-0 rounded-lg bg-brand-500 text-[13px] font-medium text-white shadow-sm active:bg-brand-600 disabled:opacity-40"
         >
           确定
         </button>

@@ -56,7 +56,7 @@ function ResultBanner({
   const meta = article ? `${article} ${word}${pos ? ` · ${pos}` : ''}` : (phonetic ?? '')
   return (
     <div
-      className={`pop mt-4 rounded-card px-4 py-3 short:mt-2.5 short:px-3 short:py-2 ${
+      className={`pop mt-4 rounded-card px-4 py-3 short:mt-2.5 short:px-3 short:py-2 land:py-1.5 ${
         ok ? 'bg-ok-soft text-[#0f6e56]' : 'bg-bad-soft text-[#a32d2d]'
       }`}
     >
@@ -241,9 +241,11 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
 
   const letterCount = entry.word.replace(/[^a-zA-Z]/g, '').length
 
+  // 手机横屏（land）：卡片和键盘左右分栏。这时候高度不再是瓶颈，
+  // 键盘能占满右半屏的高度，键跟着变大 —— 见 index.css 里的 land 尺寸档
   return (
-    <div className="flex flex-col">
-      <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5 short:p-3.5">
+    <div className="flex flex-col land:flex-row land:gap-4">
+      <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5 short:p-3.5 land:w-2/5 land:flex-none land:p-3">
         {/* 答完之后这行引导语就没用了，收掉能省一行 —— 手机上每一行都换算成键高 */}
         {!checked && (
           <div className="text-[12px] tracking-wide text-neutral-400">
@@ -292,28 +294,35 @@ export function SpellTrainer({ entry, hint, showKeyboard = true, onDone }: Train
           />
         )}
 
+        {/* 横屏时答案卡片和按钮并排 —— 竖着排会把按钮顶到固定导航栏底下 */}
         {checked && (
-          <ResultBanner
-            ok={ok}
-            word={entry.word}
-            phonetic={entry.phoneticUk}
-            note={entry.note}
-            article={entry.article}
-            pos={entry.pos}
-            accentOnly={accentOnly}
-          />
-        )}
-
-        {checked && ok && <NextButton label="继续" onClick={() => finishRef.current?.()} />}
-        {checked && !ok && (
-          <NextButton
-            label="我记住了，下一个"
-            onClick={() => manual(false, value, usedHint || accentOnly)}
-          />
+          <div className="land:flex land:items-start land:gap-3">
+            <div className="land:min-w-0 land:flex-1">
+              <ResultBanner
+                ok={ok}
+                word={entry.word}
+                phonetic={entry.phoneticUk}
+                note={entry.note}
+                article={entry.article}
+                pos={entry.pos}
+                accentOnly={accentOnly}
+              />
+            </div>
+            <div className="land:w-44 land:shrink-0">
+              {ok ? (
+                <NextButton label="继续" onClick={() => finishRef.current?.()} />
+              ) : (
+                <NextButton
+                  label="我记住了，下一个"
+                  onClick={() => manual(false, value, usedHint || accentOnly)}
+                />
+              )}
+            </div>
+          </div>
         )}
       </div>
 
-      <div className="mt-5">
+      <div className="mt-5 land:mt-0 land:flex-1 land:min-w-0 land:self-start">
         <LetterKeyboard
           disabled={checked}
           onKey={(ch) => setValue((v) => (v + ch).slice(0, 40))}
@@ -405,14 +414,16 @@ export function ExampleTrainer({
     onSubmit: submit,
   })
 
+  // 手机横屏（land）：卡片和键盘左右分栏。这时候高度不再是瓶颈，
+  // 键盘能占满右半屏的高度，键跟着变大 —— 见 index.css 里的 land 尺寸档
   return (
-    <div className="flex flex-col">
-      <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5 short:p-3.5">
+    <div className="flex flex-col land:flex-row land:gap-4">
+      <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5 short:p-3.5 land:w-2/5 land:flex-none land:p-3">
         <div className="text-[12px] tracking-wide text-neutral-400">
           放进句子里，这个词怎么用
         </div>
 
-        <div className="mt-3 rounded-xl bg-neutral-50 p-4 short:mt-2 short:p-2.5">
+        <div className="mt-3 rounded-xl bg-neutral-50 p-4 short:mt-2 short:p-2.5 land:mt-2 land:p-2">
           <div className="text-[15px] leading-relaxed text-neutral-800 short:text-[14px] short:leading-snug">
             {blanked ? text : entry.exampleEn}
           </div>
@@ -427,7 +438,7 @@ export function ExampleTrainer({
         </div>
 
         <div
-          className={`mt-2 flex min-h-[52px] items-center justify-center rounded-xl border-2 px-3 text-center text-[20px] tracking-widest short:min-h-[44px] short:text-[18px] ${
+          className={`mt-2 flex min-h-[52px] items-center justify-center rounded-xl border-2 px-3 text-center text-[20px] tracking-widest short:min-h-[44px] short:text-[18px] land:min-h-[40px] land:text-[18px] ${
             checked
               ? ok
                 ? 'border-ok bg-ok-soft text-[#0f6e56]'
@@ -462,29 +473,36 @@ export function ExampleTrainer({
           />
         )}
 
+        {/* 同上：横屏并排，避免按钮被底部固定导航栏盖住 */}
         {checked && (
-          <ResultBanner
-            ok={ok}
-            word={entry.word}
-            phonetic={entry.phoneticUk}
-            note={entry.note}
-            article={entry.article}
-            pos={entry.pos}
-            accentOnly={accentOnly}
-            skipped={skipped}
-          />
-        )}
-
-        {checked && ok && <NextButton label="继续" onClick={() => finishRef.current?.()} />}
-        {checked && !ok && (
-          <NextButton
-            label="我记住了，下一个"
-            onClick={() => manual(false, value, usedHint || accentOnly)}
-          />
+          <div className="land:flex land:items-start land:gap-3">
+            <div className="land:min-w-0 land:flex-1">
+              <ResultBanner
+                ok={ok}
+                word={entry.word}
+                phonetic={entry.phoneticUk}
+                note={entry.note}
+                article={entry.article}
+                pos={entry.pos}
+                accentOnly={accentOnly}
+                skipped={skipped}
+              />
+            </div>
+            <div className="land:w-44 land:shrink-0">
+              {ok ? (
+                <NextButton label="继续" onClick={() => finishRef.current?.()} />
+              ) : (
+                <NextButton
+                  label="我记住了，下一个"
+                  onClick={() => manual(false, value, usedHint || accentOnly)}
+                />
+              )}
+            </div>
+          </div>
         )}
       </div>
 
-      <div className="mt-5">
+      <div className="mt-5 land:mt-0 land:flex-1 land:min-w-0 land:self-start">
         <LetterKeyboard
           disabled={checked}
           onKey={(ch) => setValue((v) => (v + ch).slice(0, 40))}
@@ -556,7 +574,10 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
   }, [picked, options])
 
   return (
-    <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5">
+    // 这一关没有键盘，横屏时没必要铺满 —— 居中收一收更好读。
+    // 但也不能沿用竖屏的 max-w-lg：LearnPage 在横屏放开了宽度限制，
+    // 不这里收一下的话四个选项会被拉到八百多像素宽
+    <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5 land:mx-auto land:w-full land:max-w-3xl land:p-4">
       <div className="text-[12px] tracking-wide text-neutral-400">
         听到这个词，是什么意思
       </div>
@@ -570,12 +591,13 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
       <button
         type="button"
         onClick={() => speak(entry.word, { audioId: entry.id, rate: 0.7 })}
-        className="mt-3 flex h-14 w-full items-center justify-center rounded-xl bg-brand-50 text-[13px] text-brand-600 active:bg-brand-100"
+        className="mt-3 flex h-14 w-full items-center justify-center rounded-xl bg-brand-50 text-[13px] text-brand-600 active:bg-brand-100 land:mt-2 land:h-9"
       >
         再听一遍
       </button>
 
-      <div className="mt-4 grid gap-2">
+      {/* 横屏高度紧张，四个选项改排成两行两列，能省下一半的纵向空间 */}
+      <div className="mt-4 grid gap-2 land:mt-2 land:grid-cols-2 land:gap-2">
         {options.map((opt, i) => {
           const isAnswer = normalize(opt.word) === normalize(entry.word)
           const chosen = picked === opt.word
@@ -597,7 +619,7 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
               type="button"
               disabled={!!picked}
               onClick={() => choose(opt.word)}
-              className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 text-left text-[15px] ${cls}`}
+              className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 text-left text-[15px] land:py-1.5 ${cls}`}
             >
               <span
                 className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[13px] font-medium tabular-nums ${badgeCls}`}
@@ -610,20 +632,24 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
         })}
       </div>
 
+      {/* 横屏时答案行和按钮并排。竖着排要 112px，正好把按钮顶到固定导航栏
+          底下（导航栏 fixed，被盖住就点不到了）；并排只要 52px */}
       {picked && (
-        <div className="pop mt-4 rounded-card bg-neutral-50 px-4 py-3 text-[13px] text-neutral-600">
-          {entry.word} · {entry.phoneticUk} · {entry.cn}
+        <div className="land:flex land:items-start land:gap-3">
+          <div className="pop mt-4 rounded-card bg-neutral-50 px-4 py-3 text-[13px] text-neutral-600 land:mt-3 land:min-w-0 land:flex-1 land:py-1.5">
+            {entry.word} · {entry.phoneticUk} · {entry.cn}
+          </div>
+          <div className="land:w-44 land:shrink-0">
+            {normalize(picked) === normalize(entry.word) ? (
+              <NextButton label="继续" onClick={() => finishRef.current?.()} />
+            ) : (
+              <NextButton
+                label="我记住了，下一个"
+                onClick={() => manual(false, picked, false)}
+              />
+            )}
+          </div>
         </div>
-      )}
-
-      {picked && normalize(picked) === normalize(entry.word) && (
-        <NextButton label="继续" onClick={() => finishRef.current?.()} />
-      )}
-      {picked && normalize(picked) !== normalize(entry.word) && (
-        <NextButton
-          label="我记住了，下一个"
-          onClick={() => manual(false, picked ?? undefined, false)}
-        />
       )}
     </div>
   )
