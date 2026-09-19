@@ -363,11 +363,16 @@ export const useAppStore = create<AppState>((set, get) => ({
           ...rec,
           completed: true,
           completedAt: now,
-          // 用整场打卡的起点算总用时。退回 session.startedAt 是给老记录兜底
-          // （那时还没这个字段），那种情况下数字会偏小，但不会是 0
-          durationSec: Math.round(
-            (now - (rec.sessionStartedAt ?? session.startedAt)) / 1000,
-          ),
+          /**
+           * 用时 = 之前几轮的累计 + 本轮。
+           *
+           * 一天可能学好几轮（打完卡又"再来几个"），每轮起点由 addMore 重置，
+           * 这里把各轮加起来才是今天真实的总投入。
+           * 退回 session.startedAt 是给老记录兜底（那时还没这个字段）。
+           */
+          durationSec:
+            (rec.durationSec ?? 0) +
+            Math.round((now - (rec.sessionStartedAt ?? session.startedAt)) / 1000),
           rewardYuan,
           // 打完了就不用再存进度了，留着反而让别的设备以为还要接着学
           progress: undefined,
@@ -722,6 +727,9 @@ export const useAppStore = create<AppState>((set, get) => ({
             reviewCount: checkin.reviewCount + (kind === 'weak' ? added.length : 0),
             completed: false,
             completedAt: null,
+            // 新一轮重新计时。不重置的话，加练的用时会从"早上第一次开始"
+            // 一直算到现在，把中间隔着的几个小时也算进去
+            sessionStartedAt: Date.now(),
           }
         : null
       if (reopened) await repo.putCheckin(reopened)
