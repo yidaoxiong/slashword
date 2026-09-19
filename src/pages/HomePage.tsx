@@ -142,6 +142,10 @@ export function HomePage() {
           </div>
         </div>
         <div className="mt-2 text-[11px] text-neutral-400">
+          首次开始学习时，新词和复习加一起最多{' '}
+          {config?.dailyTotalLimit ?? 50} 个
+        </div>
+        <div className="mt-0.5 text-[11px] text-neutral-400">
           学到一半想加量也可以，做完之后有"再来几个"
         </div>
       </div>

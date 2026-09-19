@@ -216,6 +216,16 @@ export interface CheckinRecord {
   completed: boolean
   completedAt: number | null
   /**
+   * 这一整场打卡从什么时候开始。
+   *
+   * 不能拿 SessionProgress.startedAt 顶替 —— 那个是"当前这一个问题"的开始
+   * 时刻，每换一个词就重置一次；用它算用时，得到的是最后一个词的几十秒，
+   * 打卡页于是永远显示「约 1 分钟」。
+   *
+   * 老记录没有这个字段，算的时候退回 session.startedAt 兜底。
+   */
+  sessionStartedAt?: number
+  /**
    * 当天打卡发出去的奖金（元）。存档用 —— 真正算钱在 core/reward.ts，
    * 规则改了可以整体重算，这个字段只是留个当时的凭据。
    */
@@ -263,6 +273,16 @@ export interface EngineConfig {
   dailyNewLimit: number
   /** 每日复习上限 */
   dailyReviewLimit: number
+  /**
+   * 每天**首次**生成任务的总量上限（新增 + 复习）。
+   *
+   * 只有新词上限是不够的：复习默认 60、新词 10，凑起来 70 个 —— 孩子在首页
+   * 选了"学 5 个新词"，一进去发现还有五十几个复习，直接懵。
+   * 50 是刻意定的：一次大概十到十五分钟，正好是一个小学生的注意力长度。
+   *
+   * 只对当天第一次生成队列生效；中途"再来几个"是孩子自己点的，不受它限制。
+   */
+  dailyTotalLimit: number
   /** 当前词书 */
   activeBook: string
   /**

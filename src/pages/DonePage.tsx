@@ -7,7 +7,16 @@ export function DonePage() {
   const [adding, setAdding] = useState(false)
   const [msg, setMsg] = useState('')
 
-  const minutes = Math.max(1, Math.round((checkin?.durationSec ?? 0) / 60))
+  /**
+   * 用时。
+   *
+   * 原来是 `Math.max(1, ...)`，写死兜底成 1 分钟 —— 结果 durationSec 算错了
+   * 也照样显示"约 1 分钟"，问题被藏了好几个月。这里改成不到一分钟就报秒，
+   * 数字不对一眼能看出来。
+   */
+  const sec = Math.max(0, Math.round(checkin?.durationSec ?? 0))
+  const timeLabel =
+    sec <= 0 ? '—' : sec < 60 ? `${sec} 秒` : `约 ${Math.round(sec / 60)} 分钟`
 
   const add = async (n: number, kind: 'new' | 'weak' = 'new') => {
     setAdding(true)
@@ -33,7 +42,7 @@ export function DonePage() {
         <Row label="连续打卡" value={`${streak + 1} 天`} highlight />
         <Row label="今日新学" value={`${queue.filter((q) => q.isNew).length} 个`} />
         <Row label="今日复习" value={`${queue.filter((q) => !q.isNew).length} 个`} />
-        <Row label="用时" value={`约 ${minutes} 分钟`} />
+        <Row label="用时" value={timeLabel} />
         <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
           <span className="text-[13px] text-neutral-500">今日奖金</span>
           <span className="flex items-baseline gap-1.5">

@@ -257,6 +257,9 @@ export const useAppStore = create<AppState>((set, get) => ({
         durationSec: 0,
         completed: false,
         completedAt: null,
+        // 整场打卡的起点。session.startedAt 只记"当前这一个词"，每个词都会
+        // 重置，不能拿来算总用时
+        sessionStartedAt: now,
         updatedAt: now,
       }
       await repo.putCheckin(checkin)
@@ -360,7 +363,11 @@ export const useAppStore = create<AppState>((set, get) => ({
           ...rec,
           completed: true,
           completedAt: now,
-          durationSec: Math.round((now - session.startedAt) / 1000),
+          // 用整场打卡的起点算总用时。退回 session.startedAt 是给老记录兜底
+          // （那时还没这个字段），那种情况下数字会偏小，但不会是 0
+          durationSec: Math.round(
+            (now - (rec.sessionStartedAt ?? session.startedAt)) / 1000,
+          ),
           rewardYuan,
           // 打完了就不用再存进度了，留着反而让别的设备以为还要接着学
           progress: undefined,
@@ -645,9 +652,11 @@ export const useAppStore = create<AppState>((set, get) => ({
         dailyNewLimit: count,
         dailyReviewLimit: 0,
       }
-      added = (await buildDailyQueue(repo, temp, Date.now())).filter(
-        (q) => !have.has(q.cardId),
-      )
+      // 加练是孩子自己点的"再来几个"，不受每天 50 个的首日上限约束，
+      // 这里把总量上限放开，只让 dailyNewLimit=count 起作用
+      added = (
+        await buildDailyQueue(repo, temp, Date.now(), Number.MAX_SAFE_INTEGER)
+      ).filter((q) => !have.has(q.cardId))
     } else {
       // 专攻薄弱词：按掌握度从低到高挑。
       // 不再排除"今天已经练过的" —— 刚学完的孩子，他全部的卡就是今天这几张，

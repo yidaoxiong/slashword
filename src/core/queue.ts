@@ -49,57 +49,43 @@ export function sortEntries(entries: WordEntry[]): WordEntry[] {
 }
 
 /**
+ * 每天**首次**生成任务时的总量上限（新增 + 复习）。
+ *
+ * 光有「新词上限」管不住总量：复习默认 60、新词 10，凑起来 70 个。
+ * 孩子在首页明明选了"学 5 个新词"，一进去发现还有五十几个复习等着，
+ * 第一反应就是"我设的 5 个怎么没用"。
+ */
+export const DEFAULT_TOTAL_LIMIT = 50
+
+/**
  * 生成今日任务队列。
  *
- * 顺序：先复习后新词。复习是"还债"，新词是"扩张"——
- * 债不还，学再多新词也会在同一个坑上反复摔。
+ * 队列顺序仍然是先复习后新词（复习是"还债"，新词是"扩张"——
+ * 债不还，学再多新词也会在同一个坑上反复摔）。
+ *
+ * 但**计算顺序**要反过来：先定新词、再用剩下的名额取复习。
+ * 因为总上限是共享的，得先知道新词占掉几个，才知道复习还能给多少。
+ * 新词没取满时（单元快见底了）空出来的名额自动让给复习，不浪费。
+ *
+ * @param totalLimit 覆盖总量上限。加练时传大值绕开每天 50 的限制 ——
+ *   那是孩子自己点的"再来几个"，不该被首日限额挡住。
  */
 export async function buildDailyQueue(
   repo: Repository,
   config: EngineConfig,
   now: number,
+  totalLimitOverride?: number,
 ): Promise<QueueItem[]> {
-  const items: QueueItem[] = []
   const entries = await repo.listEntries(config.activeBook)
+  const totalLimit = totalLimitOverride ?? config.dailyTotalLimit ?? DEFAULT_TOTAL_LIMIT
 
-  // 1) 到期的复习卡 —— 只取当前词书的，否则学厚海时会混进五年级的复习词
-  const allDue = await repo.listDueCards(config.userId, now, config.dailyReviewLimit * 3)
-  const dueSorted = allDue
-    .filter((c) => c.book === config.activeBook)
-    .sort((a, b) => a.due - b.due)
-  for (const card of dueSorted) {
-    if (items.length >= config.dailyReviewLimit) break
-    const entry = resolveEntry(entries, card)
-    // 词表里已经找不到这个词了（改过词表）—— 跳过，而且不能让白跳的卡
-    // 占掉复习名额，所以限额判断放在这里而不是提前 slice
-    if (!entry) continue
-    // 顺手把卡片上过期的位置编号改回来，之后就不用每次都反查了
-    if (card.entryIds[0] !== entry.id) {
-      await repo.putCard({
-        ...card,
-        entryIds: [entry.id],
-        unit: entry.unit,
-        unitOrder: entry.unitOrder,
-        lesson: entry.lesson,
-        lessonOrder: entry.lessonOrder,
-        updatedAt: now,
-      })
-    }
-    items.push({
-      cardId: card.id,
-      entryId: entry.id,
-      word: card.display,
-      isNew: false,
-    })
-  }
-
-  // 2) 新词：取已解锁单元中还没建过卡的前 N 个
-  const newNeeded = config.dailyNewLimit
+  // 1) 新词：取已解锁单元中还没建过卡的前 N 个
+  const newNeeded = Math.max(0, Math.min(config.dailyNewLimit, totalLimit))
+  const fresh: QueueItem[] = []
   if (newNeeded > 0) {
     const allowed = unlockedUnitSet(entries, config)
     const candidates = sortEntries(entries.filter((e) => allowed.has(e.unitOrder)))
 
-    const fresh: QueueItem[] = []
     for (const e of candidates) {
       if (fresh.length >= newNeeded) break
       const key = wordKeyOf(e.word, e.cn)
@@ -126,10 +112,48 @@ export async function buildDailyQueue(
         isNew: true,
       })
     }
-    items.push(...fresh)
   }
 
-  return items
+  // 2) 复习名额 = 总量上限 - 实际新词数
+  const reviewCap = Math.max(
+    0,
+    Math.min(config.dailyReviewLimit, totalLimit - fresh.length),
+  )
+  const reviews: QueueItem[] = []
+  if (reviewCap > 0) {
+    // 只取当前词书的，否则学厚海时会混进五年级的复习词
+    const allDue = await repo.listDueCards(config.userId, now, reviewCap * 3)
+    const dueSorted = allDue
+      .filter((c) => c.book === config.activeBook)
+      .sort((a, b) => a.due - b.due)
+    for (const card of dueSorted) {
+      if (reviews.length >= reviewCap) break
+      const entry = resolveEntry(entries, card)
+      // 词表里已经找不到这个词了（改过词表）—— 跳过，而且不能让白跳的卡
+      // 占掉复习名额，所以限额判断放在这里而不是提前 slice
+      if (!entry) continue
+      // 顺手把卡片上过期的位置编号改回来，之后就不用每次都反查了
+      if (card.entryIds[0] !== entry.id) {
+        await repo.putCard({
+          ...card,
+          entryIds: [entry.id],
+          unit: entry.unit,
+          unitOrder: entry.unitOrder,
+          lesson: entry.lesson,
+          lessonOrder: entry.lessonOrder,
+          updatedAt: now,
+        })
+      }
+      reviews.push({
+        cardId: card.id,
+        entryId: entry.id,
+        word: card.display,
+        isNew: false,
+      })
+    }
+  }
+
+  return [...reviews, ...fresh]
 }
 
 /** 一本词书里所有单元的编号，按顺序列出来（五上是 [1,2,3,5,6,7]，厚海是 [7..12]） */
@@ -238,6 +262,9 @@ export function defaultConfig(userId = 'local'): EngineConfig {
     userId,
     dailyNewLimit: 10,
     dailyReviewLimit: 60,
+    // 首次生成队列的新增+复习总量上限。老配置没有这个字段，
+    // 加载时靠 {...默认值, ...已存配置} 自动补上
+    dailyTotalLimit: DEFAULT_TOTAL_LIMIT,
     activeBook: 'g5a',
     unitProgress: {},
     // 拼写 → 听读音选中文释义 → 例句（释义调到例句前面，见 types/index.ts 的说明）
