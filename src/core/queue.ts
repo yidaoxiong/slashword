@@ -79,12 +79,25 @@ export async function buildDailyQueue(
   const entries = await repo.listEntries(config.activeBook)
   const totalLimit = totalLimitOverride ?? config.dailyTotalLimit ?? DEFAULT_TOTAL_LIMIT
 
+  /**
+   * 家长在家长端勾掉的课一律不出题，新词和复习都受它管。
+   * 没设 lessonFilter 就是"不限制"，老用户行为不变。
+   * 空数组 ≠ 没设：空数组是这本词书一课都不学。
+   */
+  const picked = config.lessonFilter?.[config.activeBook]
+  const limited = Array.isArray(picked)
+  const pickedSet = new Set(picked ?? [])
+  const inScope = (e: WordEntry) =>
+    !limited || pickedSet.has(`${e.unitOrder}:${e.lessonOrder}`)
+
   // 1) 新词：取已解锁单元中还没建过卡的前 N 个
   const newNeeded = Math.max(0, Math.min(config.dailyNewLimit, totalLimit))
   const fresh: QueueItem[] = []
   if (newNeeded > 0) {
     const allowed = unlockedUnitSet(entries, config)
-    const candidates = sortEntries(entries.filter((e) => allowed.has(e.unitOrder)))
+    const candidates = sortEntries(
+      entries.filter((e) => allowed.has(e.unitOrder) && inScope(e)),
+    )
 
     for (const e of candidates) {
       if (fresh.length >= newNeeded) break
@@ -132,6 +145,8 @@ export async function buildDailyQueue(
       // 词表里已经找不到这个词了（改过词表）—— 跳过，而且不能让白跳的卡
       // 占掉复习名额，所以限额判断放在这里而不是提前 slice
       if (!entry) continue
+      // 家长勾掉的课，已经学过的卡也不再拿出来复习
+      if (!inScope(entry)) continue
       // 顺手把卡片上过期的位置编号改回来，之后就不用每次都反查了
       if (card.entryIds[0] !== entry.id) {
         await repo.putCard({

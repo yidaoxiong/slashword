@@ -312,6 +312,17 @@ export interface EngineConfig {
   /** 目标：真正记住 = 四维都达标 */
   masteryThreshold: number
   /**
+   * 每本词书里参与打卡的课。key 是 bookId，值是课的编号数组，
+   * 每项格式 `"单元序:课序"`（比如 "1:3" = 第 1 单元第 3 课）。
+   *
+   * 没设（undefined）= 不限制，按单元顺序整本推进 —— 老用户都是这个状态。
+   * 设了（哪怕是空数组）= 严格按这份名单来，没勾的课不出题。
+   *
+   * 空数组和 undefined 必须区分开：空数组是"这本课都不学"，
+   * undefined 是"照旧全学"，混成一回事的话家长把勾全去掉就会变成全学。
+   */
+  lessonFilter?: Record<string, string[]>
+  /**
    * 同步冲突裁决的唯一依据（last-write-wins）。
    * setConfig 每次都会刷新它 —— 不刷的话本地改完永远是旧时间戳，
    * 推上去云端不收、拉下来又被云端旧配置盖掉。

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuthStore } from '../store/useAuthStore'
+import { useAppStore } from '../store/useAppStore'
 
 export function LoginPage({ onClose }: { onClose: () => void }) {
   const { login, register, logout, sync, status, username, syncing } = useAuthStore()
@@ -81,7 +82,9 @@ export function LoginPage({ onClose }: { onClose: () => void }) {
         <button
           type="button"
           disabled={syncing}
-          onClick={() => void sync()}
+          onClick={() =>
+            void sync().then(() => void useAppStore.getState().refreshToday())
+          }
           className="mt-3 h-11 w-full rounded-xl bg-white text-[14px] text-neutral-700 shadow-sm ring-1 ring-black/5 disabled:opacity-40"
         >
           {syncing ? '同步中…' : '立即同步'}

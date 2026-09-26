@@ -6,6 +6,7 @@ import type { Card, CheckinRecord, Skill } from '../types'
 import { SKILL_LABEL, SKILLS } from '../types'
 import { speak } from '../lib/speech'
 import { BookImporter } from '../components/BookImporter'
+import { LessonPicker } from '../components/LessonPicker'
 import { ACCENTS, langOf, resolveAccent } from '../core/lang'
 import { visibleBooks } from '../core/books'
 import { SiteFooter } from '../components/SiteFooter'
@@ -259,6 +260,9 @@ export function ParentPage() {
           />
         </label>
       </div>
+
+      {/* 挑哪几课参与打卡。放设置之后 —— 它管的是"学什么"，比"怎么学"更基础 */}
+      <LessonPicker />
 
       <BookImporter />
 

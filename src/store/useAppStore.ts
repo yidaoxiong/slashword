@@ -73,6 +73,22 @@ interface AppState {
 
   init: () => Promise<void>
   refreshCatalog: () => Promise<void>
+  /**
+   * 同步之后重新读一遍「今天」的状态。
+   *
+   * 必须单独有这一步：sync() 只负责把云端数据写进 IndexedDB，不动 store，
+   * 而界面上的打卡状态是 init() 那一刻读进内存的 —— 于是别的设备打完卡，
+   * 这边同步完了，首页照旧显示"未打卡"。
+   */
+  refreshToday: () => Promise<void>
+  /**
+   * 学习途中改了学习范围，把队列里后面被取消的题摘掉。
+   *
+   * 当前正在做的这一道不动 —— 答到一半题目突然换了很糟，所以只动
+   * idx 之后的部分，孩子的体感是"下一题开始就是新范围了"。
+   * 不往里补新题：补题要建卡、还要重算总量，容易把正在进行的这一轮搞乱。
+   */
+  applyLessonScope: () => Promise<void>
   /** 从自制词库里删掉若干词条（连带清理已学卡片、单元进度） */
   removeWordsFromBook: (bookId: string, wordIds: string[]) => Promise<void>
   /** 撤回上一次删除，把整本词库恢复成删之前的样子 */
@@ -237,6 +253,43 @@ export const useAppStore = create<AppState>((set, get) => ({
     } catch (e) {
       set({ error: e instanceof Error ? e.message : String(e), phase: 'idle' })
     }
+  },
+
+  async refreshToday() {
+    const userId = getUserId()
+    const checkin = await repo.getCheckin(userId, todayKey())
+    const records = await repo.listCheckins(userId)
+    // 只刷这三项，不碰 phase —— 万一此刻正在学习页，不能把人踢回首页
+    set({
+      checkin: checkin ?? null,
+      streak: await computeStreak(userId),
+      reward: computeRewards(records),
+    })
+  },
+
+  async applyLessonScope() {
+    const { config, queue, idx, entries, session } = get()
+    if (!config || queue.length === 0) return
+    const picked = config.lessonFilter?.[config.activeBook]
+    if (!Array.isArray(picked)) return
+
+    const scope = new Set(picked)
+    const byId = new Map(entries.map((e) => [e.id, e]))
+    const inScope = (item: QueueItem) => {
+      const e = byId.get(item.entryId)
+      // 词条找不着就先留着：宁可多出一题，也别把还能学的词误删了
+      if (!e) return true
+      return scope.has(`${e.unitOrder}:${e.lessonOrder}`)
+    }
+
+    const head = queue.slice(0, idx + 1)
+    const tail = queue.slice(idx + 1).filter(inScope)
+    if (tail.length === queue.length - idx - 1) return
+
+    const next = [...head, ...tail]
+    set({ queue: next })
+    // 进度必须一起存，否则刷新一下又回到过滤前的队列
+    if (session) await saveProgress(next, idx, session, set)
   },
 
   async startDay() {
