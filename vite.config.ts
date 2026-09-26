@@ -26,6 +26,21 @@ export default defineConfig({
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
     __GIT_HASH__: JSON.stringify(gitHash()),
   },
+  /**
+   * 本地开发时把 /api 转发到线上 Worker。
+   *
+   * 后端挂在站点自己的域名下（english-slashword.slashbro.top/api/*），
+   * 本地 5173 端口没有这个路径，不转发的话登录、同步这些一概跑不通，
+   * 只能在本地干看界面。转发后同源限制也不存在了。
+   */
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://english-slashword.slashbro.top',
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     outDir: 'dist',
     // 不清空 dist：里面有 30MB 预生成的发音音频，每次全删全拷既慢又容易被

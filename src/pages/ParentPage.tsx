@@ -198,7 +198,9 @@ export function ParentPage() {
             className="mt-2 w-full accent-[#7132f5]"
           />
           <div className="mt-1 text-[11px] text-neutral-300">
-            每本词书的进度各自独立保存
+            {config.lessonFilter?.[config.activeBook]
+              ? '已设置学习范围，这项暂不生效'
+              : '每本词书的进度各自独立保存'}
           </div>
         </div>
 

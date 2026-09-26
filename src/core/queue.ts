@@ -94,9 +94,11 @@ export async function buildDailyQueue(
   const newNeeded = Math.max(0, Math.min(config.dailyNewLimit, totalLimit))
   const fresh: QueueItem[] = []
   if (newNeeded > 0) {
+    // 家长明确勾了范围，就按范围来，不再叠加「学到第几个单元」的限制 ——
+    // 否则勾了后面单元的课也不出题，家长只会以为这功能坏了
     const allowed = unlockedUnitSet(entries, config)
     const candidates = sortEntries(
-      entries.filter((e) => allowed.has(e.unitOrder) && inScope(e)),
+      entries.filter((e) => (limited ? inScope(e) : allowed.has(e.unitOrder))),
     )
 
     for (const e of candidates) {
