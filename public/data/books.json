@@ -30,11 +30,11 @@
   },
   {
     "id": "es-verbos",
-    "name": "西语常用动词",
+    "name": "西语常用动词 100",
     "grade": "西语动词",
     "source": "常用动词",
     "lang": "es",
-    "wordCount": 20,
-    "unitCount": 1
+    "wordCount": 100,
+    "unitCount": 4
   }
 ]

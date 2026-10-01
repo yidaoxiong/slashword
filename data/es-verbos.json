@@ -1,159 +1,6 @@
 [
  {
   "id": "es-verbos-0001",
-  "word": "hablar",
-  "note": "",
-  "phoneticUk": "",
-  "phoneticUs": "",
-  "article": "",
-  "lang": "es",
-  "pos": "v.",
-  "cn": "说，讲",
-  "exampleEn": "Quiero hablar contigo.",
-  "exampleCn": "我想和你说话。",
-  "book": "es-verbos",
-  "grade": "西语动词",
-  "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
-  "unitTitle": "动词变位",
-  "lesson": "",
-  "lessonOrder": 999,
-  "lessonTitle": "",
-  "category": "verbo",
-  "phonics": [],
-  "definitionEn": "",
-  "conjugations": [
-   {
-    "tense": "presente",
-    "tenseCn": "现在时",
-    "rule": "-ar 现在时：-o / -as / -a / -amos / -an",
-    "forms": {
-     "yo": "hablo",
-     "tu": "hablas",
-     "el": "habla",
-     "nosotros": "hablamos",
-     "ellos": "hablan"
-    }
-   },
-   {
-    "tense": "preterito",
-    "tenseCn": "简单过去时",
-    "rule": null,
-    "forms": {
-     "yo": "hablé",
-     "tu": "hablaste",
-     "el": "habló",
-     "nosotros": "hablamos",
-     "ellos": "hablaron"
-    }
-   }
-  ]
- },
- {
-  "id": "es-verbos-0002",
-  "word": "comer",
-  "note": "",
-  "phoneticUk": "",
-  "phoneticUs": "",
-  "article": "",
-  "lang": "es",
-  "pos": "v.",
-  "cn": "吃",
-  "exampleEn": "Voy a comer una manzana.",
-  "exampleCn": "我要吃一个苹果。",
-  "book": "es-verbos",
-  "grade": "西语动词",
-  "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
-  "unitTitle": "动词变位",
-  "lesson": "",
-  "lessonOrder": 999,
-  "lessonTitle": "",
-  "category": "verbo",
-  "phonics": [],
-  "definitionEn": "",
-  "conjugations": [
-   {
-    "tense": "presente",
-    "tenseCn": "现在时",
-    "rule": "-er 现在时：-o / -es / -e / -emos / -en",
-    "forms": {
-     "yo": "como",
-     "tu": "comes",
-     "el": "come",
-     "nosotros": "comemos",
-     "ellos": "comen"
-    }
-   },
-   {
-    "tense": "preterito",
-    "tenseCn": "简单过去时",
-    "rule": null,
-    "forms": {
-     "yo": "comí",
-     "tu": "comiste",
-     "el": "comió",
-     "nosotros": "comimos",
-     "ellos": "comieron"
-    }
-   }
-  ]
- },
- {
-  "id": "es-verbos-0003",
-  "word": "vivir",
-  "note": "",
-  "phoneticUk": "",
-  "phoneticUs": "",
-  "article": "",
-  "lang": "es",
-  "pos": "v.",
-  "cn": "生活，住",
-  "exampleEn": "Vivo en Beijing.",
-  "exampleCn": "我住在北京。",
-  "book": "es-verbos",
-  "grade": "西语动词",
-  "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
-  "unitTitle": "动词变位",
-  "lesson": "",
-  "lessonOrder": 999,
-  "lessonTitle": "",
-  "category": "verbo",
-  "phonics": [],
-  "definitionEn": "",
-  "conjugations": [
-   {
-    "tense": "presente",
-    "tenseCn": "现在时",
-    "rule": "-ir 现在时：-o / -es / -e / -imos / -en",
-    "forms": {
-     "yo": "vivo",
-     "tu": "vives",
-     "el": "vive",
-     "nosotros": "vivimos",
-     "ellos": "viven"
-    }
-   },
-   {
-    "tense": "preterito",
-    "tenseCn": "简单过去时",
-    "rule": null,
-    "forms": {
-     "yo": "viví",
-     "tu": "viviste",
-     "el": "vivió",
-     "nosotros": "vivimos",
-     "ellos": "vivieron"
-    }
-   }
-  ]
- },
- {
-  "id": "es-verbos-0004",
   "word": "ser",
   "note": "",
   "phoneticUk": "",
@@ -204,7 +51,7 @@
   ]
  },
  {
-  "id": "es-verbos-0005",
+  "id": "es-verbos-0002",
   "word": "estar",
   "note": "",
   "phoneticUk": "",
@@ -255,7 +102,7 @@
   ]
  },
  {
-  "id": "es-verbos-0006",
+  "id": "es-verbos-0003",
   "word": "tener",
   "note": "",
   "phoneticUk": "",
@@ -306,17 +153,17 @@
   ]
  },
  {
-  "id": "es-verbos-0007",
-  "word": "ir",
+  "id": "es-verbos-0004",
+  "word": "haber",
   "note": "",
   "phoneticUk": "",
   "phoneticUs": "",
   "article": "",
   "lang": "es",
   "pos": "v.",
-  "cn": "去",
-  "exampleEn": "Vamos al parque.",
-  "exampleCn": "我们去公园。",
+  "cn": "有（助动词）",
+  "exampleEn": "He comido ya.",
+  "exampleCn": "我已经吃过了。",
   "book": "es-verbos",
   "grade": "西语动词",
   "source": "常用动词",
@@ -335,11 +182,11 @@
     "tenseCn": "现在时",
     "rule": null,
     "forms": {
-     "yo": "voy",
-     "tu": "vas",
-     "el": "va",
-     "nosotros": "vamos",
-     "ellos": "van"
+     "yo": "he",
+     "tu": "has",
+     "el": "ha",
+     "nosotros": "hemos",
+     "ellos": "han"
     }
    },
    {
@@ -347,170 +194,17 @@
     "tenseCn": "简单过去时",
     "rule": null,
     "forms": {
-     "yo": "fui",
-     "tu": "fuiste",
-     "el": "fue",
-     "nosotros": "fuimos",
-     "ellos": "fueron"
+     "yo": "hube",
+     "tu": "hubiste",
+     "el": "hubo",
+     "nosotros": "hubimos",
+     "ellos": "hubieron"
     }
    }
   ]
  },
  {
-  "id": "es-verbos-0008",
-  "word": "querer",
-  "note": "",
-  "phoneticUk": "",
-  "phoneticUs": "",
-  "article": "",
-  "lang": "es",
-  "pos": "v.",
-  "cn": "想要，爱",
-  "exampleEn": "Quiero un café.",
-  "exampleCn": "我想要一杯咖啡。",
-  "book": "es-verbos",
-  "grade": "西语动词",
-  "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
-  "unitTitle": "动词变位",
-  "lesson": "",
-  "lessonOrder": 999,
-  "lessonTitle": "",
-  "category": "verbo",
-  "phonics": [],
-  "definitionEn": "",
-  "conjugations": [
-   {
-    "tense": "presente",
-    "tenseCn": "现在时",
-    "rule": "e→ie，但 nosotros / vosotros 不变",
-    "forms": {
-     "yo": "quiero",
-     "tu": "quieres",
-     "el": "quiere",
-     "nosotros": "queremos",
-     "ellos": "quieren"
-    }
-   },
-   {
-    "tense": "preterito",
-    "tenseCn": "简单过去时",
-    "rule": null,
-    "forms": {
-     "yo": "quise",
-     "tu": "quisiste",
-     "el": "quiso",
-     "nosotros": "quisimos",
-     "ellos": "quisieron"
-    }
-   }
-  ]
- },
- {
-  "id": "es-verbos-0009",
-  "word": "poder",
-  "note": "",
-  "phoneticUk": "",
-  "phoneticUs": "",
-  "article": "",
-  "lang": "es",
-  "pos": "v.",
-  "cn": "能够，可以",
-  "exampleEn": "¿Puedes ayudarme?",
-  "exampleCn": "你能帮我吗？",
-  "book": "es-verbos",
-  "grade": "西语动词",
-  "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
-  "unitTitle": "动词变位",
-  "lesson": "",
-  "lessonOrder": 999,
-  "lessonTitle": "",
-  "category": "verbo",
-  "phonics": [],
-  "definitionEn": "",
-  "conjugations": [
-   {
-    "tense": "presente",
-    "tenseCn": "现在时",
-    "rule": "o→ue，但 nosotros 不变",
-    "forms": {
-     "yo": "puedo",
-     "tu": "puedes",
-     "el": "puede",
-     "nosotros": "podemos",
-     "ellos": "pueden"
-    }
-   },
-   {
-    "tense": "preterito",
-    "tenseCn": "简单过去时",
-    "rule": null,
-    "forms": {
-     "yo": "pude",
-     "tu": "pudiste",
-     "el": "pudo",
-     "nosotros": "pudimos",
-     "ellos": "pudieron"
-    }
-   }
-  ]
- },
- {
-  "id": "es-verbos-0010",
-  "word": "decir",
-  "note": "",
-  "phoneticUk": "",
-  "phoneticUs": "",
-  "article": "",
-  "lang": "es",
-  "pos": "v.",
-  "cn": "说，告诉",
-  "exampleEn": "¿Qué dices?",
-  "exampleCn": "你说什么？",
-  "book": "es-verbos",
-  "grade": "西语动词",
-  "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
-  "unitTitle": "动词变位",
-  "lesson": "",
-  "lessonOrder": 999,
-  "lessonTitle": "",
-  "category": "verbo",
-  "phonics": [],
-  "definitionEn": "",
-  "conjugations": [
-   {
-    "tense": "presente",
-    "tenseCn": "现在时",
-    "rule": null,
-    "forms": {
-     "yo": "digo",
-     "tu": "dices",
-     "el": "dice",
-     "nosotros": "decimos",
-     "ellos": "dicen"
-    }
-   },
-   {
-    "tense": "preterito",
-    "tenseCn": "简单过去时",
-    "rule": null,
-    "forms": {
-     "yo": "dije",
-     "tu": "dijiste",
-     "el": "dijo",
-     "nosotros": "dijimos",
-     "ellos": "dijeron"
-    }
-   }
-  ]
- },
- {
-  "id": "es-verbos-0011",
+  "id": "es-verbos-0005",
   "word": "hacer",
   "note": "",
   "phoneticUk": "",
@@ -561,17 +255,17 @@
   ]
  },
  {
-  "id": "es-verbos-0012",
-  "word": "pensar",
+  "id": "es-verbos-0006",
+  "word": "poder",
   "note": "",
   "phoneticUk": "",
   "phoneticUs": "",
   "article": "",
   "lang": "es",
   "pos": "v.",
-  "cn": "想，思考",
-  "exampleEn": "Pienso en ti.",
-  "exampleCn": "我想你。",
+  "cn": "能够，可以",
+  "exampleEn": "¿Puedes ayudarme?",
+  "exampleCn": "你能帮我吗？",
   "book": "es-verbos",
   "grade": "西语动词",
   "source": "常用动词",
@@ -588,13 +282,13 @@
    {
     "tense": "presente",
     "tenseCn": "现在时",
-    "rule": "e→ie，nosotros 不变",
+    "rule": null,
     "forms": {
-     "yo": "pienso",
-     "tu": "piensas",
-     "el": "piensa",
-     "nosotros": "pensamos",
-     "ellos": "piensan"
+     "yo": "puedo",
+     "tu": "puedes",
+     "el": "puede",
+     "nosotros": "podemos",
+     "ellos": "pueden"
     }
    },
    {
@@ -602,27 +296,333 @@
     "tenseCn": "简单过去时",
     "rule": null,
     "forms": {
-     "yo": "pensé",
-     "tu": "pensaste",
-     "el": "pensó",
-     "nosotros": "pensamos",
-     "ellos": "pensaron"
+     "yo": "pude",
+     "tu": "pudiste",
+     "el": "pudo",
+     "nosotros": "pudimos",
+     "ellos": "pudieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0007",
+  "word": "decir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "说，告诉",
+  "exampleEn": "¿Qué dices?",
+  "exampleCn": "你说什么？",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "digo",
+     "tu": "dices",
+     "el": "dice",
+     "nosotros": "decimos",
+     "ellos": "dicen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "dije",
+     "tu": "dijiste",
+     "el": "dijo",
+     "nosotros": "dijimos",
+     "ellos": "dijeron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0008",
+  "word": "ir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "去",
+  "exampleEn": "Vamos al parque.",
+  "exampleCn": "我们去公园。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "voy",
+     "tu": "vas",
+     "el": "va",
+     "nosotros": "vamos",
+     "ellos": "van"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "fui",
+     "tu": "fuiste",
+     "el": "fue",
+     "nosotros": "fuimos",
+     "ellos": "fueron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0009",
+  "word": "ver",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "看，看见",
+  "exampleEn": "Veo la casa.",
+  "exampleCn": "我看见那座房子。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "veo",
+     "tu": "ves",
+     "el": "ve",
+     "nosotros": "vemos",
+     "ellos": "ven"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "vi",
+     "tu": "viste",
+     "el": "vio",
+     "nosotros": "vimos",
+     "ellos": "vieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0010",
+  "word": "dar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "给",
+  "exampleEn": "Me da un libro.",
+  "exampleCn": "他给我一本书。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "doy",
+     "tu": "das",
+     "el": "da",
+     "nosotros": "damos",
+     "ellos": "dan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "di",
+     "tu": "diste",
+     "el": "dio",
+     "nosotros": "dimos",
+     "ellos": "dieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0011",
+  "word": "saber",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "知道，会",
+  "exampleEn": "Sé la respuesta.",
+  "exampleCn": "我知道答案。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "sé",
+     "tu": "sabes",
+     "el": "sabe",
+     "nosotros": "sabemos",
+     "ellos": "saben"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "supe",
+     "tu": "supiste",
+     "el": "supo",
+     "nosotros": "supimos",
+     "ellos": "supieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0012",
+  "word": "querer",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "想要，爱",
+  "exampleEn": "Quiero un café.",
+  "exampleCn": "我想要一杯咖啡。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "quiero",
+     "tu": "quieres",
+     "el": "quiere",
+     "nosotros": "queremos",
+     "ellos": "quieren"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "quise",
+     "tu": "quisiste",
+     "el": "quiso",
+     "nosotros": "quisimos",
+     "ellos": "quisieron"
     }
    }
   ]
  },
  {
   "id": "es-verbos-0013",
-  "word": "dormir",
+  "word": "hablar",
   "note": "",
   "phoneticUk": "",
   "phoneticUs": "",
   "article": "",
   "lang": "es",
   "pos": "v.",
-  "cn": "睡觉",
-  "exampleEn": "Duermo ocho horas.",
-  "exampleCn": "我睡八小时。",
+  "cn": "说，讲",
+  "exampleEn": "Quiero hablar contigo.",
+  "exampleCn": "我想和你说话。",
   "book": "es-verbos",
   "grade": "西语动词",
   "source": "常用动词",
@@ -639,13 +639,13 @@
    {
     "tense": "presente",
     "tenseCn": "现在时",
-    "rule": "o→ue，过去时三单/三复 e→u",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
     "forms": {
-     "yo": "duermo",
-     "tu": "duermes",
-     "el": "duerme",
-     "nosotros": "dormimos",
-     "ellos": "duermen"
+     "yo": "hablo",
+     "tu": "hablas",
+     "el": "habla",
+     "nosotros": "hablamos",
+     "ellos": "hablan"
     }
    },
    {
@@ -653,27 +653,27 @@
     "tenseCn": "简单过去时",
     "rule": null,
     "forms": {
-     "yo": "dormí",
-     "tu": "dormiste",
-     "el": "durmió",
-     "nosotros": "dormimos",
-     "ellos": "durmieron"
+     "yo": "hablé",
+     "tu": "hablaste",
+     "el": "habló",
+     "nosotros": "hablamos",
+     "ellos": "hablaron"
     }
    }
   ]
  },
  {
   "id": "es-verbos-0014",
-  "word": "pedir",
+  "word": "comer",
   "note": "",
   "phoneticUk": "",
   "phoneticUs": "",
   "article": "",
   "lang": "es",
   "pos": "v.",
-  "cn": "请求，点（餐）",
-  "exampleEn": "Pido un taxi.",
-  "exampleCn": "我叫一辆出租车。",
+  "cn": "吃",
+  "exampleEn": "Voy a comer una manzana.",
+  "exampleCn": "我要吃一个苹果。",
   "book": "es-verbos",
   "grade": "西语动词",
   "source": "常用动词",
@@ -690,13 +690,13 @@
    {
     "tense": "presente",
     "tenseCn": "现在时",
-    "rule": "e→i，过去时三单/三复也 e→i",
+    "rule": "-er：-o / -es / -e / -emos / -en",
     "forms": {
-     "yo": "pido",
-     "tu": "pides",
-     "el": "pide",
-     "nosotros": "pedimos",
-     "ellos": "piden"
+     "yo": "como",
+     "tu": "comes",
+     "el": "come",
+     "nosotros": "comemos",
+     "ellos": "comen"
     }
    },
    {
@@ -704,17 +704,119 @@
     "tenseCn": "简单过去时",
     "rule": null,
     "forms": {
-     "yo": "pedí",
-     "tu": "pediste",
-     "el": "pidió",
-     "nosotros": "pedimos",
-     "ellos": "pidieron"
+     "yo": "comí",
+     "tu": "comiste",
+     "el": "comió",
+     "nosotros": "comimos",
+     "ellos": "comieron"
     }
    }
   ]
  },
  {
   "id": "es-verbos-0015",
+  "word": "vivir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "生活，住",
+  "exampleEn": "Vivo en Beijing.",
+  "exampleCn": "我住在北京。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "vivo",
+     "tu": "vives",
+     "el": "vive",
+     "nosotros": "vivimos",
+     "ellos": "viven"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "viví",
+     "tu": "viviste",
+     "el": "vivió",
+     "nosotros": "vivimos",
+     "ellos": "vivieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0016",
+  "word": "beber",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "喝",
+  "exampleEn": "Bebo agua.",
+  "exampleCn": "我喝水。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en",
+    "forms": {
+     "yo": "bebo",
+     "tu": "bebes",
+     "el": "bebe",
+     "nosotros": "bebemos",
+     "ellos": "beben"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "bebí",
+     "tu": "bebiste",
+     "el": "bebió",
+     "nosotros": "bebimos",
+     "ellos": "bebieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0017",
   "word": "leer",
   "note": "",
   "phoneticUk": "",
@@ -741,7 +843,7 @@
    {
     "tense": "presente",
     "tenseCn": "现在时",
-    "rule": "过去时三单 y 结尾：-yó / -yeron",
+    "rule": "-er：-o / -es / -e / -emos / -en",
     "forms": {
      "yo": "leo",
      "tu": "lees",
@@ -756,16 +858,730 @@
     "rule": null,
     "forms": {
      "yo": "leí",
-     "tu": "leíste",
+     "tu": "leiste",
      "el": "leyó",
-     "nosotros": "leímos",
+     "nosotros": "leimos",
      "ellos": "leyeron"
     }
    }
   ]
  },
  {
-  "id": "es-verbos-0016",
+  "id": "es-verbos-0018",
+  "word": "escribir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "写",
+  "exampleEn": "Escribo una carta.",
+  "exampleCn": "我写一封信。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "escribo",
+     "tu": "escribes",
+     "el": "escribe",
+     "nosotros": "escribimos",
+     "ellos": "escriben"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "escribí",
+     "tu": "escribiste",
+     "el": "escribió",
+     "nosotros": "escribimos",
+     "ellos": "escribieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0019",
+  "word": "escuchar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "听",
+  "exampleEn": "Escucho música.",
+  "exampleCn": "我听音乐。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "escucho",
+     "tu": "escuchas",
+     "el": "escucha",
+     "nosotros": "escuchamos",
+     "ellos": "escuchan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "escuché",
+     "tu": "escuchaste",
+     "el": "escuchó",
+     "nosotros": "escuchamos",
+     "ellos": "escucharon"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0020",
+  "word": "oír",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "听见",
+  "exampleEn": "Oigo un ruido.",
+  "exampleCn": "我听见一个声音。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "oigo",
+     "tu": "oyes",
+     "el": "oye",
+     "nosotros": "oímos",
+     "ellos": "oyen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "oí",
+     "tu": "oíste",
+     "el": "oyó",
+     "nosotros": "oímos",
+     "ellos": "oyeron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0021",
+  "word": "mirar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "看，瞧",
+  "exampleEn": "Miro la televisión.",
+  "exampleCn": "我看电视。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "miro",
+     "tu": "miras",
+     "el": "mira",
+     "nosotros": "miramos",
+     "ellos": "miran"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "miré",
+     "tu": "miraste",
+     "el": "miró",
+     "nosotros": "miramos",
+     "ellos": "miraron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0022",
+  "word": "estudiar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "学习",
+  "exampleEn": "Estudio español.",
+  "exampleCn": "我学西班牙语。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "estudio",
+     "tu": "estudias",
+     "el": "estudia",
+     "nosotros": "estudiamos",
+     "ellos": "estudian"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "estudié",
+     "tu": "estudiaste",
+     "el": "estudió",
+     "nosotros": "estudiamos",
+     "ellos": "estudiaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0023",
+  "word": "aprender",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "学会",
+  "exampleEn": "Aprendo palabras nuevas.",
+  "exampleCn": "我学新单词。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en",
+    "forms": {
+     "yo": "aprendo",
+     "tu": "aprendes",
+     "el": "aprende",
+     "nosotros": "aprendemos",
+     "ellos": "aprenden"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "aprendí",
+     "tu": "aprendiste",
+     "el": "aprendió",
+     "nosotros": "aprendimos",
+     "ellos": "aprendieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0024",
+  "word": "enseñar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "教",
+  "exampleEn": "Enseño matemáticas.",
+  "exampleCn": "我教数学。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "enseño",
+     "tu": "enseñas",
+     "el": "enseña",
+     "nosotros": "enseñamos",
+     "ellos": "enseñan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "enseñé",
+     "tu": "enseñaste",
+     "el": "enseñó",
+     "nosotros": "enseñamos",
+     "ellos": "enseñaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0025",
+  "word": "trabajar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "工作",
+  "exampleEn": "Trabajo en una fábrica.",
+  "exampleCn": "我在一家工厂工作。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 1",
+  "unitOrder": 1,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "trabajo",
+     "tu": "trabajas",
+     "el": "trabaja",
+     "nosotros": "trabajamos",
+     "ellos": "trabajan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "trabajé",
+     "tu": "trabajaste",
+     "el": "trabajó",
+     "nosotros": "trabajamos",
+     "ellos": "trabajaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0026",
+  "word": "necesitar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "需要",
+  "exampleEn": "Necesito ayuda.",
+  "exampleCn": "我需要帮助。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "necesito",
+     "tu": "necesitas",
+     "el": "necesita",
+     "nosotros": "necesitamos",
+     "ellos": "necesitan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "necesité",
+     "tu": "necesitaste",
+     "el": "necesitó",
+     "nosotros": "necesitamos",
+     "ellos": "necesitaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0027",
+  "word": "comprar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "买",
+  "exampleEn": "Compro pan.",
+  "exampleCn": "我买面包。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "compro",
+     "tu": "compras",
+     "el": "compra",
+     "nosotros": "compramos",
+     "ellos": "compran"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "compré",
+     "tu": "compraste",
+     "el": "compró",
+     "nosotros": "compramos",
+     "ellos": "compraron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0028",
+  "word": "vender",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "卖",
+  "exampleEn": "Vendo frutas.",
+  "exampleCn": "我卖水果。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en",
+    "forms": {
+     "yo": "vendo",
+     "tu": "vendes",
+     "el": "vende",
+     "nosotros": "vendemos",
+     "ellos": "venden"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "vendí",
+     "tu": "vendiste",
+     "el": "vendió",
+     "nosotros": "vendimos",
+     "ellos": "vendieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0029",
+  "word": "pagar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "支付",
+  "exampleEn": "Pago la cuenta.",
+  "exampleCn": "我付账。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "pago",
+     "tu": "pagas",
+     "el": "paga",
+     "nosotros": "pagamos",
+     "ellos": "pagan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": "yo 保音：car→-qué、gar→-gué、zar→-cé",
+    "forms": {
+     "yo": "pagué",
+     "tu": "pagaste",
+     "el": "pagó",
+     "nosotros": "pagamos",
+     "ellos": "pagaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0030",
+  "word": "costar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "花费",
+  "exampleEn": "Cuesta diez pesos.",
+  "exampleCn": "这个卖十比索。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an；o→ue（ nosotros 不变）",
+    "forms": {
+     "yo": "cuesto",
+     "tu": "cuestas",
+     "el": "cuesta",
+     "nosotros": "costamos",
+     "ellos": "cuestan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "costé",
+     "tu": "costaste",
+     "el": "costó",
+     "nosotros": "costamos",
+     "ellos": "costaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0031",
+  "word": "esperar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "等待，希望",
+  "exampleEn": "Espero el autobús.",
+  "exampleCn": "我等公交车。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "espero",
+     "tu": "esperas",
+     "el": "espera",
+     "nosotros": "esperamos",
+     "ellos": "esperan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "esperé",
+     "tu": "esperaste",
+     "el": "esperó",
+     "nosotros": "esperamos",
+     "ellos": "esperaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0032",
   "word": "buscar",
   "note": "",
   "phoneticUk": "",
@@ -779,8 +1595,8 @@
   "book": "es-verbos",
   "grade": "西语动词",
   "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
+  "unit": "Unidad 2",
+  "unitOrder": 2,
   "unitTitle": "动词变位",
   "lesson": "",
   "lessonOrder": 999,
@@ -792,7 +1608,7 @@
    {
     "tense": "presente",
     "tenseCn": "现在时",
-    "rule": "过去时 yo 要保音：c→qu（busqué）",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
     "forms": {
      "yo": "busco",
      "tu": "buscas",
@@ -804,7 +1620,7 @@
    {
     "tense": "preterito",
     "tenseCn": "简单过去时",
-    "rule": null,
+    "rule": "yo 保音：car→-qué、gar→-gué、zar→-cé",
     "forms": {
      "yo": "busqué",
      "tu": "buscaste",
@@ -816,7 +1632,58 @@
   ]
  },
  {
-  "id": "es-verbos-0017",
+  "id": "es-verbos-0033",
+  "word": "encontrar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "找到",
+  "exampleEn": "Encuentro el libro.",
+  "exampleCn": "我找到那本书。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an；o→ue（ nosotros 不变）",
+    "forms": {
+     "yo": "encuentro",
+     "tu": "encuentras",
+     "el": "encuentra",
+     "nosotros": "encontramos",
+     "ellos": "encuentran"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "encontré",
+     "tu": "encontraste",
+     "el": "encontró",
+     "nosotros": "encontramos",
+     "ellos": "encontraron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0034",
   "word": "llegar",
   "note": "",
   "phoneticUk": "",
@@ -830,8 +1697,8 @@
   "book": "es-verbos",
   "grade": "西语动词",
   "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
+  "unit": "Unidad 2",
+  "unitOrder": 2,
   "unitTitle": "动词变位",
   "lesson": "",
   "lessonOrder": 999,
@@ -843,7 +1710,7 @@
    {
     "tense": "presente",
     "tenseCn": "现在时",
-    "rule": "过去时 yo 要保音：g→gu（llegué）",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
     "forms": {
      "yo": "llego",
      "tu": "llegas",
@@ -855,7 +1722,7 @@
    {
     "tense": "preterito",
     "tenseCn": "简单过去时",
-    "rule": null,
+    "rule": "yo 保音：car→-qué、gar→-gué、zar→-cé",
     "forms": {
      "yo": "llegué",
      "tu": "llegaste",
@@ -867,7 +1734,772 @@
   ]
  },
  {
-  "id": "es-verbos-0018",
+  "id": "es-verbos-0035",
+  "word": "salir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "出去",
+  "exampleEn": "Salgo de casa.",
+  "exampleCn": "我出门。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en；yo 加 -go",
+    "forms": {
+     "yo": "salgo",
+     "tu": "sales",
+     "el": "sale",
+     "nosotros": "salimos",
+     "ellos": "salen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "salí",
+     "tu": "saliste",
+     "el": "salió",
+     "nosotros": "salimos",
+     "ellos": "salieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0036",
+  "word": "entrar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "进入",
+  "exampleEn": "Entro al cuarto.",
+  "exampleCn": "我进房间。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "entro",
+     "tu": "entras",
+     "el": "entra",
+     "nosotros": "entramos",
+     "ellos": "entran"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "entré",
+     "tu": "entraste",
+     "el": "entró",
+     "nosotros": "entramos",
+     "ellos": "entraron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0037",
+  "word": "subir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "上去，上传",
+  "exampleEn": "Subo las escaleras.",
+  "exampleCn": "我上楼梯。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "subo",
+     "tu": "subes",
+     "el": "sube",
+     "nosotros": "subimos",
+     "ellos": "suben"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "subí",
+     "tu": "subiste",
+     "el": "subió",
+     "nosotros": "subimos",
+     "ellos": "subieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0038",
+  "word": "bajar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "下来，下载",
+  "exampleEn": "Bajo del coche.",
+  "exampleCn": "我下车。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "bajo",
+     "tu": "bajas",
+     "el": "baja",
+     "nosotros": "bajamos",
+     "ellos": "bajan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "bajé",
+     "tu": "bajaste",
+     "el": "bajó",
+     "nosotros": "bajamos",
+     "ellos": "bajaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0039",
+  "word": "abrir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "打开",
+  "exampleEn": "Abro la puerta.",
+  "exampleCn": "我开门。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "abro",
+     "tu": "abres",
+     "el": "abre",
+     "nosotros": "abrimos",
+     "ellos": "abren"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "abrí",
+     "tu": "abriste",
+     "el": "abrió",
+     "nosotros": "abrimos",
+     "ellos": "abrieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0040",
+  "word": "cerrar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "关闭",
+  "exampleEn": "Cierro la ventana.",
+  "exampleCn": "我关窗。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an；e→ie（ nosotros 不变）",
+    "forms": {
+     "yo": "cierro",
+     "tu": "cierras",
+     "el": "cierra",
+     "nosotros": "cerramos",
+     "ellos": "cierran"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "cerré",
+     "tu": "cerraste",
+     "el": "cerró",
+     "nosotros": "cerramos",
+     "ellos": "cerraron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0041",
+  "word": "empezar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "开始",
+  "exampleEn": "Empiezo a trabajar.",
+  "exampleCn": "我开始工作。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an；e→ie（ nosotros 不变）",
+    "forms": {
+     "yo": "empiezo",
+     "tu": "empiezas",
+     "el": "empieza",
+     "nosotros": "empezamos",
+     "ellos": "empiezan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": "yo 保音：car→-qué、gar→-gué、zar→-cé",
+    "forms": {
+     "yo": "empecé",
+     "tu": "empezaste",
+     "el": "empezó",
+     "nosotros": "empezamos",
+     "ellos": "empezaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0042",
+  "word": "terminar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "结束",
+  "exampleEn": "Termino la tarea.",
+  "exampleCn": "我完成任务。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "termino",
+     "tu": "terminas",
+     "el": "termina",
+     "nosotros": "terminamos",
+     "ellos": "terminan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "terminé",
+     "tu": "terminaste",
+     "el": "terminó",
+     "nosotros": "terminamos",
+     "ellos": "terminaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0043",
+  "word": "seguir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "继续",
+  "exampleEn": "Sigo estudiando.",
+  "exampleCn": "我继续学习。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "sigo",
+     "tu": "sigues",
+     "el": "sigue",
+     "nosotros": "seguimos",
+     "ellos": "siguen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "seguí",
+     "tu": "seguiste",
+     "el": "siguió",
+     "nosotros": "seguimos",
+     "ellos": "siguieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0044",
+  "word": "volver",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "回来",
+  "exampleEn": "Vuelvo a casa.",
+  "exampleCn": "我回家。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en；o→ue（ nosotros 不变）",
+    "forms": {
+     "yo": "vuelvo",
+     "tu": "vuelves",
+     "el": "vuelve",
+     "nosotros": "volvemos",
+     "ellos": "vuelven"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "volví",
+     "tu": "volviste",
+     "el": "volvió",
+     "nosotros": "volvimos",
+     "ellos": "volvieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0045",
+  "word": "venir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "来",
+  "exampleEn": "Vengo mañana.",
+  "exampleCn": "我明天来。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "vengo",
+     "tu": "vienes",
+     "el": "viene",
+     "nosotros": "venimos",
+     "ellos": "vienen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "vine",
+     "tu": "viniste",
+     "el": "vino",
+     "nosotros": "vinimos",
+     "ellos": "vinieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0046",
+  "word": "viajar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "旅行",
+  "exampleEn": "Viajo a México.",
+  "exampleCn": "我去墨西哥旅行。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "viajo",
+     "tu": "viajas",
+     "el": "viaja",
+     "nosotros": "viajamos",
+     "ellos": "viajan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "viajé",
+     "tu": "viajaste",
+     "el": "viajó",
+     "nosotros": "viajamos",
+     "ellos": "viajaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0047",
+  "word": "caminar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "走路",
+  "exampleEn": "Camino al parque.",
+  "exampleCn": "我走路去公园。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "camino",
+     "tu": "caminas",
+     "el": "camina",
+     "nosotros": "caminamos",
+     "ellos": "caminan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "caminé",
+     "tu": "caminaste",
+     "el": "caminó",
+     "nosotros": "caminamos",
+     "ellos": "caminaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0048",
+  "word": "correr",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "跑",
+  "exampleEn": "Corro cada mañana.",
+  "exampleCn": "我每天早上跑步。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en",
+    "forms": {
+     "yo": "corro",
+     "tu": "corres",
+     "el": "corre",
+     "nosotros": "corremos",
+     "ellos": "corren"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "corrí",
+     "tu": "corriste",
+     "el": "corrió",
+     "nosotros": "corrimos",
+     "ellos": "corrieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0049",
+  "word": "nadar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "游泳",
+  "exampleEn": "Nado en la piscina.",
+  "exampleCn": "我在游泳池游泳。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 2",
+  "unitOrder": 2,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "nado",
+     "tu": "nadas",
+     "el": "nada",
+     "nosotros": "nadamos",
+     "ellos": "nadan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "nadé",
+     "tu": "nadaste",
+     "el": "nadó",
+     "nosotros": "nadamos",
+     "ellos": "nadaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0050",
   "word": "jugar",
   "note": "",
   "phoneticUk": "",
@@ -881,8 +2513,8 @@
   "book": "es-verbos",
   "grade": "西语动词",
   "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
+  "unit": "Unidad 2",
+  "unitOrder": 2,
   "unitTitle": "动词变位",
   "lesson": "",
   "lessonOrder": 999,
@@ -894,7 +2526,7 @@
    {
     "tense": "presente",
     "tenseCn": "现在时",
-    "rule": "u→ue，过去时 yo g→gu",
+    "rule": null,
     "forms": {
      "yo": "juego",
      "tu": "juegas",
@@ -906,7 +2538,7 @@
    {
     "tense": "preterito",
     "tenseCn": "简单过去时",
-    "rule": null,
+    "rule": "yo 保音：car→-qué、gar→-gué、zar→-cé",
     "forms": {
      "yo": "jugué",
      "tu": "jugaste",
@@ -918,7 +2550,466 @@
   ]
  },
  {
-  "id": "es-verbos-0019",
+  "id": "es-verbos-0051",
+  "word": "ganar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "赢，赚",
+  "exampleEn": "Gano el partido.",
+  "exampleCn": "我赢了比赛。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "gano",
+     "tu": "ganas",
+     "el": "gana",
+     "nosotros": "ganamos",
+     "ellos": "ganan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "gané",
+     "tu": "ganaste",
+     "el": "ganó",
+     "nosotros": "ganamos",
+     "ellos": "ganaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0052",
+  "word": "perder",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "输，丢失",
+  "exampleEn": "Pierdo el tren.",
+  "exampleCn": "我错过火车。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en；e→ie（ nosotros 不变）",
+    "forms": {
+     "yo": "pierdo",
+     "tu": "pierdes",
+     "el": "pierde",
+     "nosotros": "perdemos",
+     "ellos": "pierden"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "perdí",
+     "tu": "perdiste",
+     "el": "perdió",
+     "nosotros": "perdimos",
+     "ellos": "perdieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0053",
+  "word": "descansar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "休息",
+  "exampleEn": "Descanso un rato.",
+  "exampleCn": "我休息一会儿。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "descanso",
+     "tu": "descansas",
+     "el": "descansa",
+     "nosotros": "descansamos",
+     "ellos": "descansan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "descansé",
+     "tu": "descansaste",
+     "el": "descansó",
+     "nosotros": "descansamos",
+     "ellos": "descansaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0054",
+  "word": "dormir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "睡觉",
+  "exampleEn": "Duermo ocho horas.",
+  "exampleCn": "我睡八小时。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "duermo",
+     "tu": "duermes",
+     "el": "duerme",
+     "nosotros": "dormimos",
+     "ellos": "duermen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "dormí",
+     "tu": "dormiste",
+     "el": "durmió",
+     "nosotros": "dormimos",
+     "ellos": "durmieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0055",
+  "word": "levantarse",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "起床",
+  "exampleEn": "Me levanto temprano.",
+  "exampleCn": "我起得早。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "levanto",
+     "tu": "levantas",
+     "el": "levanta",
+     "nosotros": "levantamos",
+     "ellos": "levantan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "levanté",
+     "tu": "levantaste",
+     "el": "levantó",
+     "nosotros": "levantamos",
+     "ellos": "levantaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0056",
+  "word": "sentirse",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "感觉",
+  "exampleEn": "Me siento bien.",
+  "exampleCn": "我感觉不错。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "siento",
+     "tu": "sientes",
+     "el": "siente",
+     "nosotros": "sentimos",
+     "ellos": "sienten"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "sentí",
+     "tu": "sentiste",
+     "el": "sintió",
+     "nosotros": "sentimos",
+     "ellos": "sintieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0057",
+  "word": "sentir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "感觉，遗憾",
+  "exampleEn": "Siento el frío.",
+  "exampleCn": "我感到冷。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en；e→ie（ nosotros 不变）",
+    "forms": {
+     "yo": "siento",
+     "tu": "sientes",
+     "el": "siente",
+     "nosotros": "sentimos",
+     "ellos": "sienten"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "sentí",
+     "tu": "sentiste",
+     "el": "sintió",
+     "nosotros": "sentimos",
+     "ellos": "sintieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0058",
+  "word": "pensar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "想，思考",
+  "exampleEn": "Pienso en ti.",
+  "exampleCn": "我想你。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an；e→ie（ nosotros 不变）",
+    "forms": {
+     "yo": "pienso",
+     "tu": "piensas",
+     "el": "piensa",
+     "nosotros": "pensamos",
+     "ellos": "piensan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "pensé",
+     "tu": "pensaste",
+     "el": "pensó",
+     "nosotros": "pensamos",
+     "ellos": "pensaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0059",
+  "word": "entender",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "理解",
+  "exampleEn": "Entiendo la pregunta.",
+  "exampleCn": "我明白这个问题。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en；e→ie（ nosotros 不变）",
+    "forms": {
+     "yo": "entiendo",
+     "tu": "entiendes",
+     "el": "entiende",
+     "nosotros": "entendemos",
+     "ellos": "entienden"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "entendí",
+     "tu": "entendiste",
+     "el": "entendió",
+     "nosotros": "entendimos",
+     "ellos": "entendieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0060",
   "word": "conocer",
   "note": "",
   "phoneticUk": "",
@@ -932,8 +3023,8 @@
   "book": "es-verbos",
   "grade": "西语动词",
   "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
+  "unit": "Unidad 3",
+  "unitOrder": 3,
   "unitTitle": "动词变位",
   "lesson": "",
   "lessonOrder": 999,
@@ -945,7 +3036,7 @@
    {
     "tense": "presente",
     "tenseCn": "现在时",
-    "rule": "yo 加 -zco（conozco）",
+    "rule": "-er：-o / -es / -e / -emos / -en；yo 加 -zco",
     "forms": {
      "yo": "conozco",
      "tu": "conoces",
@@ -969,7 +3060,466 @@
   ]
  },
  {
-  "id": "es-verbos-0020",
+  "id": "es-verbos-0061",
+  "word": "recordar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "记得",
+  "exampleEn": "Recuerdo tu nombre.",
+  "exampleCn": "我记得你的名字。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an；o→ue（ nosotros 不变）",
+    "forms": {
+     "yo": "recuerdo",
+     "tu": "recuerdas",
+     "el": "recuerda",
+     "nosotros": "recordamos",
+     "ellos": "recuerdan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "recordé",
+     "tu": "recordaste",
+     "el": "recordó",
+     "nosotros": "recordamos",
+     "ellos": "recordaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0062",
+  "word": "olvidar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "忘记",
+  "exampleEn": "Olvido las llaves.",
+  "exampleCn": "我忘了钥匙。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "olvido",
+     "tu": "olvidas",
+     "el": "olvida",
+     "nosotros": "olvidamos",
+     "ellos": "olvidan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "olvidé",
+     "tu": "olvidaste",
+     "el": "olvidó",
+     "nosotros": "olvidamos",
+     "ellos": "olvidaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0063",
+  "word": "creer",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "相信",
+  "exampleEn": "Creo en ti.",
+  "exampleCn": "我相信你。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en",
+    "forms": {
+     "yo": "creo",
+     "tu": "crees",
+     "el": "cree",
+     "nosotros": "creemos",
+     "ellos": "creen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "creí",
+     "tu": "creiste",
+     "el": "creyó",
+     "nosotros": "creimos",
+     "ellos": "creyeron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0064",
+  "word": "contar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "数，讲述",
+  "exampleEn": "Cuento un cuento.",
+  "exampleCn": "我讲一个故事。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an；o→ue（ nosotros 不变）",
+    "forms": {
+     "yo": "cuento",
+     "tu": "cuentas",
+     "el": "cuenta",
+     "nosotros": "contamos",
+     "ellos": "cuentan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "conté",
+     "tu": "contaste",
+     "el": "contó",
+     "nosotros": "contamos",
+     "ellos": "contaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0065",
+  "word": "mostrar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "展示",
+  "exampleEn": "Muestro la foto.",
+  "exampleCn": "我展示照片。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an；o→ue（ nosotros 不变）",
+    "forms": {
+     "yo": "muestro",
+     "tu": "muestras",
+     "el": "muestra",
+     "nosotros": "mostramos",
+     "ellos": "muestran"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "mostré",
+     "tu": "mostraste",
+     "el": "mostró",
+     "nosotros": "mostramos",
+     "ellos": "mostraron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0066",
+  "word": "pedir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "请求，点（餐）",
+  "exampleEn": "Pido un taxi.",
+  "exampleCn": "我叫一辆出租车。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en；e→i（ nosotros 不变）",
+    "forms": {
+     "yo": "pido",
+     "tu": "pides",
+     "el": "pide",
+     "nosotros": "pedimos",
+     "ellos": "piden"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "pedí",
+     "tu": "pediste",
+     "el": "pidió",
+     "nosotros": "pedimos",
+     "ellos": "pidieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0067",
+  "word": "servir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "服务，有用",
+  "exampleEn": "Sirvo la comida.",
+  "exampleCn": "我上菜。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en；e→i（ nosotros 不变）",
+    "forms": {
+     "yo": "sirvo",
+     "tu": "sirves",
+     "el": "sirve",
+     "nosotros": "servimos",
+     "ellos": "sirven"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "serví",
+     "tu": "serviste",
+     "el": "sirvió",
+     "nosotros": "servimos",
+     "ellos": "sirvieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0068",
+  "word": "repetir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "重复",
+  "exampleEn": "Repito la palabra.",
+  "exampleCn": "我重复这个词。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en；e→i（ nosotros 不变）",
+    "forms": {
+     "yo": "repito",
+     "tu": "repites",
+     "el": "repite",
+     "nosotros": "repetimos",
+     "ellos": "repiten"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "repetí",
+     "tu": "repetiste",
+     "el": "repitió",
+     "nosotros": "repetimos",
+     "ellos": "repitieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0069",
+  "word": "conseguir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "得到",
+  "exampleEn": "Consigo un trabajo.",
+  "exampleCn": "我找到一份工作。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "consigo",
+     "tu": "consigues",
+     "el": "consigue",
+     "nosotros": "conseguimos",
+     "ellos": "consiguen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "conseguí",
+     "tu": "conseguiste",
+     "el": "consiguió",
+     "nosotros": "conseguimos",
+     "ellos": "consiguieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0070",
   "word": "poner",
   "note": "",
   "phoneticUk": "",
@@ -983,8 +3533,8 @@
   "book": "es-verbos",
   "grade": "西语动词",
   "source": "常用动词",
-  "unit": "Unidad 1",
-  "unitOrder": 1,
+  "unit": "Unidad 3",
+  "unitOrder": 3,
   "unitTitle": "动词变位",
   "lesson": "",
   "lessonOrder": 999,
@@ -1015,6 +3565,1536 @@
      "el": "puso",
      "nosotros": "pusimos",
      "ellos": "pusieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0071",
+  "word": "traer",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "带来",
+  "exampleEn": "Traigo el libro.",
+  "exampleCn": "我把书带来。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "traigo",
+     "tu": "traes",
+     "el": "trae",
+     "nosotros": "traemos",
+     "ellos": "traen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "traje",
+     "tu": "trajiste",
+     "el": "trajo",
+     "nosotros": "trajimos",
+     "ellos": "trajeron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0072",
+  "word": "llevar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "带走，穿",
+  "exampleEn": "Llevo una chaqueta.",
+  "exampleCn": "我穿着外套。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "llevo",
+     "tu": "llevas",
+     "el": "lleva",
+     "nosotros": "llevamos",
+     "ellos": "llevan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "llevé",
+     "tu": "llevaste",
+     "el": "llevó",
+     "nosotros": "llevamos",
+     "ellos": "llevaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0073",
+  "word": "tomar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "拿，乘坐",
+  "exampleEn": "Tomo el autobús.",
+  "exampleCn": "我坐公交车。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "tomo",
+     "tu": "tomas",
+     "el": "toma",
+     "nosotros": "tomamos",
+     "ellos": "toman"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "tomé",
+     "tu": "tomaste",
+     "el": "tomó",
+     "nosotros": "tomamos",
+     "ellos": "tomaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0074",
+  "word": "usar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "使用",
+  "exampleEn": "Uso el diccionario.",
+  "exampleCn": "我用字典。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "uso",
+     "tu": "usas",
+     "el": "usa",
+     "nosotros": "usamos",
+     "ellos": "usan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "usé",
+     "tu": "usaste",
+     "el": "usó",
+     "nosotros": "usamos",
+     "ellos": "usaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0075",
+  "word": "ayudar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "帮助",
+  "exampleEn": "Ayudo a mi mamá.",
+  "exampleCn": "我帮妈妈。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 3",
+  "unitOrder": 3,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "ayudo",
+     "tu": "ayudas",
+     "el": "ayuda",
+     "nosotros": "ayudamos",
+     "ellos": "ayudan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "ayudé",
+     "tu": "ayudaste",
+     "el": "ayudó",
+     "nosotros": "ayudamos",
+     "ellos": "ayudaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0076",
+  "word": "cuidar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "照顾",
+  "exampleEn": "Cuido a mi hermano.",
+  "exampleCn": "我照顾弟弟。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "cuido",
+     "tu": "cuidas",
+     "el": "cuida",
+     "nosotros": "cuidamos",
+     "ellos": "cuidan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "cuidé",
+     "tu": "cuidaste",
+     "el": "cuidó",
+     "nosotros": "cuidamos",
+     "ellos": "cuidaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0077",
+  "word": "limpiar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "打扫",
+  "exampleEn": "Limpio la casa.",
+  "exampleCn": "我打扫房子。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "limpio",
+     "tu": "limpias",
+     "el": "limpia",
+     "nosotros": "limpiamos",
+     "ellos": "limpian"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "limpié",
+     "tu": "limpiaste",
+     "el": "limpió",
+     "nosotros": "limpiamos",
+     "ellos": "limpiaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0078",
+  "word": "cocinar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "做饭",
+  "exampleEn": "Cocino la cena.",
+  "exampleCn": "我做晚饭。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "cocino",
+     "tu": "cocinas",
+     "el": "cocina",
+     "nosotros": "cocinamos",
+     "ellos": "cocinan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "cociné",
+     "tu": "cocinaste",
+     "el": "cocinó",
+     "nosotros": "cocinamos",
+     "ellos": "cocinaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0079",
+  "word": "cantar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "唱歌",
+  "exampleEn": "Canto una canción.",
+  "exampleCn": "我唱一首歌。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "canto",
+     "tu": "cantas",
+     "el": "canta",
+     "nosotros": "cantamos",
+     "ellos": "cantan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "canté",
+     "tu": "cantaste",
+     "el": "cantó",
+     "nosotros": "cantamos",
+     "ellos": "cantaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0080",
+  "word": "bailar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "跳舞",
+  "exampleEn": "Bailo salsa.",
+  "exampleCn": "我跳萨尔萨。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "bailo",
+     "tu": "bailas",
+     "el": "baila",
+     "nosotros": "bailamos",
+     "ellos": "bailan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "bailé",
+     "tu": "bailaste",
+     "el": "bailó",
+     "nosotros": "bailamos",
+     "ellos": "bailaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0081",
+  "word": "gustar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "使喜欢",
+  "exampleEn": "Me gusta el café.",
+  "exampleCn": "我喜欢咖啡。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "gusto",
+     "tu": "gustas",
+     "el": "gusta",
+     "nosotros": "gustamos",
+     "ellos": "gustan"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "gusté",
+     "tu": "gustaste",
+     "el": "gustó",
+     "nosotros": "gustamos",
+     "ellos": "gustaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0082",
+  "word": "amar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "爱",
+  "exampleEn": "Amo mi país.",
+  "exampleCn": "我爱我的国家。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "amo",
+     "tu": "amas",
+     "el": "ama",
+     "nosotros": "amamos",
+     "ellos": "aman"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "amé",
+     "tu": "amaste",
+     "el": "amó",
+     "nosotros": "amamos",
+     "ellos": "amaron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0083",
+  "word": "deber",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "应该，欠",
+  "exampleEn": "Debo estudiar.",
+  "exampleCn": "我应该学习。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en",
+    "forms": {
+     "yo": "debo",
+     "tu": "debes",
+     "el": "debe",
+     "nosotros": "debemos",
+     "ellos": "deben"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "debí",
+     "tu": "debiste",
+     "el": "debió",
+     "nosotros": "debimos",
+     "ellos": "debieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0084",
+  "word": "preferir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "更喜欢",
+  "exampleEn": "Prefiero el té.",
+  "exampleCn": "我更喜欢茶。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en；e→ie（ nosotros 不变）",
+    "forms": {
+     "yo": "prefiero",
+     "tu": "prefieres",
+     "el": "prefiere",
+     "nosotros": "preferimos",
+     "ellos": "prefieren"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "preferí",
+     "tu": "preferiste",
+     "el": "prefirió",
+     "nosotros": "preferimos",
+     "ellos": "prefirieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0085",
+  "word": "morir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "死",
+  "exampleEn": "El pez muere.",
+  "exampleCn": "那条鱼死了。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "muero",
+     "tu": "mueres",
+     "el": "muere",
+     "nosotros": "morimos",
+     "ellos": "mueren"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "morí",
+     "tu": "moriste",
+     "el": "murió",
+     "nosotros": "morimos",
+     "ellos": "murieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0086",
+  "word": "nacer",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "出生",
+  "exampleEn": "Nazco en Beijing.",
+  "exampleCn": "我出生在北京。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en；yo 加 -zco",
+    "forms": {
+     "yo": "nazco",
+     "tu": "naces",
+     "el": "nace",
+     "nosotros": "nacemos",
+     "ellos": "nacen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "nací",
+     "tu": "naciste",
+     "el": "nació",
+     "nosotros": "nacimos",
+     "ellos": "nacieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0087",
+  "word": "crecer",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "成长",
+  "exampleEn": "El niño crece.",
+  "exampleCn": "孩子在长大。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en；yo 加 -zco",
+    "forms": {
+     "yo": "crezco",
+     "tu": "creces",
+     "el": "crece",
+     "nosotros": "crecemos",
+     "ellos": "crecen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "crecí",
+     "tu": "creciste",
+     "el": "creció",
+     "nosotros": "crecimos",
+     "ellos": "crecieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0088",
+  "word": "parecer",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "看起来",
+  "exampleEn": "Parece difícil.",
+  "exampleCn": "看起来很难。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en；yo 加 -zco",
+    "forms": {
+     "yo": "parezco",
+     "tu": "pareces",
+     "el": "parece",
+     "nosotros": "parecemos",
+     "ellos": "parecen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "parecí",
+     "tu": "pareciste",
+     "el": "pareció",
+     "nosotros": "parecimos",
+     "ellos": "parecieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0089",
+  "word": "ofrecer",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "提供",
+  "exampleEn": "Ofrezco mi ayuda.",
+  "exampleCn": "我提供帮助。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-er：-o / -es / -e / -emos / -en；yo 加 -zco",
+    "forms": {
+     "yo": "ofrezco",
+     "tu": "ofreces",
+     "el": "ofrece",
+     "nosotros": "ofrecemos",
+     "ellos": "ofrecen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "ofrecí",
+     "tu": "ofreciste",
+     "el": "ofreció",
+     "nosotros": "ofrecimos",
+     "ellos": "ofrecieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0090",
+  "word": "producir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "生产",
+  "exampleEn": "La fábrica produce.",
+  "exampleCn": "工厂在生产。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "produzco",
+     "tu": "produces",
+     "el": "produce",
+     "nosotros": "producimos",
+     "ellos": "producen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "produje",
+     "tu": "produjiste",
+     "el": "produjo",
+     "nosotros": "produjimos",
+     "ellos": "produjeron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0091",
+  "word": "traducir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "翻译",
+  "exampleEn": "Traduzco el texto.",
+  "exampleCn": "我翻译这篇文章。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": null,
+    "forms": {
+     "yo": "traduzco",
+     "tu": "traduces",
+     "el": "traduce",
+     "nosotros": "traducimos",
+     "ellos": "traducen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "traduje",
+     "tu": "tradujiste",
+     "el": "tradujo",
+     "nosotros": "tradujimos",
+     "ellos": "tradujeron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0092",
+  "word": "recibir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "收到",
+  "exampleEn": "Recibo una carta.",
+  "exampleCn": "我收到一封信。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "recibo",
+     "tu": "recibes",
+     "el": "recibe",
+     "nosotros": "recibimos",
+     "ellos": "reciben"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "recibí",
+     "tu": "recibiste",
+     "el": "recibió",
+     "nosotros": "recibimos",
+     "ellos": "recibieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0093",
+  "word": "permitir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "允许",
+  "exampleEn": "Permito la entrada.",
+  "exampleCn": "我允许进入。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "permito",
+     "tu": "permites",
+     "el": "permite",
+     "nosotros": "permitimos",
+     "ellos": "permiten"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "permití",
+     "tu": "permitiste",
+     "el": "permitió",
+     "nosotros": "permitimos",
+     "ellos": "permitieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0094",
+  "word": "decidir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "决定",
+  "exampleEn": "Decido quedarme.",
+  "exampleCn": "我决定留下。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "decido",
+     "tu": "decides",
+     "el": "decide",
+     "nosotros": "decidimos",
+     "ellos": "deciden"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "decidí",
+     "tu": "decidiste",
+     "el": "decidió",
+     "nosotros": "decidimos",
+     "ellos": "decidieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0095",
+  "word": "descubrir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "发现",
+  "exampleEn": "Descubro un error.",
+  "exampleCn": "我发现一个错误。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "descubro",
+     "tu": "descubres",
+     "el": "descubre",
+     "nosotros": "descubrimos",
+     "ellos": "descubren"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "descubrí",
+     "tu": "descubriste",
+     "el": "descubrió",
+     "nosotros": "descubrimos",
+     "ellos": "descubrieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0096",
+  "word": "compartir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "分享",
+  "exampleEn": "Comparto la comida.",
+  "exampleCn": "我分享食物。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "comparto",
+     "tu": "compartes",
+     "el": "comparte",
+     "nosotros": "compartimos",
+     "ellos": "comparten"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "compartí",
+     "tu": "compartiste",
+     "el": "compartió",
+     "nosotros": "compartimos",
+     "ellos": "compartieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0097",
+  "word": "cumplir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "完成，满（岁）",
+  "exampleEn": "Cumplo veinte años.",
+  "exampleCn": "我满二十岁。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "cumplo",
+     "tu": "cumples",
+     "el": "cumple",
+     "nosotros": "cumplimos",
+     "ellos": "cumplen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "cumplí",
+     "tu": "cumpliste",
+     "el": "cumplió",
+     "nosotros": "cumplimos",
+     "ellos": "cumplieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0098",
+  "word": "existir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "存在",
+  "exampleEn": "Existe un problema.",
+  "exampleCn": "存在一个问题。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "existo",
+     "tu": "existes",
+     "el": "existe",
+     "nosotros": "existimos",
+     "ellos": "existen"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "existí",
+     "tu": "exististe",
+     "el": "existió",
+     "nosotros": "existimos",
+     "ellos": "existieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0099",
+  "word": "asistir",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "参加，出席",
+  "exampleEn": "Asisto a la clase.",
+  "exampleCn": "我去上课。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ir：-o / -es / -e / -imos / -en",
+    "forms": {
+     "yo": "asisto",
+     "tu": "asistes",
+     "el": "asiste",
+     "nosotros": "asistimos",
+     "ellos": "asisten"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": null,
+    "forms": {
+     "yo": "asistí",
+     "tu": "asististe",
+     "el": "asistió",
+     "nosotros": "asistimos",
+     "ellos": "asistieron"
+    }
+   }
+  ]
+ },
+ {
+  "id": "es-verbos-0100",
+  "word": "practicar",
+  "note": "",
+  "phoneticUk": "",
+  "phoneticUs": "",
+  "article": "",
+  "lang": "es",
+  "pos": "v.",
+  "cn": "练习，运动",
+  "exampleEn": "Practico deporte.",
+  "exampleCn": "我运动。",
+  "book": "es-verbos",
+  "grade": "西语动词",
+  "source": "常用动词",
+  "unit": "Unidad 4",
+  "unitOrder": 4,
+  "unitTitle": "动词变位",
+  "lesson": "",
+  "lessonOrder": 999,
+  "lessonTitle": "",
+  "category": "verbo",
+  "phonics": [],
+  "definitionEn": "",
+  "conjugations": [
+   {
+    "tense": "presente",
+    "tenseCn": "现在时",
+    "rule": "-ar：-o / -as / -a / -amos / -an",
+    "forms": {
+     "yo": "practico",
+     "tu": "practicas",
+     "el": "practica",
+     "nosotros": "practicamos",
+     "ellos": "practican"
+    }
+   },
+   {
+    "tense": "preterito",
+    "tenseCn": "简单过去时",
+    "rule": "yo 保音：car→-qué、gar→-gué、zar→-cé",
+    "forms": {
+     "yo": "practiqué",
+     "tu": "practicaste",
+     "el": "practicó",
+     "nosotros": "practicamos",
+     "ellos": "practicaron"
     }
    }
   ]

@@ -8,3 +8,8 @@ dist/
 ios/**/build/
 ios/**/xcuserdata/
 *.xcuserstate
+
+# 发音音频：由 npm run audio（scripts/gen_audio.py）从 data/all.json 重新生成，
+# 属于构建产物。之前已经进 git 的那批保持不变，新的不再跟踪 ——
+# 否则每次加词都要往仓库里塞几十 MB 的 mp3
+public/audio/
