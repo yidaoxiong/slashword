@@ -173,6 +173,25 @@ export async function buildDailyQueue(
   return [...reviews, ...fresh]
 }
 
+/**
+ * 一个词条实际要走的训练环节。
+ *
+ * 变位这一关只对动词有效。非动词词条没有变位数据，如果硬把它留在环节列表里，
+ * mastery.conjugation 会永远是 0 —— 平均分被拉下去，卡片一辈子达不到
+ * "已掌握"，还会被 FSRS 反复排进复习。
+ *
+ * 所以这里按词条过滤，而不是让每个环节自己去判断"我适不适用"。
+ */
+export function activeSkillsFor(
+  enabled: Skill[],
+  entry?: WordEntry | null,
+): Skill[] {
+  if (!entry?.conjugations?.length) {
+    return enabled.filter((s) => s !== 'conjugation')
+  }
+  return enabled
+}
+
 /** 一本词书里所有单元的编号，按顺序列出来（五上是 [1,2,3,5,6,7]，厚海是 [7..12]） */
 export function unitsOf(entries: WordEntry[]): number[] {
   return [...new Set(entries.map((e) => e.unitOrder))].sort((a, b) => a - b)

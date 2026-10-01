@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
+import { activeSkillsFor } from '../core/queue'
 import type { Skill } from '../types'
 import {
+  ConjugationTrainer,
   DefinitionTrainer,
   ExampleTrainer,
   SpellTrainer,
@@ -15,6 +17,7 @@ import {
  * 却是第二道题目。关号改成按当前顺序实时算，以后再调也不会错。
  */
 const SKILL_NAME: Record<Skill, string> = {
+  conjugation: '变位',
   pron: '发音',
   spell: '拼写',
   example: '例句',
@@ -71,7 +74,8 @@ export function LearnPage() {
   }
 
   const bookName = catalog.find((b) => b.id === config.activeBook)?.name ?? ''
-  const skills = config.enabledSkills
+  // 环节按词条算：非动词没有变位数据，这一关对它不存在
+  const skills = activeSkillsFor(config.enabledSkills, entry)
   const skill = skills[session.skillIdx]
   const total = queue.length
   const progress = (idx + (session.skillIdx + 1) / skills.length) / total
@@ -142,6 +146,16 @@ export function LearnPage() {
             canSkip={session.results.spell === true}
             onDone={(ok, input, usedHint, skipped) =>
               void submitSkill('example', ok, input, usedHint, skipped)
+            }
+          />
+        )}
+        {skill === 'conjugation' && (
+          <ConjugationTrainer
+            entry={entry}
+            candidates={entries}
+            showKeyboard={showKeyboard}
+            onDone={(correct, input) =>
+              void submitSkill('conjugation', correct, input)
             }
           />
         )}

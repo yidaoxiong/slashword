@@ -12,6 +12,7 @@ import type {
 } from '../types'
 import { getRepo } from '../storage'
 import {
+  activeSkillsFor,
   autoUnlock,
   buildDailyQueue,
   defaultConfig,
@@ -357,7 +358,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   async submitSkill(skill, correct, input, usedHint = false, skipped = false) {
     const state = get()
-    const { card, session, config, queue, idx } = state
+    const { card, session, config, queue, idx, entry } = state
     if (!card || !session || !config) return
 
     const now = Date.now()
@@ -381,7 +382,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     })
 
     const nextIdx = session.skillIdx + 1
-    const skills = config.enabledSkills
+    // 环节按词条算：非动词没有变位数据，不该被"变位"这一关拖着
+    const skills = activeSkillsFor(config.enabledSkills, entry)
 
     if (nextIdx < skills.length) {
       const nextSession = { ...session, skillIdx: nextIdx, results }

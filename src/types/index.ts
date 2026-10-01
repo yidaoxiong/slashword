@@ -11,7 +11,13 @@
  *    这四维共同决定一次复习的评分，而不是笼统的"会/不会"。
  */
 
-export type Skill = 'pron' | 'spell' | 'example' | 'definition'
+export type Skill =
+  | 'pron'
+  | 'spell'
+  | 'example'
+  | 'definition'
+  /** 动词变位：给主语和时态，写出变位形式。只有动词词条才有 */
+  | 'conjugation'
 
 /**
  * 环节顺序：拼写 → 听读音选中文释义 → 例句。
@@ -30,13 +36,53 @@ export const SKILLS: Skill[] = ['pron', 'spell', 'definition', 'example']
  * 改顺序只改这一处：defaultConfig() 和老配置的迁移逻辑都读它，
  * 否则又会出现"改了默认值、但老用户配置还是旧顺序"的情况。
  */
-export const ENABLED_SKILL_ORDER: Skill[] = ['spell', 'definition', 'example']
+/**
+ * 变位排在最后：先认得词义、会拼、能在句子里用，再抠变位。
+ *
+ * 老用户不用管：他们的 enabledSkills 里没有这一项，normalizeSkills
+ * 重排时自然不含，等于默认关闭，要开得去家长端勾。
+ */
+export const ENABLED_SKILL_ORDER: Skill[] = [
+  'spell',
+  'definition',
+  'example',
+  'conjugation',
+]
 
 export const SKILL_LABEL: Record<Skill, string> = {
   pron: '能发音',
   spell: '能拼写',
   example: '能看懂',
   definition: '能听懂',
+  conjugation: '会变位',
+}
+
+/**
+ * 一个人称的变位形式。
+ *
+ * 只列拉美西语用得上的 5 个 —— **没有 vosotros**：那是西班牙本土的人称，
+ * 拉美一律说 ustedes（`él` 和 `usted` 变位相同，所以 5 个形式够覆盖
+ * 6 个代词）。教了 vosotros 只会让孩子困惑，还白占 1/6 的记忆量。
+ */
+export type Person = 'yo' | 'tu' | 'el' | 'nosotros' | 'ellos'
+
+export const PERSON_LABEL: Record<Person, string> = {
+  yo: '我',
+  tu: '你',
+  el: '他 / 她 / 您',
+  nosotros: '我们',
+  ellos: '他们 / 诸位',
+}
+
+/** 一个动词在某一个时态下的全部人称变位 */
+export interface ConjugationSet {
+  /** 时态 id，如 'presente' / 'preterito' */
+  tense: string
+  tenseCn: string
+  /** 人称 → 变位形式 */
+  forms: Record<Person, string>
+  /** 规则提示（只在有规律可循时给，ser / ir 这类给了也没用） */
+  rule?: string | null
 }
 
 /** 词库语言。en = 英语，es = 西班牙语 */
@@ -71,6 +117,13 @@ export interface WordEntry {
   lessonOrder: number
   lessonTitle: string
   category: string
+  /**
+   * 动词变位表。只有 pos 是 v. 才有。
+   *
+   * 变位**不拆成独立词条** —— 一个动词的一种时态是一张卡，一次考几个人称。
+   * 拆成 hablo / hablas / habla 三张孤立卡片，反而破坏了"变位是模式"这件事。
+   */
+  conjugations?: ConjugationSet[]
   /** 自然拼读切分，如 ['sh', 'ip']，由规则或 LLM 补 */
   phonics: string[]
   /** 儿童友好英英释义，由 LLM 补 */

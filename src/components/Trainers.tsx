@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { WordEntry } from '../types'
+import type { Person, WordEntry } from '../types'
+import { PERSON_LABEL } from '../types'
 import { estimateDuration, speak } from '../lib/speech'
 import { useTyping } from '../lib/useTyping'
 import { blankOut, checkSpelling, normalize } from '../lib/spell'
@@ -651,6 +652,181 @@ export function DefinitionTrainer({ entry, candidates, onDone }: TrainerProps) {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+/**
+ * 环节四：动词变位 —— 给出时态和人称，写出变位形式。
+ *
+ * 一次只考 3 个人称：5 个全填太累，而且抽着考更能暴露真正没掌握的那个。
+ * 时态随机挑一个 —— 这关的身份是"这个动词"，不是"这个动词的某个时态"。
+ *
+ * 只给动词词条用（非动词没有 conjugations，环节列表里根本不会出现这一关，
+ * 见 core/queue.ts 的 activeSkillsFor）。
+ */
+export function ConjugationTrainer({
+  entry,
+  showKeyboard = true,
+  onDone,
+}: TrainerProps) {
+  const sets = entry.conjugations ?? []
+
+  // 整关只挑一次，重渲染不换题
+  const plan = useMemo(() => {
+    const set = sets[Math.floor(Math.random() * Math.max(1, sets.length))]
+    const pool = (['yo', 'tu', 'el', 'nosotros', 'ellos'] as Person[])
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+    return { set, pool }
+  }, [sets])
+
+  const [i, setI] = useState(0)
+  const [value, setValue] = useState('')
+  const [checked, setChecked] = useState(false)
+  const [okNow, setOkNow] = useState(false)
+  const [marks, setMarks] = useState<boolean[]>([])
+
+  const person = plan.pool[i]
+  const target = plan.set?.forms[person] ?? ''
+
+  const finish = (all: boolean[]) => {
+    onDone(all.every(Boolean), all.map((m) => (m ? '1' : '0')).join(''), false)
+  }
+
+  const submit = () => {
+    if (checked) return
+    const good = normalize(value) === normalize(target)
+    setOkNow(good)
+    setChecked(true)
+    setMarks((m) => [...m, good])
+    speak(target, {
+      audioId: `${entry.id}-${plan.set?.tense}-${person}`,
+      rate: 0.75,
+    })
+  }
+
+  useTyping({
+    enabled: !checked,
+    onChar: (ch: string) => setValue((v) => (v + ch).slice(0, 24)),
+    onBackspace: () => setValue((v) => v.slice(0, -1)),
+    onSubmit: submit,
+  })
+
+  // 答完停一下让人看清对错，再自动进下一个空 ——
+  // 跟其他环节"读完发音自动推进"是一个节奏，不用多点一次
+  useEffect(() => {
+    if (!checked) return
+    const t = setTimeout(() => {
+      if (i + 1 < plan.pool.length) {
+        setI(i + 1)
+        setValue('')
+        setChecked(false)
+        setOkNow(false)
+      } else {
+        finish(marks)
+      }
+    }, 1300)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checked, i])
+
+  if (!plan.set) {
+    return (
+      <div className="rounded-card bg-white p-5 text-[13px] text-neutral-500">
+        这个词没有变位数据
+      </div>
+    )
+  }
+
+  const allDone = marks.length >= plan.pool.length
+
+  return (
+    <div className="w-full">
+      <div className="rounded-card bg-white p-5 shadow-sm ring-1 ring-black/5">
+        {/* 不写关号：关号取决于家长开了几个环节，写死就和顶部进度对不上了。
+            另外三个 Trainer 也都是只说事、不报关号 */}
+        <div className="text-[12px] tracking-wide text-neutral-400">
+          写出这个动词的变位形式
+        </div>
+
+        <div className="mt-2 flex items-baseline gap-2">
+          <span className="text-[18px] font-medium">{entry.word}</span>
+          <span className="text-[13px] text-neutral-500">{entry.cn}</span>
+        </div>
+
+        <div className="mt-2 text-[13px] text-neutral-500">
+          {plan.set.tenseCn} · {PERSON_LABEL[person]}
+          <span className="ml-1 text-[12px] text-neutral-400">
+            （第 {i + 1}/{plan.pool.length} 空）
+          </span>
+        </div>
+
+        <div
+          className={`mt-2 flex min-h-[52px] items-center justify-center rounded-xl border-2 px-3 text-center text-[20px] tracking-wide ${
+            checked
+              ? okNow
+                ? 'border-ok bg-ok-soft text-[#0f6e56]'
+                : 'shake border-bad bg-bad-soft text-[#a32d2d]'
+              : 'border-neutral-200 bg-neutral-50'
+          }`}
+        >
+          {value || (
+            <span className="text-[13px] tracking-normal text-neutral-300">
+              写出变位形式
+            </span>
+          )}
+        </div>
+
+        {checked && (
+          <div className="pop mt-2 rounded-card bg-neutral-50 px-4 py-2 text-[13px] text-neutral-600">
+            {okNow ? (
+              <span className="text-[#0f6e56]">对了</span>
+            ) : (
+              <span>
+                正确写法：<span className="font-medium">{target}</span>
+              </span>
+            )}
+          </div>
+        )}
+
+        {allDone && (
+          <div className="pop mt-2 rounded-card bg-neutral-50 px-4 py-2">
+            <div className="text-[12px] text-neutral-500">
+              {entry.word} · {plan.set.tenseCn} 全部人称
+            </div>
+            {(Object.keys(plan.set.forms) as Person[]).map((p) => (
+              <div
+                key={p}
+                className="mt-0.5 flex justify-between text-[13px] text-neutral-700"
+              >
+                <span className="text-neutral-400">{PERSON_LABEL[p]}</span>
+                <span>{plan.set.forms[p]}</span>
+              </div>
+            ))}
+            {plan.set.rule && (
+              <div className="mt-2 rounded-lg bg-ok-soft px-2 py-1 text-[11px] text-[#0f6e56]">
+                {plan.set.rule}
+              </div>
+            )}
+          </div>
+        )}
+
+        {!allDone && (
+          <TypingHint />
+        )}
+      </div>
+
+      <div className="mt-5">
+        <LetterKeyboard
+          disabled={checked}
+          onKey={(ch) => setValue((v) => (v + ch).slice(0, 24))}
+          onBackspace={() => setValue((v) => v.slice(0, -1))}
+          onSubmit={submit}
+          visible={showKeyboard}
+          lang={entry.lang}
+        />
+      </div>
     </div>
   )
 }

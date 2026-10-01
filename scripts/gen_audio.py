@@ -79,6 +79,7 @@ async def main():
     tasks = []
     by_lang: dict[str, int] = {}
     ex_count = 0
+    conj_count = 0
 
     def path(d: Path, wid: str, accent_id: str, default: str) -> Path:
         # 命名规则必须和 src/lib/speech.ts 的 audioPath 一致：
@@ -112,10 +113,30 @@ async def main():
                 )
             ex_count += 1
 
+        # 动词变位：每个时态每个人称各一份。
+        # 命名必须和组件里的做法一致（{词条id}-{时态}-{人称}），
+        # 见 src/components/Trainers.tsx 的 ConjugationTrainer
+        for c in w.get("conjugations") or []:
+            for person, form in c["forms"].items():
+                if not form:
+                    continue
+                for accent_id, voice in cfg["voices"].items():
+                    suffix = "" if accent_id == default else f"-{accent_id}"
+                    tasks.append(
+                        synth(
+                            form,
+                            WORDS_DIR / f"{wid}-{c['tense']}-{person}{suffix}.mp3",
+                            voice,
+                            sem,
+                        )
+                    )
+                conj_count += 1
+
     print(
         "待生成："
         + "、".join(f"{k} {v} 词" for k, v in sorted(by_lang.items()))
         + f" + {ex_count} 例句"
+        + (f" + {conj_count} 变位" if conj_count else "")
     )
     print(f"共 {len(tasks)} 个音频，并发 {CONCURRENCY}，请稍候…")
 

@@ -21,7 +21,7 @@ const fsrs = new FSRS()
 const MASTERY_ALPHA = 0.35
 
 export function emptyMastery(): Mastery {
-  return { pron: 0, spell: 0, example: 0, definition: 0 }
+  return { pron: 0, spell: 0, example: 0, definition: 0, conjugation: 0 }
 }
 
 export function createCard(params: {

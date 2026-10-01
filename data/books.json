@@ -27,5 +27,14 @@
     "locked": true,
     "wordCount": 223,
     "unitCount": 6
+  },
+  {
+    "id": "es-verbos",
+    "name": "西语常用动词",
+    "grade": "西语动词",
+    "source": "常用动词",
+    "lang": "es",
+    "wordCount": 20,
+    "unitCount": 1
   }
 ]
