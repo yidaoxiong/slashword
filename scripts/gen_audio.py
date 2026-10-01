@@ -120,12 +120,16 @@ async def main():
             for person, form in c["forms"].items():
                 if not form:
                     continue
+                # 变位只生成默认口音。两种口音都生成会让文件数翻倍，
+                # Cloudflare Pages 上传会直接失败（实测 6251 个文件传不动）。
+                # 切到别的口音时由系统 TTS 兜底 —— 拉美场景本来就只用 es-mx
                 for accent_id, voice in cfg["voices"].items():
-                    suffix = "" if accent_id == default else f"-{accent_id}"
+                    if accent_id != default:
+                        continue
                     tasks.append(
                         synth(
                             form,
-                            WORDS_DIR / f"{wid}-{c['tense']}-{person}{suffix}.mp3",
+                            WORDS_DIR / f"{wid}-{c['tense']}-{person}.mp3",
                             voice,
                             sem,
                         )
