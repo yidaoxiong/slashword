@@ -31,5 +31,8 @@
 	<string>UIStatusBarStyleDefault</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<!-- 读音评价要录孩子的声音。缺这一句不是"被拒绝"，是直接崩 -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>需要用麦克风录下你的发音，用来判断读得准不准。</string>
 </dict>
 </plist>

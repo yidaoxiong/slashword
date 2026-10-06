@@ -302,6 +302,17 @@ export default {
       if (path === '/api/register' && request.method === 'POST') return await handleRegister(request, env);
       if (path === '/api/login' && request.method === 'POST') return await handleLogin(request, env);
 
+      // 麦克风自检：收一段 WAV 回来，只报字节数，不落盘、不识别。
+      // 目的是先确认「手机 → Cloudflare → 返回」这条链路通不通 ——
+      // 真正接讯飞评测要等 key 到位，不该被这一步卡住。
+      // 放在鉴权前面：自检页在没登录时也要能用。
+      if (path === '/api/mic-echo' && request.method === 'POST') {
+        const buf = await request.arrayBuffer();
+        // 正常一段 3 秒的 16k 单声道 WAV 约 96KB，留足余量
+        if (buf.byteLength > 2 * 1024 * 1024) return json({ error: '音频太大了' }, 413);
+        return json({ ok: true, received: buf.byteLength, at: Date.now() });
+      }
+
       const user = await authUser(request, env);
       if (!user) return json({ error: '未登录或会话已过期' }, 401);
 

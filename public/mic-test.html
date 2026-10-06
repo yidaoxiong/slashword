@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>麦克风自检</title>
+<style>
+  :root{
+    --brand:#7132f5; --ok:#0f6e56; --bad:#a32d2d; --muted:#8a8678; --line:rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;padding:20px 16px 48px;
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;
+    background:#f6f5f8;color:#262626;
+  }
+  .wrap{max-width:520px;margin:0 auto}
+  h1{font-size:19px;font-weight:500;margin:0 0 4px}
+  .sub{font-size:13px;color:var(--muted);margin:0 0 20px}
+  .card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;
+        box-shadow:0 1px 3px rgba(0,0,0,.06),0 0 0 .5px var(--line)}
+  .row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:.5px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .ico{width:20px;flex:none;text-align:center;font-size:14px;line-height:1.5}
+  .t{font-size:14px}
+  .d{font-size:12px;color:var(--muted);word-break:break-all;margin-top:1px}
+  .wait{color:var(--muted)}
+  .yes{color:var(--ok)}
+  .no{color:var(--bad)}
+  button{
+    width:100%;height:52px;border:0;border-radius:14px;background:var(--brand);
+    color:#fff;font-size:16px;font-weight:500;margin-top:4px;
+  }
+  button:disabled{opacity:.4}
+  button.ghost{background:#fff;color:#262626;box-shadow:0 0 0 .5px var(--line);margin-top:8px}
+  #meter{height:8px;background:#eceaf0;border-radius:99px;overflow:hidden;margin-top:14px}
+  #bar{height:100%;width:0;background:linear-gradient(90deg,#7132f5,#0f6e56);transition:width .08s}
+  .hint{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+  a{color:var(--brand);font-size:14px;text-decoration:none}
+  .sum{border-left:3px solid var(--brand);padding-left:12px;margin-bottom:16px}
+  .sum b{font-size:15px;font-weight:500}
+  code{font:12px ui-monospace,Menlo,monospace;background:#f2f1f5;padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>麦克风自检</h1>
+  <p class="sub">验证这个 App 能不能录到声音 —— 发音评价功能的前置条件</p>
+
+  <div class="card">
+    <div class="sum" id="sum"><b>还没测</b></div>
+
+    <div class="row"><span class="ico wait">○</span><div><div class="t">运行环境</div><div class="d" id="d0">—</div></div></div>
+    <div class="row"><span class="ico wait">○</span><div><div class="t">麦克风授权</div><div class="d" id="d1">—</div></div></div>
+    <div class="row"><span class="ico wait">○</span><div><div class="t">录到声音</div><div class="d" id="d2">—</div></div></div>
+    <div class="row"><span class="ico wait">○</span><div><div class="t">转成 WAV（16k 单声道）</div><div class="d" id="d3">—</div></div></div>
+    <div class="row"><span class="ico wait">○</span><div><div class="t">上传到服务器</div><div class="d" id="d4">—</div></div></div>
+  </div>
+
+  <div id="meter"><div id="bar"></div></div>
+  <p class="hint" id="hint">点下面的按钮开始，说一句「hello」</p>
+
+  <button id="go">开始测试</button>
+  <button class="ghost" id="back">返回学习</button>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const set = (i, state, detail) => {
+  const ico = $('d' + i).parentElement.querySelector('.ico');
+  const map = { wait: ['○', 'wait'], ok: ['✓', 'yes'], no: ['✗', 'no'] };
+  const [glyph, cls] = map[state];
+  ico.textContent = glyph;
+  ico.className = 'ico ' + cls;
+  $('d' + i).textContent = detail;
+  $('d' + i).className = 'd ' + (cls === 'wait' ? '' : cls);
+};
+
+$('back').onclick = () => { location.href = './'; };
+
+/* Float32 → 16bit PCM，再包一层 44 字节 WAV 头。
+   讯飞那类语音评测接口要的就是 16k / 16bit / 单声道 WAV，
+   而浏览器 MediaRecorder 只能出 webm/opus，所以自己拼。 */
+function encodeWav(samples, sampleRate) {
+  const buf = new ArrayBuffer(44 + samples.length * 2);
+  const v = new DataView(buf);
+  const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  str(0, 'RIFF'); v.setUint32(4, 36 + samples.length * 2, true); str(8, 'WAVE');
+  str(12, 'fmt '); v.setUint32(16, 16, true);
+  v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sampleRate, true);
+  v.setUint32(28, sampleRate * 2, true);
+  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, samples.length * 2, true);
+  let o = 44;
+  for (let i = 0; i < samples.length; i++, o += 2) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+  }
+  return new Blob([buf], { type: 'audio/wav' });
+}
+
+$('go').onclick = async () => {
+  $('go').disabled = true;
+  $('sum').innerHTML = '<b>测试中…</b>';
+
+  // 0. 环境
+  const hasGUM = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  const hasAC = typeof (window.AudioContext || window.webkitAudioContext) === 'function';
+  const secure = window.isSecureContext;
+  set(0, hasGUM && hasAC ? 'ok' : 'no',
+      hasGUM && hasAC ? `getUserMedia ✓  AudioContext ✓  ${secure ? 'HTTPS' : '非安全上下文'}` : '缺少必要 API');
+  if (!hasGUM || !hasAC) {
+    $('sum').innerHTML = '<b class="no">跑不起来</b>：环境不支持';
+    $('go').disabled = false;
+    return;
+  }
+
+  // 1. 授权
+  let stream;
+  try {
+    set(1, 'wait', '请求中…');
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true }
+    });
+    set(1, 'ok', '已授权');
+  } catch (e) {
+    set(1, 'no', (e && e.name) + '：' + (e && e.message ? e.message : ''));
+    $('sum').innerHTML = '<b class="no">卡在麦克风授权</b>';
+    $('hint').textContent = '如果是 NotAllowedError，说明 iOS 壳没放行麦克风';
+    $('go').disabled = false;
+    return;
+  }
+
+  // 2. 录 3 秒，同时看音量
+  const SR = 16000;
+  const ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SR });
+  const src = ctx.createMediaStreamSource(stream);
+  const proc = ctx.createScriptProcessor(4096, 1, 1);
+  const chunks = [];
+  let peak = 0;
+  set(2, 'wait', '录音中，请说话…');
+
+  proc.onaudioprocess = (e) => {
+    const f = e.inputBuffer.getChannelData(0);
+    chunks.push(new Float32Array(f));
+    let p = 0;
+    for (let i = 0; i < f.length; i++) { const a = Math.abs(f[i]); if (a > p) p = a; }
+    if (p > peak) peak = p;
+    $('bar').style.width = Math.min(100, p * 160) + '%';
+  };
+  src.connect(proc);
+  proc.connect(ctx.destination);   // 不连 destination 的话 onaudioprocess 根本不会触发
+
+  await new Promise((r) => setTimeout(r, 3000));
+  proc.disconnect(); src.disconnect();
+  stream.getTracks().forEach((t) => t.stop());
+  $('bar').style.width = '0';
+
+  const total = chunks.reduce((n, c) => n + c.length, 0);
+  const flat = new Float32Array(total);
+  let o = 0;
+  for (const c of chunks) { flat.set(c, o); o += c.length; }
+
+  const secs = total / SR;
+  if (total === 0) {
+    set(2, 'no', '一帧音频都没拿到');
+    $('sum').innerHTML = '<b class="no">录不到声音</b>';
+    $('go').disabled = false;
+    return;
+  }
+  const audible = peak > 0.01;
+  set(2, audible ? 'ok' : 'no',
+      `录到 ${secs.toFixed(1)} 秒，峰值 ${peak.toFixed(3)}` +
+      (audible ? '（有声音）' : '（全是静音 —— 麦克风没真正工作）'));
+
+  // 3. WAV
+  const wav = encodeWav(flat, SR);
+  set(3, 'ok', `${(wav.size / 1024).toFixed(1)} KB · ${SR}Hz / 16bit / 单声道`);
+
+  // 4. 上传
+  set(4, 'wait', '上传中…');
+  const t0 = performance.now();
+  try {
+    const res = await fetch('/api/mic-echo', { method: 'POST', body: wav });
+    const ms = Math.round(performance.now() - t0);
+    const j = await res.json().catch(() => ({}));
+    if (res.ok) {
+      set(4, 'ok', `服务器已收到 ${j.received} 字节，耗时 ${ms}ms`);
+    } else {
+      set(4, 'no', `HTTP ${res.status}：${j.error || '未知错误'}`);
+    }
+  } catch (e) {
+    set(4, 'no', '上传失败：' + (e && e.message));
+  }
+
+  const pass = audible && true;
+  $('sum').innerHTML = pass
+    ? '<b class="yes">可以用 🎉</b>　麦克风正常，录音链路通。'
+    : '<b class="no">先解决上面标红的两步</b>';
+  $('hint').textContent = '可以回 Safari 点一下喇叭图标，听听录的是不是自己的声音';
+  $('go').disabled = false;
+  $('go').textContent = '再测一次';
+};
+</script>
+</body>
+</html>

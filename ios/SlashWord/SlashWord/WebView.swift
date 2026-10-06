@@ -1,5 +1,6 @@
 import SwiftUI
 import WebKit
+import AVFoundation
 
 /// 站点地址。登录 / 同步 / 存储全靠它带一个正常的 https 源 ——
 /// 换成 file:// 的话 Origin 会是 null，跨域请求和 IndexedDB 都可能出问题。
@@ -36,7 +37,7 @@ enum LoadState {
     case failed
 }
 
-final class WebModel: NSObject, ObservableObject {
+final class WebModel: NSObject, ObservableObject, WKUIDelegate {
     @Published var state: LoadState = .loading
 
     let webView: WKWebView
@@ -62,7 +63,25 @@ final class WebModel: NSObject, ObservableObject {
 
         super.init()
         webView.navigationDelegate = self
+        // 麦克风权限必须走 uiDelegate 才有 —— WKWebView 对 getUserMedia
+        // 默认一律拒绝，不实现下面那个 requestMediaCapturePermissionFor
+        // 的话，网页里不管怎么申请都是 NotAllowedError
+        webView.uiDelegate = self
+        // 自检入口：双指长按 2 秒打开麦克风自检页。
+        // 用双指 + 长按的双重条件，孩子正常答题时几乎不可能误触进去
+        let micTestGesture = UILongPressGestureRecognizer(
+            target: self, action: #selector(openMicTestPage)
+        )
+        micTestGesture.minimumPressDuration = 2.0
+        micTestGesture.numberOfTouchesRequired = 2
+        webView.addGestureRecognizer(micTestGesture)
         load()
+    }
+
+    @objc private func openMicTestPage() {
+        guard let url = URL(string: "https://english-slashword.slashbro.top/mic-test.html")
+        else { return }
+        webView.load(URLRequest(url: url))
     }
 
     func load() {
@@ -126,6 +145,59 @@ extension WebModel: WKNavigationDelegate {
 
     /// 有些错误是"页面内部的资源没加载上"，整个页面其实还能用，
     /// 这时候不能拿一张"没网了"的大图把正在做的题盖住
+    // MARK: - 麦克风权限
+
+    /**
+     * WKWebView 对 `getUserMedia` 默认一律拒绝 —— 网页里怎么申请都是
+     * NotAllowedError。必须在这里显式放行。
+     *
+     * 注意不能直接 `.grant`：那样绕过系统权限，拿到的是一个空轨，
+     * 录出来全是静音，还不报错，比明确拒绝难查得多。这里老老实实走
+     * AVAssetSession 的系统流程，让用户自己决定。
+     */
+    @available(iOS 15.0, *)
+    func webView(
+        _ webView: WKWebView,
+        requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+        initiatedByFrame frame: WKFrameInfo,
+        type: WKMediaCaptureType,
+        decisionHandler: @escaping (WKPermissionDecision) -> Void
+    ) {
+        // 只对本站放行，别把麦克风开给任何 iframe
+        let host = origin.host.lowercased()
+        let mine = siteURL.host?.lowercased() ?? ""
+        guard host == mine else {
+            decisionHandler(.deny)
+            return
+        }
+        switch type {
+        case .microphone:
+            askMicrophone { granted in
+                decisionHandler(granted ? .grant : .deny)
+            }
+        default:
+            // 摄像头这版用不到，让系统自己弹
+            decisionHandler(.prompt)
+        }
+    }
+
+    /// 系统级麦克风权限。弹框是异步的，所以回调形式
+    private func askMicrophone(_ done: @escaping (Bool) -> Void) {
+        let session = AVAudioSession.sharedInstance()
+        switch session.recordPermission {
+        case .granted:
+            done(true)
+        case .denied:
+            done(false)
+        case .undetermined:
+            session.requestRecordPermission { ok in
+                DispatchQueue.main.async { done(ok) }
+            }
+        @unknown default:
+            done(false)
+        }
+    }
+
     private func showErrorIfReallyBroken(_ error: Error) {
         let code = (error as NSError).code
         let fatal: [Int] = [
