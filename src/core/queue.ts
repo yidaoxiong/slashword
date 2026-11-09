@@ -94,12 +94,13 @@ export async function buildDailyQueue(
   const newNeeded = Math.max(0, Math.min(config.dailyNewLimit, totalLimit))
   const fresh: QueueItem[] = []
   if (newNeeded > 0) {
-    // 家长明确勾了范围，就按范围来，不再叠加「学到第几个单元」的限制 ——
-    // 否则勾了后面单元的课也不出题，家长只会以为这功能坏了
-    const allowed = unlockedUnitSet(entries, config)
-    const candidates = sortEntries(
-      entries.filter((e) => (limited ? inScope(e) : allowed.has(e.unitOrder))),
-    )
+    // 学习范围是唯一的控制项：
+    //   没设（undefined）＝ 全选，整本都能出
+    //   设了（哪怕空数组）＝ 严格按勾选来
+    // 不再叠加「学到第几个单元」的自动解锁限制 —— 家长既然能在学习范围里
+    // 挑单元和课，就不该再被解锁进度挡着（勾了 Unit 5 却不出题，
+    // 看起来就像功能坏了）
+    const candidates = sortEntries(limited ? entries.filter(inScope) : entries)
 
     for (const e of candidates) {
       if (fresh.length >= newNeeded) break

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { getRepo } from '../storage'
-import { currentUnitLabel, unlockedCount, unitsOf } from '../core/queue'
 import type { Card, CheckinRecord, Skill } from '../types'
 import { SKILL_LABEL, SKILLS } from '../types'
 import { speak } from '../lib/speech'
@@ -173,36 +172,12 @@ export function ParentPage() {
           />
         </div>
 
-        <div className="mt-4">
-          <div className="flex justify-between text-[12px] text-neutral-500">
-            <span>学到第几个单元</span>
-            <span className="tabular-nums">
-              {currentUnitLabel(entries, config)} · {unlockedCount(config)}/
-              {Math.max(1, unitsOf(entries).length)}
-            </span>
-          </div>
-          <input
-            type="range"
-            min={1}
-            max={Math.max(1, unitsOf(entries).length)}
-            step={1}
-            value={unlockedCount(config)}
-            onChange={(e) =>
-              void setConfig({
-                unitProgress: {
-                  ...(config.unitProgress ?? {}),
-                  [config.activeBook]: Number(e.target.value),
-                },
-              })
-            }
-            className="mt-2 w-full accent-[#7132f5]"
-          />
-          <div className="mt-1 text-[11px] text-neutral-300">
-            {config.lessonFilter?.[config.activeBook]
-              ? '已设置学习范围，这项暂不生效'
-              : '每本词书的进度各自独立保存'}
-          </div>
-        </div>
+        {/*
+          「学到第几个单元」的滑杆已去掉 —— 学习范围（单元 / 课）现在是
+          唯一的范围控制入口，在下面的「学习范围」卡片里勾。
+          留着滑杆会出现两套控制互相打架的情况：滑杆说只学到 Unit 2，
+          勾选说 Unit 5 全要，最后出哪部分词说不清。
+        */}
 
         <div className="mt-4">
           <div className="flex items-center justify-between">
